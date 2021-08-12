@@ -9,3 +9,9 @@ DC-Boxjelly Private Github Repository
 1063288 - Shumin Liu  shumin@student.unimelb.edu.au  Architecture Lead  
 1044804 - Jiexin Liu jiexin@student.unimelb.edu.au  Deployment Lead  
 1102336 - Chien-Chih Wang chienchihw@student.unimelb.edu.au  Quality Lead  
+
+## How to develop
+- Install [pipenv](https://pipenv.pypa.io/en/latest/)
+- Run `pipenv sync` to install dependency
+- Run `pipenv shell` to start a shell based on the virtualenv
+- If you want to install any packages, use `pipenv install`
