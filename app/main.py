@@ -2,5 +2,10 @@ import matplotlib
 matplotlib.use("TkAgg")
 
 from windows.MainWindow import MainWindow
-main = MainWindow()
-main.mainloop()
+
+def main():
+    main = MainWindow()
+    main.mainloop()
+
+if __name__ == '__main__':
+    main()
