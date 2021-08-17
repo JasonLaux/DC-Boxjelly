@@ -1,10 +1,19 @@
+'''
+    File name: calculator2
+    Author: Chien-Chih Wang
+    Date created: 18/08/2020
+    Python version: 3.9
+
+    The file is about the Tkinter calculator.
+    Original source: https://www.geeksforgeeks.org/python-simple-calculator-using-tkinter/ 
+
+'''
+
 # importing Tkinter and math
 from tkinter import *
 import math
 
 # calc class
-
-
 class calc:
 
   def getandreplace(self):
