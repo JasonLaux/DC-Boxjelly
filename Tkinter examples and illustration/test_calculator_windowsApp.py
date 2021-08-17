@@ -1,3 +1,16 @@
+'''
+    File name: test_calculator_windowsApp
+    Author: Chien-Chih Wang
+    Date created: 18/08/2020
+    Python version: 3.9
+
+    The file is built for the demonstration of end-to-end testing on Window calculator.
+    The Windows application driver is the tool for testing the standalone application.
+    The appium module can directly get the application attributes through the graphical user interface.
+    For more details, see Windows application driver ( https://github.com/microsoft/WinAppDriver )
+
+'''
+
 import unittest
 from appium import webdriver
 
