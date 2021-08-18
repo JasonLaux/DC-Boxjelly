@@ -65,10 +65,12 @@ layout = [
   # row 1
   [sg.Canvas(size=(600,300),background_color="#D3B8B2")]
 ]
-window = sg.Window('Window Title', layout)
-while True:
-    event, values = window.read()
-    if event == sg.WIN_CLOSED:
-        break
 
-window.close()
+def make_window():
+    window = sg.Window('Window Title', layout)
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED:
+            break
+
+    window.close()

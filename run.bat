@@ -1,1 +1,1 @@
-pipenv run python app/client_based_demo_pysimplegui.py
+pipenv run python app/main.py
