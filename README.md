@@ -14,4 +14,9 @@ DC-Boxjelly Private Github Repository
 - Install [pipenv](https://pipenv.pypa.io/en/latest/)
 - Run `pipenv sync` to install dependency
 - Run `pipenv shell` to start a shell based on the virtualenv
+- Then, use whatever shell command you want in the shell
 - If you want to install any packages, use `pipenv install`
+
+## Interactive development
+- After the steps above, you can use `pipenv run repl` to start an interactive shell
+  in IPython. You can import modules and test them, like `from models import Job`.

@@ -10,6 +10,10 @@ pysimplegui = "*"
 
 [dev-packages]
 autopep8 = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+repl = "python app/repl.py"
