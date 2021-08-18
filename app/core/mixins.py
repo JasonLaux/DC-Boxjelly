@@ -1,4 +1,8 @@
+from app.core.utils import ensure_folder
+from pathlib import Path
+from app.core.constraints import META_FILE_NAME
 import configparser
+import shutil
 
 class WithMetaMixin:
     """
@@ -8,13 +12,38 @@ class WithMetaMixin:
     the model has.
     """
 
-    def _save_meta_data(self, meta: dict):
+    @property
+    def _meta(self) -> Path:
         """
-        Override the meta.ini with what meta dict provides
+        Get the path of the meta file
+        """
+        return self._folder / META_FILE_NAME
+
+    def _meta_exists(self) -> bool:
+        """
+        Check if the meta file exists
+        """
+        return self._meta.is_file()
+
+    def _ensure_folder_with_meta(self, meta: dict):
+        """
+        Ensure folder and meta file exists.
+
+        If folder does not exist, create it with meta file with data provided
+        """
+        if not ensure_folder(self._folder):
+            self._overwrite_meta_data(meta)
+        else:
+            assert self._meta_exists()
+
+
+    def _overwrite_meta_data(self, meta: dict):
+        """
+        Override the meta.ini with whatever meta dict provides
         """
         config = configparser.ConfigParser()
         config['meta'] = meta
-        with open(self._folder / 'meta.ini', 'w') as fr:
+        with open(self._meta, 'w') as fr:
             config.write(fr)
 
     def _read_meta(self, section='meta'):
@@ -22,7 +51,7 @@ class WithMetaMixin:
         Return a dict represents the meta data of the folder
         """
         config = configparser.ConfigParser()
-        config.read(self._folder / 'meta.ini')
+        config.read(self._meta)
         return config[section]
 
     def _set_meta_data(self, field, value, section='meta'):
@@ -30,7 +59,22 @@ class WithMetaMixin:
         Set a value into the meta data field.
         """
         config = configparser.ConfigParser()
-        config.read(self._folder / 'meta.ini')
+        config.read(self._meta)
         config[section][field] = value
-        with open(self._folder / 'meta.ini', 'w') as fr:
+        with open(self._meta, 'w') as fr:
             config.write(fr)
+
+class DeleteFolderMixin:
+    """
+    A mixin that adds operation to delete the folder this instance represents.
+
+    The class must contains a _folder field.
+    """
+
+    def delete(self):
+        """
+        Remove the model, this process cannot be undone.
+
+        After calling this method, invoking other methods are invalid.
+        """
+        shutil.rmtree(self._folder)
