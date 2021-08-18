@@ -1,5 +1,5 @@
 """
-This module contains the models representing a job, an equipment and a run.
+This file contains the models representing a job, an equipment and a run.
 
 Each model controls a folder in /data.
 
