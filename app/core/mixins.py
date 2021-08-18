@@ -4,6 +4,7 @@ from app.core.constraints import META_FILE_NAME
 import configparser
 import shutil
 
+
 class WithMetaMixin:
     """
     A mixin representing a model contains a meta file
@@ -36,7 +37,6 @@ class WithMetaMixin:
         else:
             assert self._meta_exists()
 
-
     def _overwrite_meta_data(self, meta: dict):
         """
         Override the meta.ini with whatever meta dict provides
@@ -63,6 +63,7 @@ class WithMetaMixin:
         config[section][field] = value
         with open(self._meta, 'w') as fr:
             config.write(fr)
+
 
 class DeleteFolderMixin:
     """

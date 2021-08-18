@@ -14,6 +14,7 @@ from .mixins import DeleteFolderMixin, WithMetaMixin
 from .constraints import JOB_FOLDER, EQUIPMENT_FOLDER_NAME, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME
 from .utils import datetime_to_iso, ensure_folder, iter_subfolders
 
+
 def list_jobs() -> Iterable['Job']:
     """
     Return an iterator of Job object in the job folder
@@ -22,6 +23,7 @@ def list_jobs() -> Iterable['Job']:
         if not file.is_dir():
             continue
         yield Job(file.name)
+
 
 class Job(WithMetaMixin, DeleteFolderMixin, object):
     """
@@ -43,9 +45,9 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
     """
 
     def __init__(self, id: str, *,
-        name='Please enter client name',
-        address='Please enter client address',
-        ) -> None:
+                 name='Please enter client name',
+                 address='Please enter client address',
+                 ) -> None:
         """
         id: The id of the job
         name: Client name, only used in creating new Job
@@ -62,7 +64,7 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
             'name': name,
             'address': address,
         })
-        
+
         self._equipment_folder = self._folder / EQUIPMENT_FOLDER_NAME
         ensure_folder(self._equipment_folder)
 
@@ -104,7 +106,8 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
         Get one equipment by id. It verifies whether the folder exists.
         """
         if id not in self:
-            raise KeyError(f'The equipment identified by {id} is not a folder!')
+            raise KeyError(
+                f'The equipment identified by {id} is not a folder!')
 
         return Equipment(self, id=id)
 
@@ -112,7 +115,7 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
         """
         Add an equipment with the given model and serial
         """
-        
+
         return Equipment(self, model_serial=(model, serial))
 
     __getitem__ = get_equipment
@@ -124,13 +127,14 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
         equipment = self[id]
         equipment.delete()
 
+
 class Equipment(WithMetaMixin, DeleteFolderMixin, object):
     """
     A model that represents an equipment.
     """
-    
-    def __init__(self, parent: Job, *, 
-        id: str=None, model_serial: Tuple[str, str]=None) -> None:
+
+    def __init__(self, parent: Job, *,
+                 id: str = None, model_serial: Tuple[str, str] = None) -> None:
         """
         Init an equipment, either id or model_serial should be not None.
 
@@ -140,10 +144,12 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
         """
 
         if not id and not model_serial:
-            raise ValueError('At least one of the id and model_serial should be provided')
+            raise ValueError(
+                'At least one of the id and model_serial should be provided')
 
         if id and model_serial:
-            raise ValueError('Only one of the id and model_serial should be provided')
+            raise ValueError(
+                'Only one of the id and model_serial should be provided')
 
         self._parent = parent
 
@@ -160,7 +166,8 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
             else:
                 id = f'{model}_{serial}'
         else:
-            assert (parent._equipment_folder / str(id)).is_dir(), 'Equipment folder exists'
+            assert (parent._equipment_folder / str(id)
+                    ).is_dir(), 'Equipment folder exists'
 
         self._id = id
         self._folder = parent._equipment_folder / id
@@ -177,7 +184,7 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
 
     def __repr__(self) -> str:
         return f'Equipment({self._id}, parent={self._parent})'
-    
+
     def __str__(self):
         return f'Equipment({self._id})'
 
@@ -211,6 +218,7 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
         """
         return MexRun(self)
 
+
 class MexRun(WithMetaMixin, DeleteFolderMixin, object):
     """
     This model represents a run in mex analysis.
@@ -232,7 +240,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
         else:
             assert (parent._mex / str(id)).is_dir(), 'MEX run folder exists'
 
-        self._id=str(id)
+        self._id = str(id)
         self._folder = parent._mex / self._id
         self._raw = self._folder / MEX_RAW_FOLDER_NAME
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
@@ -245,6 +253,6 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
 
     def __repr__(self) -> str:
         return f'MexRun({self._id}, parent={self._parent})'
-    
+
     def __str__(self):
         return f'MexRun({self._id})'
