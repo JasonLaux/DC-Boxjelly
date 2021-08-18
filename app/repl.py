@@ -1,6 +1,6 @@
 """
-The file adds /app as the module search directory, so you can use `import models.models` 
-rather than `import app.models.models`
+The file adds /app as the module search directory, so you can use `import models` 
+rather than `import app.models`
 """
 
 import sys
