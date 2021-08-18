@@ -94,6 +94,8 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
         for file in iter_subfolders(self._equipment_folder):
             yield Equipment(self, id=file.name)
 
+    __iter__ = get_equipments
+
     def __contains__(self, id) -> bool:
         """
         Return whether this job contains equipment identified by id
