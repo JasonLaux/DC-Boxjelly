@@ -24,3 +24,5 @@ data/jobs/1/equipments/ABC_123
         This one
 '''
 EQUIPMENT_FOLDER_NAME = 'equipments'
+
+JOBS_LOCK_PATH = DATA_FOLDER / 'jobs.lock'
