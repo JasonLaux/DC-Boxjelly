@@ -1,5 +1,6 @@
-from app.utils import ensure_folder
 from pathlib import Path
+
+from .utils import ensure_folder
 
 '''
 The path of the data folder

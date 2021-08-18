@@ -11,7 +11,7 @@ from typing import Tuple
 
 from .mixins import WithMetaMixin
 from .constraints import JOB_FOLDER, EQUIPMENT_FOLDER_NAME
-from utils import ensure_folder
+from .utils import ensure_folder
 
 class Job(WithMetaMixin, object):
     """
