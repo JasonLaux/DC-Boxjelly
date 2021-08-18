@@ -20,6 +20,6 @@ DC-Boxjelly Private Github Repository
 ## Interactive development
 - After the steps above, you can use `pipenv run repl` to start an interactive shell
   in IPython. You can import modules and test them, like `from models import Job`.
-- Invoke `reload()` in repl to reload all modules while keeping variables in shell.
+- If you use repl, modified modules can be reloaded automatically.
   - Only modules imported by `import A` can be reloaded, while `from A import b` cannot
     be reloaded.
