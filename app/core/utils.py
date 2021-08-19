@@ -4,7 +4,7 @@ Utility functions
 
 from pathlib import Path
 from datetime import datetime
-from typing import Iterable
+from typing import Iterator
 
 
 def ensure_folder(path: Path) -> bool:
@@ -29,7 +29,7 @@ def datetime_to_iso(time: datetime) -> str:
     return time.astimezone().replace(microsecond=0).isoformat()
 
 
-def iter_subfolders(folder: Path) -> Iterable[Path]:
+def iter_subfolders(folder: Path) -> Iterator[Path]:
     """
     Iterate through the folder, yield each subfolders
     """

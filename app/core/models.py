@@ -7,11 +7,11 @@ Data consistency is not guaranteed if a folder is access by multiple instences
 (such as multiple devices accessing the same folder) at the same time.
 """
 
-from typing import Iterable, Tuple
+from typing import Iterable, Iterator, Optional, Tuple
 from datetime import datetime
 
-from .mixins import DeleteFolderMixin, WithMetaMixin
-from .constraints import JOB_FOLDER, EQUIPMENT_FOLDER_NAME, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME
+from .mixins import DeleteFolderMixin, WithMetaMixin, meta_property
+from .constraints import JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME
 from .utils import datetime_to_iso, ensure_folder, iter_subfolders
 
 
@@ -31,6 +31,7 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
 
     In additions to the given methods, it supports basic python operations like below:
 
+    ```
     job = Job(5)
 
     # iterate through each equipments
@@ -42,16 +43,20 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
 
     # delete an equipment
     del job['AAA_123']
+
+    # get the total number of jobs
+    len(e.mex)
+    ```
     """
 
     def __init__(self, id: str, *,
-                 name='Please enter client name',
-                 address='Please enter client address',
+                 client_name='Please enter client name',
+                 client_address='Please enter client address',
                  ) -> None:
         """
         id: The id of the job
-        name: Client name, only used in creating new Job
-        address: Client address, only used in creating new Job
+        client_name: Client name, only used in creating new Job
+        client_address: Client address, only used in creating new Job
 
         If the folder does not exist, it is automatically created using provided
         id, name and address.
@@ -59,31 +64,26 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
         self._id = str(id)
         self._folder = JOB_FOLDER / self._id
 
-        self._ensure_folder_with_meta({
-            'id': self._id,
-            'name': name,
-            'address': address,
-        })
-
-        self._equipment_folder = self._folder / EQUIPMENT_FOLDER_NAME
-        ensure_folder(self._equipment_folder)
+        if not self._ensure_folder_with_meta():
+            self.client_name = client_name
+            self.client_address = client_address
 
     def __repr__(self) -> str:
         return f'Job({self._id})'
     __str__ = __repr__
 
-    def __iter__(self) -> Iterable['Equipment']:
+    def __iter__(self) -> Iterator['Equipment']:
         """
         Get all equipments belongs to the job
         """
-        for file in iter_subfolders(self._equipment_folder):
+        for file in iter_subfolders(self._folder):
             yield Equipment(self, id=file.name)
 
     def __contains__(self, id) -> bool:
         """
         Return whether this job contains equipment identified by id
         """
-        folder = self._equipment_folder / str(id)
+        folder = self._folder / str(id)
         return folder.is_dir()
 
     def __getitem__(self, id):
@@ -103,26 +103,24 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
         equipment = self[id]
         equipment.delete()
 
-    def get_client_name(self):
-        return self._read_meta()['name']
+    def __len__(self):
+        """
+        Get the number of equipments in this job
+        """
+        return len(list(iter_subfolders(self._folder)))
 
-    def get_client_address(self):
-        return self._read_meta()['address']
-
-    def get_id(self):
+    @property
+    def id(self):
         return self._id
 
-    def set_client_name(self, name):
-        self._set_meta_data('name', name)
-
-    def set_client_address(self, address):
-        self._set_meta_data('address', address)
+    # meta properties
+    client_name = meta_property('client_name')
+    client_address = meta_property('client_address')
 
     def add_equipment(self, model, serial) -> 'Equipment':
         """
         Add an equipment with the given model and serial
         """
-
         return Equipment(self, model_serial=(model, serial))
 
 
@@ -134,7 +132,8 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
     """
 
     def __init__(self, parent: Job, *,
-                 id: str = None, model_serial: Tuple[str, str] = None) -> None:
+                 id: Optional[str] = None,
+                 model_serial: Optional[Tuple[str, str]] = None) -> None:
         """
         Init an equipment, either id or model_serial should be not None.
 
@@ -156,28 +155,29 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
         # generate an id from model and serial
         if model_serial:
             model, serial = model_serial
-            folder = parent._equipment_folder
+            folder = parent._folder
 
             if (folder / f'{model}_{serial}').exists():
                 idx = 2
                 while (folder / f'{model}_{serial}_{idx}').exists():
                     idx += 1
-                id = f'{model}_{serial}_{idx}'
+                self._id = f'{model}_{serial}_{idx}'
             else:
-                id = f'{model}_{serial}'
+                self._id = f'{model}_{serial}'
+
+            self._folder = parent._folder / self._id
+            self._ensure_folder_with_meta()
+            self.model = model
+            self.serial = serial
+
         else:
-            assert (parent._equipment_folder / str(id)
+            assert(id)
+            assert (parent._folder / str(id)
                     ).is_dir(), 'Equipment folder exists'
 
-        self._id = id
-        self._folder = parent._equipment_folder / id
-
-        model_serial = self._id.split('_')
-        self._ensure_folder_with_meta({
-            'id': self._id,
-            'model': model_serial[0],
-            'serial': model_serial[1],
-        })
+            self._id = id
+            self._folder = parent._folder / self._id
+            assert self._meta_exists()
 
         self.mex = MexAssessment(self)
 
@@ -187,6 +187,9 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
     def __str__(self):
         return f'Equipment({self._id})'
 
+    model = meta_property('model', 'The model of the equipment')
+    serial = meta_property('serial', 'The serial of the equipment')
+
 
 class MexAssessment:
     """
@@ -194,6 +197,7 @@ class MexAssessment:
 
     In additions to the given methods, it supports basic python operations like below:
 
+    ```
     job = Job(5)
     e = job['AAA_123'] # a equipment
 
@@ -209,6 +213,7 @@ class MexAssessment:
 
     # get the total number of mex runs
     len(e.mex)
+    ```
     """
 
     def __init__(self, parent: Equipment) -> None:
@@ -222,7 +227,7 @@ class MexAssessment:
     def __repr__(self) -> str:
         return f'MexAssessment({self._parent.__repr__()})'
 
-    def __iter__(self) -> Iterable['MexRun']:
+    def __iter__(self) -> Iterator['MexRun']:
         """
         Iterate through all MEX runs
         """
@@ -254,14 +259,14 @@ class MexAssessment:
         """
         self[id].delete()
 
+    def __len__(self):
+        return len(list(iter_subfolders(self._folder)))
+
     def add(self) -> 'MexRun':
         """
         Add a new MEX run
         """
         return MexRun(self)
-
-    def __len__(self):
-        return len(list(iter_subfolders(self._folder)))
 
 
 class MexRun(WithMetaMixin, DeleteFolderMixin, object):
@@ -291,9 +296,8 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
         self._lab = self._raw / MEX_RAW_LAB_FILE_NAME
 
-        self._ensure_folder_with_meta({
-            'added_at': datetime_to_iso(datetime.now())
-        })
+        if not self._ensure_folder_with_meta():
+            self._set_meta('added_at', datetime_to_iso(datetime.now()))
         ensure_folder(self._raw)
 
     def __repr__(self) -> str:

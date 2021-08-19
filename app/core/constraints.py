@@ -15,17 +15,6 @@ JOB_FOLDER = DATA_FOLDER / 'jobs'
 ensure_folder(JOB_FOLDER)
 
 '''
-The name of the equipment folder. Altering this constraints changes the name of the
-equipment folder in the job folder.
-
-data/jobs/1/equipments/ABC_123
-            ^
-            |
-        This one
-'''
-EQUIPMENT_FOLDER_NAME = 'equipments'
-
-'''
 The name of the folder that stores MEX analysis
 '''
 MEX_FOLDER_NAME = 'MEX'

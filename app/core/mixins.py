@@ -1,6 +1,7 @@
 from pathlib import Path
 import configparser
 import shutil
+from typing import Optional
 
 from .constraints import META_FILE_NAME
 from .utils import ensure_folder
@@ -13,6 +14,8 @@ class WithMetaMixin:
     It assume that the object contains a field called _folder, which represents the folder
     the model has.
     """
+
+    _folder: Path
 
     @property
     def _meta(self) -> Path:
@@ -27,43 +30,79 @@ class WithMetaMixin:
         """
         return self._meta.is_file()
 
-    def _ensure_folder_with_meta(self, meta: dict):
+    def _ensure_folder_with_meta(self) -> bool:
         """
-        Ensure folder and meta file exists.
+        Ensure the folder exists, if not, create the folder with an empty meta file.
 
-        If folder does not exist, create it with meta file with data provided
+        Returns True if the folder already exists.
         """
-        if not ensure_folder(self._folder):
-            self._overwrite_meta_data(meta)
-        else:
+        if ensure_folder(self._folder):
             assert self._meta_exists()
+            return True
+        else:
+            self._meta.touch()
+            return False
 
-    def _overwrite_meta_data(self, meta: dict):
-        """
-        Override the meta.ini with whatever meta dict provides
-        """
-        config = configparser.ConfigParser()
-        config['meta'] = meta
-        with open(self._meta, 'w') as fr:
-            config.write(fr)
-
-    def _read_meta(self, section='meta'):
+    def _get_meta(self, field, section='meta') -> Optional[str]:
         """
         Return a dict represents the meta data of the folder
         """
         config = configparser.ConfigParser()
         config.read(self._meta)
-        return config[section]
+        return config.get(section, field, fallback=None)
 
-    def _set_meta_data(self, field, value, section='meta'):
+    def _set_meta(self, field, value, section='meta'):
         """
         Set a value into the meta data field.
         """
         config = configparser.ConfigParser()
         config.read(self._meta)
-        config[section][field] = value
+        config.set(section, field, value)
         with open(self._meta, 'w') as fr:
             config.write(fr)
+
+    def _del_meta(self, field, section='meta'):
+        """
+        Remove a field from meta
+        """
+        config = configparser.ConfigParser()
+        config.read(self._meta)
+        config.remove_option(section, field)
+        with open(self._meta, 'w') as fr:
+            config.write(fr)
+
+
+def meta_property(name, docstring=None):
+    """
+    Create a property that reads and writes a field in meta file. Please ensure the class
+    has `WithMetaMixin`
+
+    Usage:
+    ```
+    class MyModel(WithMetaMixin, object):
+        def __init__(self, id):
+            ...
+
+            self.my_field = self._make_meta_property(self, 'my_field', 'A description of my_field')
+
+    # in other code
+    m = MyModel(1)
+    m.my_field = '123' # write
+    print(m.my_field)  # read, if field does not exist, return None
+    del m.my_field     # clear the field
+    ```
+    """
+
+    def getx(self):
+        return self._get_meta(name)
+
+    def setx(self, value):
+        return self._set_meta(name, value)
+
+    def delx(self):
+        return self._del_meta(name)
+
+    return property(getx, setx, delx, docstring)
 
 
 class DeleteFolderMixin:
@@ -72,6 +111,8 @@ class DeleteFolderMixin:
 
     The class must contains a _folder field.
     """
+
+    _folder: Path
 
     def delete(self):
         """
