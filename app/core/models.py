@@ -15,7 +15,7 @@ from .constraints import JOB_FOLDER, EQUIPMENT_FOLDER_NAME, MEX_FOLDER_NAME, MEX
 from .utils import datetime_to_iso, ensure_folder, iter_subfolders
 
 
-def list_jobs() -> Iterable['Job']:
+def iter_jobs() -> Iterable['Job']:
     """
     Return an iterator of Job object in the job folder
     """

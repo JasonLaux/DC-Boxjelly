@@ -1,1 +1,1 @@
-pipenv run python app/main.py
+pipenv run python -m app.main

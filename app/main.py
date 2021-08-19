@@ -2,8 +2,8 @@ from portalocker.exceptions import AlreadyLocked
 import portalocker
 import PySimpleGUI as sg
 
-from core.constraints import JOBS_LOCK_PATH
-from gui.client_based_demo_pysimplegui import make_window as make_main_window
+from app.core.constraints import JOBS_LOCK_PATH
+from app.gui.client_based_demo_pysimplegui import make_window as make_main_window
 
 
 def main():

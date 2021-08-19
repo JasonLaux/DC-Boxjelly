@@ -1,8 +1,9 @@
-from app.core.utils import ensure_folder
 from pathlib import Path
-from app.core.constraints import META_FILE_NAME
 import configparser
 import shutil
+
+from .constraints import META_FILE_NAME
+from .utils import ensure_folder
 
 
 class WithMetaMixin:
