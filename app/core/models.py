@@ -72,6 +72,37 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
         return f'Job({self._id})'
     __str__ = __repr__
 
+    def __iter__(self) -> Iterable['Equipment']:
+        """
+        Get all equipments belongs to the job
+        """
+        for file in iter_subfolders(self._equipment_folder):
+            yield Equipment(self, id=file.name)
+
+    def __contains__(self, id) -> bool:
+        """
+        Return whether this job contains equipment identified by id
+        """
+        folder = self._equipment_folder / str(id)
+        return folder.is_dir()
+
+    def __getitem__(self, id):
+        """
+        Get one equipment by id. It verifies whether the folder exists.
+        """
+        if id not in self:
+            raise KeyError(
+                f'The equipment identified by {id} is not a folder!')
+
+        return Equipment(self, id=id)
+
+    def __delitem__(self, id):
+        """
+        Delete an equipment by the id provided
+        """
+        equipment = self[id]
+        equipment.delete()
+
     def get_client_name(self):
         return self._read_meta()['name']
 
@@ -87,32 +118,6 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
     def set_client_address(self, address):
         self._set_meta_data('address', address)
 
-    def get_equipments(self) -> Iterable['Equipment']:
-        """
-        Get all equipments belongs to the job
-        """
-        for file in iter_subfolders(self._equipment_folder):
-            yield Equipment(self, id=file.name)
-
-    __iter__ = get_equipments
-
-    def __contains__(self, id) -> bool:
-        """
-        Return whether this job contains equipment identified by id
-        """
-        folder = self._equipment_folder / str(id)
-        return folder.is_dir()
-
-    def get_equipment(self, id):
-        """
-        Get one equipment by id. It verifies whether the folder exists.
-        """
-        if id not in self:
-            raise KeyError(
-                f'The equipment identified by {id} is not a folder!')
-
-        return Equipment(self, id=id)
-
     def add_equipment(self, model, serial) -> 'Equipment':
         """
         Add an equipment with the given model and serial
@@ -120,19 +125,12 @@ class Job(WithMetaMixin, DeleteFolderMixin, object):
 
         return Equipment(self, model_serial=(model, serial))
 
-    __getitem__ = get_equipment
-
-    def __delitem__(self, id):
-        """
-        Delete an equipment by the id provided
-        """
-        equipment = self[id]
-        equipment.delete()
-
 
 class Equipment(WithMetaMixin, DeleteFolderMixin, object):
     """
     A model that represents an equipment.
+
+    Use `equipment.mex` to get the set of mex runs of this equipment
     """
 
     def __init__(self, parent: Job, *,
@@ -181,8 +179,7 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
             'serial': model_serial[1],
         })
 
-        self._mex = self._folder / MEX_FOLDER_NAME
-        ensure_folder(self._mex)
+        self.mex = MexAssessment(self)
 
     def __repr__(self) -> str:
         return f'Equipment({self._id}, parent={self._parent})'
@@ -190,35 +187,81 @@ class Equipment(WithMetaMixin, DeleteFolderMixin, object):
     def __str__(self):
         return f'Equipment({self._id})'
 
-    def mex_runs(self) -> Iterable['MexRun']:
+
+class MexAssessment:
+    """
+    The mex assessment belongs to an equipment.
+
+    In additions to the given methods, it supports basic python operations like below:
+
+    job = Job(5)
+    e = job['AAA_123'] # a equipment
+
+    # iterate through each MexRun's
+    for run in e.mex:
+        print(e)
+
+    # get a mex run by its id
+    e.mex[1]
+
+    # delete a mex run
+    del e.mex[1]
+
+    # get the total number of mex runs
+    len(e.mex)
+    """
+
+    def __init__(self, parent: Equipment) -> None:
+        self._parent = parent
+        self._folder = parent._folder / MEX_FOLDER_NAME
+        ensure_folder(self._folder)
+
+    def __str__(self) -> str:
+        return f'MexAssessment({self._parent})'
+
+    def __repr__(self) -> str:
+        return f'MexAssessment({self._parent.__repr__()})'
+
+    def __iter__(self) -> Iterable['MexRun']:
         """
         Iterate through all MEX runs
         """
-        for file in iter_subfolders(self._mex):
+        for file in iter_subfolders(self._folder):
             yield MexRun(self, file.name)
 
-    def has_mex_run(self, id) -> bool:
+    def __contains__(self, id) -> bool:
         """
         Check if the equipment has the MEX run with given id
         """
-        folder = self._mex / str(id)
+        folder = self._folder / str(id)
         return folder.is_dir()
 
-    def get_mex_run(self, id) -> 'MexRun':
+    def __getitem__(self, id) -> 'MexRun':
         """
         Get a mex run by id.
 
         If run does not exist, raise KeyError
         """
-        if not self.has_mex_run(id):
+        if id not in self:
             raise KeyError(f'{self} does not contains MEX run with id={id}')
         return MexRun(self, id)
 
-    def add_mex_run(self) -> 'MexRun':
+    def __delitem__(self, id):
+        """
+        Delete a mex run by id.
+
+        If run does not exist, raise KeyError
+        """
+        self[id].delete()
+
+    def add(self) -> 'MexRun':
         """
         Add a new MEX run
         """
         return MexRun(self)
+
+    def __len__(self):
+        return len(list(iter_subfolders(self._folder)))
 
 
 class MexRun(WithMetaMixin, DeleteFolderMixin, object):
@@ -226,7 +269,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
     This model represents a run in mex analysis.
     """
 
-    def __init__(self, parent: Equipment, id=None) -> None:
+    def __init__(self, parent: MexAssessment, id=None) -> None:
         """
         Initialize a MexRun instance.
 
@@ -237,13 +280,13 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
         self._parent = parent
 
         if not id:
-            id = max(int(file.name) for file in iter_subfolders(parent._mex)) + 1 \
-                if next(iter_subfolders(parent._mex), None) else 1
+            id = max(int(run._id) for run in parent) + 1 \
+                if len(parent) > 0 else 1
         else:
-            assert (parent._mex / str(id)).is_dir(), 'MEX run folder exists'
+            assert (parent._folder / str(id)).is_dir(), 'MEX run folder exists'
 
         self._id = str(id)
-        self._folder = parent._mex / self._id
+        self._folder = parent._folder / self._id
         self._raw = self._folder / MEX_RAW_FOLDER_NAME
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
         self._lab = self._raw / MEX_RAW_LAB_FILE_NAME

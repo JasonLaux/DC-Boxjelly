@@ -18,8 +18,6 @@ DC-Boxjelly Private Github Repository
 - If you want to install any packages, use `pipenv install`
 
 ## Interactive development
-- After the steps above, you can use `pipenv run repl` to start an interactive shell
-  in IPython. You can import modules and test them, like `from models import Job`.
+- After the steps above, you can use `pipenv run repl` to start an interactive shell in IPython. You can import modules and test them, like `from models import Job`.
 - If you use repl, modified modules can be reloaded automatically.
-  - Only modules imported by `import A` can be reloaded, while `from A import b` cannot
-    be reloaded.
+  - For documents about auto reloading, see https://ipython.org/ipython-doc/3/config/extensions/autoreload.html
