@@ -30,7 +30,7 @@ class TestJob(ModelTestBase):
                             client_address_1=f'{i}00 St')
 
         # test iter
-        jobs = list(models.Job)
+        jobs = list(models.Job) # type: ignore
         self.assertEqual(len(jobs), 5)
         self.assertEqual(jobs[0].client_name, 'Client 1')
         self.assertEqual(jobs[0].client_address_1, '100 St')

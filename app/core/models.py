@@ -25,7 +25,7 @@ class _JobMetaClass(type):
 
     def __getitem__(cls, id) -> 'Job':
         """
-        Get an instance to an existing job.
+        Get a job by id
         @id: The id of the job
 
         If the job does not exist, it raises a KeyError
@@ -65,6 +65,25 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
     """
     A model that represents a job.
 
+    Use following methods to list, iterate, make, and get jobs:
+    ```
+    # list jobs
+    list(Job)
+
+    # iterate through all jobs
+    for job in Job:
+        print(job)
+
+    # get job number
+    len(Job)
+
+    # create new job
+    Job.make(1, client_name="A client")
+
+    # get job by id
+    Job[1]
+    ```
+
     In additions to the given methods, it supports basic python operations like below:
 
     ```
@@ -90,7 +109,7 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
 
     Read, write and delete meta data like below:
     ```
-    job = Job.of(5)
+    job = Job[5]
     print(job.client_name)             # get client name
     job.client_name = 'Another client' # set client name
     del job.client_name                # remove client name (next time, job.client_name is None)
@@ -103,7 +122,7 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
 
         **This is not meant to be used outside of `core.models`!**
         - If you want to create a new job, use `Job.make`
-        - If you want to get an instance of existing job, use `Job[_id_]`
+        - If you want to get an existing job, use `Job[_id_]`
         """
         self._id = str(id)
         self._folder = JOB_FOLDER / self._id
@@ -182,7 +201,7 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
         Init an equipment, either id or (model, serial) should be not None.
         **This constructor is not meant to be used outside of `core.models`!**
         - If you want to create a new equipment, use `job.add_equipment('AAA', '123')`
-        - If you want to get an instance of existing equipment, use `job['AAA_123']`
+        - If you want to get an existing equipment by id, use `job['AAA_123']`
 
         @partent: which job this equipment belongs to.
         @id: a string representing the id of an equipment
@@ -246,7 +265,7 @@ class MexMeasurements:
     In additions to the given methods, it supports basic python operations like below:
 
     ```
-    job = Job.of(5)
+    job = Job[5]
     e = job['AAA_123'] # a equipment
 
     # iterate through each MexRun's
@@ -334,7 +353,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
 
         **This constructor is not meant to be used outside of `core.models`!**
         - If you want to create a new run, use `equipment.mex.add()`
-        - If you want to get an instance of existing run, use `equipment.mex[_id_]`
+        - If you want to get an existing run by id, use `equipment.mex[_id_]`
 
         If id exists, it reads the data from the existing run.
         If it does not exist, this process creates new run in the parent folder.
