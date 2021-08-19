@@ -7,8 +7,11 @@ Data consistency is not guaranteed if a folder is access by multiple instences
 (such as multiple devices accessing the same folder) at the same time.
 """
 
+from pathlib import Path
 from typing import Iterable, Iterator, Optional, Tuple
 from datetime import datetime
+import shutil
+import os, errno
 
 from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
 from .constraints import JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME
@@ -386,5 +389,73 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
     @property
     def id(self) -> int:
         return self._id
+
+    @property
+    def raw_client(self) -> Optional[Path]:
+        """
+        Get the path to the raw client file.
+
+        If file does not exist, return None
+        """
+        return self._client if self._client.exists() else None
+
+    @property
+    def raw_lab(self) -> Optional[Path]:
+        """
+        Get the path to the raw lab file.
+
+        If file does not exist, return None
+        """
+        return self._lab if self._lab.exists() else None
+
+    def save_raw_client(self, source):
+        """
+        Save the data of raw client data from `source` path.
+
+        It just copies the file into the run/raw folder.
+
+        If the source file does not exist, it raises ValueError
+        """
+        if not Path(source).is_file():
+            raise ValueError(f'Source path {source} is not a file')
+        shutil.copyfile(source, self._client)
+
+    def save_raw_lab(self, source):
+        """
+        Save the data of raw lab data from `source` path.
+
+        It just copies the file into the run/raw folder.
+
+        If the source file does not exist, it raises ValueError
+        """
+        if not Path(source).is_file():
+            raise ValueError(f'Source path {source} is not a file')
+        shutil.copyfile(source, self._lab)
+
+    def rm_raw_client(self):
+        """
+        Remove the raw client data file.
+
+        If the file does not exist, it does nothing. An OSError may be
+        raised if errors such as no permission is encountered.
+        """
+        try:
+            os.remove(self._client)
+        except OSError as e:
+            if e.errno != errno.ENOENT: # no such file or directory
+                raise
+
+    def rm_raw_lab(self):
+        """
+        Remove the raw lab data file.
+
+        If the file does not exist, it does nothing. An OSError may be
+        raised if errors such as no permission is encountered.
+        """
+        try:
+            os.remove(self._lab)
+        except OSError as e:
+            if e.errno != errno.ENOENT: # no such file or directory
+                raise
 
     operator = meta_property('operator', 'Who did the measurement')
