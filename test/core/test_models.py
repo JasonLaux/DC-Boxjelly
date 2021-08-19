@@ -17,55 +17,83 @@ class ModelTestBase(unittest.TestCase):
         self.assertListEqual(meta, value)
 
 
-class TestBaseFunctions(ModelTestBase):
-    def test_list_jobs(self):
-        # arrange
+class TestJob(ModelTestBase):
+
+    def test_CRUD(self):
+        # assert no jobs
+        self.assertEqual(len(models.Job), 0)
+
+        # test add
         for i in range(1, 6):
-            models.Job(str(i), client_name=f'Client {i}', client_address=f'{i}00 St')
+            models.Job.make(str(i),
+                            client_name=f'Client {i}',
+                            client_address_1=f'{i}00 St')
 
-        # act
-
-        # assert
-        jobs = list(models.iter_jobs())
+        # test iter
+        jobs = list(models.Job)
         self.assertEqual(len(jobs), 5)
         self.assertEqual(jobs[0].client_name, 'Client 1')
-        self.assertEqual(jobs[0].client_address, '100 St')
+        self.assertEqual(jobs[0].client_address_1, '100 St')
 
+        # test get
+        self.assertEqual(models.Job['1'].client_name, 'Client 1')
+        self.assertEqual(models.Job['1'].client_address_1, '100 St')
 
-class TestJob(ModelTestBase):
+        # test delete
+        self.assertEqual(len(models.Job), 5)
+        del models.Job['1']
+        self.assertEqual(len(models.Job), 4)
+
+        # test not existing key
+        self.assertRaises(KeyError, lambda: models.Job['7'])
+
     def test_set_meta_data(self):
-        j = models.Job('1')
+        j = models.Job.make('1')
 
         j.client_name = 'A client'
-        j.client_address = 'An address'
+        j.client_address_1 = 'An address'
 
         self.assertEqual(j.client_name, 'A client')
-        self.assertEqual(j.client_address, 'An address')
+        self.assertEqual(j.client_address_1, 'An address')
         self.assertMetaContent('data/jobs/1/meta.ini', [
             '[DEFAULT]',
             'client_name = A client',
-            'client_address = An address'
+            'client_address_1 = An address'
         ])
 
-        del j.client_address
+        del j.client_address_1
 
-        self.assertEqual(j.client_address, None)
+        self.assertEqual(j.client_address_1, None)
         self.assertMetaContent('data/jobs/1/meta.ini', [
             '[DEFAULT]',
             'client_name = A client',
         ])
 
     def test_modify_equipments(self):
-        j = models.Job('1')
+        j = models.Job.make('1')
 
         # add
         j.add_equipment('AAA', '123')
-        # iter
 
+        # iter
+        for e in j:
+            self.assertEqual(e.model, 'AAA')
+            self.assertEqual(e.serial, '123')
+
+        # contains
         self.assertTrue('AAA_123' in j)
+
+        # len
         self.assertEqual(len(j), 1)
 
+        # get
         e = j['AAA_123']
+        self.assertEqual(e.model, 'AAA')
+        self.assertEqual(e.serial, '123')
+
+        # delete
+        del j['AAA_123']
+        self.assertEqual(len(j), 0)
 
 
 if __name__ == '__main__':

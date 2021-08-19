@@ -5,6 +5,8 @@ Utility functions
 from pathlib import Path
 from datetime import datetime
 from typing import Iterator
+import itertools
+from collections import deque
 
 
 def ensure_folder(path: Path) -> bool:
@@ -38,3 +40,13 @@ def iter_subfolders(folder: Path) -> Iterator[Path]:
         if not file.is_dir():
             continue
         yield file
+
+
+def count_iter_items(iterable):
+    # from https://stackoverflow.com/a/15112059
+    """
+    Consume an iterable not reading it into memory; return the number of items.
+    """
+    counter = itertools.count()
+    deque(zip(iterable, counter), maxlen=0)  # (consume at C speed)
+    return next(counter)

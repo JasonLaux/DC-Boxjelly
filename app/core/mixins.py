@@ -1,7 +1,7 @@
 from pathlib import Path
 import configparser
 import shutil
-from typing import Optional
+from typing import Dict, Optional
 
 from .constraints import META_FILE_NAME
 from .utils import ensure_folder
@@ -43,7 +43,7 @@ class WithMetaMixin:
             self._meta.touch()
             return False
 
-    def _get_meta(self, field, section='DEFAULT') -> Optional[str]:
+    def _get_meta(self, field: str, section='DEFAULT') -> Optional[str]:
         """
         Return a dict represents the meta data of the folder
         """
@@ -51,10 +51,16 @@ class WithMetaMixin:
         config.read(self._meta)
         return config.get(section, field, fallback=None)
 
-    def _set_meta(self, field, value, section='DEFAULT'):
+    def _set_meta(self, field: str, value: str, section='DEFAULT'):
         """
         Set a value into the meta data field.
+
+        If it is setted as None, it is equivalent to invoking `_del_meta`
         """
+
+        if value is None:
+            self._del_meta(field, section)
+
         config = configparser.ConfigParser()
         config.read(self._meta)
 
@@ -66,7 +72,7 @@ class WithMetaMixin:
         with open(self._meta, 'w') as fr:
             config.write(fr)
 
-    def _del_meta(self, field, section='DEFAULT'):
+    def _del_meta(self, field: str, section='DEFAULT'):
         """
         Remove a field from meta
         """
@@ -80,7 +86,7 @@ class WithMetaMixin:
             pass
 
 
-def meta_property(name, docstring=None):
+def meta_property(name: str, docstring: Optional[str] = None) -> property:
     """
     Create a property that reads and writes a field in meta file. Please ensure the class
     has `WithMetaMixin`
@@ -111,6 +117,11 @@ def meta_property(name, docstring=None):
         return self._del_meta(name)
 
     return property(getx, setx, delx, docstring)
+
+
+def assign_properties(obj, kwargs: Dict[str, str]):
+    for key, value in kwargs.items():
+        setattr(obj, key, value)
 
 
 class DeleteFolderMixin:
