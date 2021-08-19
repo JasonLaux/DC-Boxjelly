@@ -232,7 +232,7 @@ class MexAssessment:
         Iterate through all MEX runs
         """
         for file in iter_subfolders(self._folder):
-            yield MexRun(self, file.name)
+            yield MexRun(self, int(file.name))
 
     def __contains__(self, id) -> bool:
         """
@@ -274,7 +274,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
     This model represents a run in mex analysis.
     """
 
-    def __init__(self, parent: MexAssessment, id=None) -> None:
+    def __init__(self, parent: MexAssessment, id: Optional[int]=None) -> None:
         """
         Initialize a MexRun instance.
 
@@ -285,13 +285,13 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
         self._parent = parent
 
         if not id:
-            id = max(int(run._id) for run in parent) + 1 \
+            id = max(run.id for run in parent) + 1 \
                 if len(parent) > 0 else 1
         else:
             assert (parent._folder / str(id)).is_dir(), 'MEX run folder exists'
 
-        self._id = str(id)
-        self._folder = parent._folder / self._id
+        self._id = int(id)
+        self._folder = parent._folder / str(id)
         self._raw = self._folder / MEX_RAW_FOLDER_NAME
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
         self._lab = self._raw / MEX_RAW_LAB_FILE_NAME
@@ -305,3 +305,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin, object):
 
     def __str__(self):
         return f'MexRun({self._id})'
+
+    @property
+    def id(self) -> int:
+        return self._id

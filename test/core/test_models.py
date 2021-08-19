@@ -21,7 +21,7 @@ class TestBaseFunctions(ModelTestBase):
     def test_list_jobs(self):
         # arrange
         for i in range(1, 6):
-            models.Job(i, client_name=f'Client {i}', client_address=f'{i}00 St')
+            models.Job(str(i), client_name=f'Client {i}', client_address=f'{i}00 St')
 
         # act
 
@@ -34,7 +34,7 @@ class TestBaseFunctions(ModelTestBase):
 
 class TestJob(ModelTestBase):
     def test_set_meta_data(self):
-        j = models.Job(1)
+        j = models.Job('1')
 
         j.client_name = 'A client'
         j.client_address = 'An address'
@@ -42,24 +42,21 @@ class TestJob(ModelTestBase):
         self.assertEqual(j.client_name, 'A client')
         self.assertEqual(j.client_address, 'An address')
         self.assertMetaContent('data/jobs/1/meta.ini', [
-            '[meta]',
-            'id = 1',
+            '[DEFAULT]',
             'client_name = A client',
             'client_address = An address'
         ])
 
-        del j.client_name
         del j.client_address
 
-        self.assertEqual(j.client_name, None)
         self.assertEqual(j.client_address, None)
         self.assertMetaContent('data/jobs/1/meta.ini', [
-            '[meta]',
-            'id = 1',
+            '[DEFAULT]',
+            'client_name = A client',
         ])
 
     def test_modify_equipments(self):
-        j = models.Job(1)
+        j = models.Job('1')
 
         # add
         j.add_equipment('AAA', '123')

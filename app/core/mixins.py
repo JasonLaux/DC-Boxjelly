@@ -43,7 +43,7 @@ class WithMetaMixin:
             self._meta.touch()
             return False
 
-    def _get_meta(self, field, section='meta') -> Optional[str]:
+    def _get_meta(self, field, section='DEFAULT') -> Optional[str]:
         """
         Return a dict represents the meta data of the folder
         """
@@ -51,25 +51,33 @@ class WithMetaMixin:
         config.read(self._meta)
         return config.get(section, field, fallback=None)
 
-    def _set_meta(self, field, value, section='meta'):
+    def _set_meta(self, field, value, section='DEFAULT'):
         """
         Set a value into the meta data field.
         """
         config = configparser.ConfigParser()
         config.read(self._meta)
-        config.set(section, field, value)
+
+        try:
+            config.set(section, field, value)
+        except configparser.NoSectionError:
+            config[section] = {field: value}
+
         with open(self._meta, 'w') as fr:
             config.write(fr)
 
-    def _del_meta(self, field, section='meta'):
+    def _del_meta(self, field, section='DEFAULT'):
         """
         Remove a field from meta
         """
         config = configparser.ConfigParser()
         config.read(self._meta)
-        config.remove_option(section, field)
-        with open(self._meta, 'w') as fr:
-            config.write(fr)
+        try:
+            config.remove_option(section, field)
+            with open(self._meta, 'w') as fr:
+                config.write(fr)
+        except configparser.NoSectionError:
+            pass
 
 
 def meta_property(name, docstring=None):
