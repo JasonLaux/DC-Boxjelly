@@ -52,6 +52,13 @@ class _JobMetaClass(type):
         """
         return count_iter_items(iter_subfolders(JOB_FOLDER))
 
+    def __contains__(self, id) -> bool:
+        """
+        Return whether a job exists by id
+        """
+        folder = JOB_FOLDER / str(id)
+        return folder.is_dir()
+
     def make(cls, id: str, **kwargs) -> 'Job':
         """
         Create a new job with optional properties.
@@ -85,6 +92,10 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
 
     # get job by id
     Job[1]
+
+    # check job existence
+    1 in Job # => a boolean
+    'string_job_id_1' in Job # string works too
     ```
 
     In additions to the given methods, it supports basic python operations like below:
@@ -105,9 +116,8 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
     # get the total number of equipments
     len(job)
 
-    # iterate through all jobs
-    for j in Job:
-        print(j)
+    # check equipment existence
+    'AAA_123' in job # => a boolean
     ```
 
     Read, write and delete meta data like below:
