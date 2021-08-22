@@ -74,3 +74,6 @@ def make_window():
             break
 
     window.close()
+
+if __name__ == '__main__':
+  make_window()
