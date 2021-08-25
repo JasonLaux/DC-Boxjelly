@@ -1,4 +1,4 @@
-import pathlib
+from pathlib import Path
 import unittest
 import shutil
 import importlib
@@ -13,8 +13,14 @@ class ModelTestBase(unittest.TestCase):
         (constraints.DATA_FOLDER / '.gitkeep').touch()
 
     def assertMetaContent(self, path, value: list):
-        meta = pathlib.Path(path).read_text().strip().splitlines()
+        meta = Path(path).read_text().strip().splitlines()
         self.assertListEqual(meta, value)
+
+    def assertFileEqual(self, left: Path, right: Path, msg=None):
+        self.assertTrue(left.is_file(), f'{left} should be a file')
+        self.assertTrue(right.is_file(), f'{right} should be a file')
+
+        self.assertEqual(left.read_bytes(), right.read_bytes(), msg)
 
 
 class TestJob(ModelTestBase):
@@ -30,7 +36,7 @@ class TestJob(ModelTestBase):
                             client_address_1=f'{i}00 St')
 
         # test iter
-        jobs = list(models.Job) # type: ignore
+        jobs = list(models.Job)  # type: ignore
         self.assertEqual(len(jobs), 5)
         self.assertEqual(jobs[0].client_name, 'Client 1')
         self.assertEqual(jobs[0].client_address_1, '100 St')
@@ -63,7 +69,7 @@ class TestJob(ModelTestBase):
 
         del j.client_address_1
 
-        self.assertEqual(j.client_address_1, None)
+        self.assertIsNone(j.client_address_1)
         self.assertMetaContent('data/jobs/1/meta.ini', [
             '[DEFAULT]',
             'client_name = A client',
@@ -98,6 +104,68 @@ class TestJob(ModelTestBase):
         # delete
         del j['AAA_123']
         self.assertEqual(len(j), 1)
+
+
+class TestMexRun(ModelTestBase):
+
+    def test_meta_data(self):
+        # get object
+        job = models.Job.make('CAL0001')
+        equipment = job.add_equipment('AAA', '123')
+        r = equipment.mex.add()
+
+        self.assertEqual(r.id, 1)
+
+        # write meta data
+        r.operator = 'Random Person'
+
+        # read meta data
+        self.assertEqual(r.operator, 'Random Person')
+
+        # meta file
+        lines = Path(
+            'data/jobs/CAL0001/AAA_123/MEX/1/meta.ini').read_text().strip().splitlines()
+        self.assertEqual(len(lines), 3)
+        self.assertEqual(lines[0], '[DEFAULT]')
+        self.assertRegexpMatches(lines[1], r'^added_at = ')
+        self.assertEqual(lines[2], 'operator = Random Person')
+
+    def test_raw_file(self):
+        TEST_DATA_FOLDER = Path(__file__).parent / '_assert' / 'Data'
+        CLIENT_A_RUN1_CLIENT = TEST_DATA_FOLDER / \
+            'CAL00001 Raw ClientA-Run1-Client.csv'
+
+        # get object
+        job = models.Job.make('CAL0001')
+        equipment = job.add_equipment('AAA', '123')
+        r = equipment.mex.add()
+
+        # test client and lab object
+        self.assertEqual(type(r.raw_client), type(r.raw_lab))
+
+        # by default, you get None
+        self.assertEqual(r.raw_client.path, None)
+
+        # test adding file
+        r.raw_client.upload_from(CLIENT_A_RUN1_CLIENT)
+        path = r.raw_client.path
+        assert path is not None
+
+        self.assertTrue(path.samefile('data/jobs/CAL0001/AAA_123/MEX/1/raw/client.csv'),
+                        'test the raw file path')
+        self.assertFileEqual(path, CLIENT_A_RUN1_CLIENT, 'test file content')
+
+        # test exporting
+        r.raw_client.export_to(Path('data/test_exported.csv'))
+        self.assertFileEqual(
+            Path('data/test_exported.csv'), CLIENT_A_RUN1_CLIENT)
+
+        # test deleting
+        r.raw_client.remove()
+        self.assertFalse(
+            Path('data/jobs/CAL0001/AAA_123/MEX/1/raw/client.csv').exists()
+        )
+        self.assertIsNone(r.raw_client.path)
 
 
 if __name__ == '__main__':

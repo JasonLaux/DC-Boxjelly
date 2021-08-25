@@ -378,9 +378,13 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
 
         self._id = int(id)
         self._folder = parent._folder / str(id)
+
         self._raw = self._folder / MEX_RAW_FOLDER_NAME
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
         self._lab = self._raw / MEX_RAW_LAB_FILE_NAME
+
+        self.raw_client = MexRawFile(self, self._client)
+        self.raw_lab = MexRawFile(self, self._lab)
 
         if not self._ensure_folder_with_meta():
             self._set_meta('added_at', datetime_to_iso(datetime.now()))
@@ -396,72 +400,69 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
     def id(self) -> int:
         return self._id
 
-    @property
-    def raw_client(self) -> Optional[Path]:
-        """
-        Get the path to the raw client file.
-
-        If file does not exist, return None
-        """
-        return self._client if self._client.exists() else None
-
-    @property
-    def raw_lab(self) -> Optional[Path]:
-        """
-        Get the path to the raw lab file.
-
-        If file does not exist, return None
-        """
-        return self._lab if self._lab.exists() else None
-
-    def save_raw_client(self, source):
-        """
-        Save the data of raw client data from `source` path.
-
-        It just copies the file into the run/raw folder.
-
-        If the source file does not exist, it raises ValueError
-        """
-        if not Path(source).is_file():
-            raise ValueError(f'Source path {source} is not a file')
-        shutil.copyfile(source, self._client)
-
-    def save_raw_lab(self, source):
-        """
-        Save the data of raw lab data from `source` path.
-
-        It just copies the file into the run/raw folder.
-
-        If the source file does not exist, it raises ValueError
-        """
-        if not Path(source).is_file():
-            raise ValueError(f'Source path {source} is not a file')
-        shutil.copyfile(source, self._lab)
-
-    def rm_raw_client(self):
-        """
-        Remove the raw client data file.
-
-        If the file does not exist, it does nothing. An OSError may be
-        raised if errors such as no permission is encountered.
-        """
-        try:
-            os.remove(self._client)
-        except OSError as e:
-            if e.errno != errno.ENOENT:  # no such file or directory
-                raise
-
-    def rm_raw_lab(self):
-        """
-        Remove the raw lab data file.
-
-        If the file does not exist, it does nothing. An OSError may be
-        raised if errors such as no permission is encountered.
-        """
-        try:
-            os.remove(self._lab)
-        except OSError as e:
-            if e.errno != errno.ENOENT:  # no such file or directory
-                raise
-
     operator = meta_property('operator', 'Who did the measurement')
+
+class MexRawFile:
+    """
+    Representing a raw file
+    """
+
+    def __init__(self, parent: MexRun, path: Path) -> None:
+        """
+        Create a raw file object.
+
+        ** This constructor is not meant to be used outside of models.py! **
+        - Please access it through MexRun
+        """
+
+        self._path = path
+        self._parent = parent
+
+    @property
+    def path(self) -> Optional[Path]:
+        """
+        Get the path to the raw file.
+
+        If file does not exist, return None
+        """
+        return self._path if self._path.exists() else None
+
+    def upload_from(self, source: Path):
+        """
+        Save the raw data from `source` path.
+
+        It just copies the file into the run/raw folder.
+
+        If the source file does not exist, it raises ValueError
+        """
+        if not Path(source).is_file():
+            raise ValueError(f'Source path {source} is not a file')
+        shutil.copyfile(source, self._path)
+
+    def remove(self):
+        """
+        Remove the raw data file.
+
+        If the file does not exist, it does nothing. An OSError may be
+        raised if errors such as no permission is encountered.
+        """
+        try:
+            os.remove(self._path)
+        except OSError as e:
+            if e.errno != errno.ENOENT:  # no such file or directory
+                raise
+
+    def export_to(self, path: Path):
+        """
+        Export raw data into path.
+
+        Please ensure the parent folder of path exists.
+        """
+        assert path.parent.is_dir()
+
+        # TODO: add an extra header to the exported raw data
+
+        if not self._path.exists():
+            raise FileNotFoundError('The raw file does not exist!')
+
+        shutil.copyfile(self._path, path)
