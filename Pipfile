@@ -18,3 +18,4 @@ python_version = "3.9"
 
 [scripts]
 repl = "python app/repl.py"
+test = "python -m unittest discover"

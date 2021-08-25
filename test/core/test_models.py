@@ -91,9 +91,13 @@ class TestJob(ModelTestBase):
         self.assertEqual(e.model, 'AAA')
         self.assertEqual(e.serial, '123')
 
+        # add equipments with same serial
+        j.add_equipment('AAA', '456')
+        self.assertRaises(ValueError, lambda: j.add_equipment('AAA', '456'))
+
         # delete
         del j['AAA_123']
-        self.assertEqual(len(j), 0)
+        self.assertEqual(len(j), 1)
 
 
 if __name__ == '__main__':

@@ -11,7 +11,8 @@ from pathlib import Path
 from typing import Iterable, Iterator, Optional, Tuple
 from datetime import datetime
 import shutil
-import os, errno
+import os
+import errno
 
 from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
 from .constraints import JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME
@@ -242,18 +243,13 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
             assert model, 'model should be provided'
             assert serial, 'serial should be provided'
 
-            # generate an id from model and serial
-            folder = parent._folder
-
-            if (folder / f'{model}_{serial}').exists():
-                idx = 2
-                while (folder / f'{model}_{serial}_{idx}').exists():
-                    idx += 1
-                self._id = f'{model}_{serial}_{idx}'
-            else:
-                self._id = f'{model}_{serial}'
-
+            self._id = f'{model}_{serial}'
             self._folder = parent._folder / self._id
+
+            if self._folder.exists():
+                raise ValueError(f'The model ({model}) and serial {serial} in '
+                                 '{parent} should not exist at creation')
+
             self._ensure_folder_with_meta()
             self.model = model
             self.serial = serial
@@ -452,7 +448,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         try:
             os.remove(self._client)
         except OSError as e:
-            if e.errno != errno.ENOENT: # no such file or directory
+            if e.errno != errno.ENOENT:  # no such file or directory
                 raise
 
     def rm_raw_lab(self):
@@ -465,7 +461,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         try:
             os.remove(self._lab)
         except OSError as e:
-            if e.errno != errno.ENOENT: # no such file or directory
+            if e.errno != errno.ENOENT:  # no such file or directory
                 raise
 
     operator = meta_property('operator', 'Who did the measurement')
