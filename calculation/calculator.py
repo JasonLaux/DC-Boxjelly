@@ -2,7 +2,7 @@ import pandas as pd
 import warnings
 from openpyxl import Workbook
 from openpyxl import load_workbook
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Color
 
 warnings.filterwarnings('ignore')
 
@@ -116,10 +116,7 @@ def calculator(client, lab):
 
     wb = load_workbook(result_path)
     ws = wb['background-difference']
-
-    yellow = PatternFill(start_color='F7FF00',
-                         end_color='F7FF00',
-                         fill_type='solid')
+    yellow = PatternFill(fgColor=Color('F7FF00'), fill_type='solid')
 
     for row in ws.iter_rows():
         for cell in row:
