@@ -29,7 +29,7 @@ def calculator(client, lab):
 
     MC1 = (client_data.df_mean['Current1(pA)'] - BgdMC1_Before).to_frame('NK')
     IC1 = (client_data.df_mean['Current2(pA)'] - BgdIC1_Before).to_frame('NK')
-    R1 = IC1 / MC1
+    R1 = (client_data.df_mean['Current2(pA)'] - BgdIC1_Before).to_frame('NK') / (client_data.df_mean['Current1(pA)'] - BgdMC1_Before).to_frame('NK')
     TM1 = client_data.df_mean['T(MC)'].to_frame('NK')
     TA1 = client_data.df_mean['T(Air)'].to_frame('NK')
 
@@ -39,7 +39,7 @@ def calculator(client, lab):
 
     MC2 = (lab_data.df_mean['Current1(pA)'] - BgdMC2_Before).to_frame('NK')
     IC2 = (lab_data.df_mean['Current2(pA)'] - BgdIC2_Before).to_frame('NK')
-    R2 = IC2 / MC2
+    R2 = (lab_data.df_mean['Current2(pA)'] - BgdIC2_Before).to_frame('NK') / (lab_data.df_mean['Current1(pA)'] - BgdMC2_Before).to_frame('NK')
     TM2 = lab_data.df_mean['T(MC)'].to_frame('NK')
     TS2 = lab_data.df_mean['T(SC)'].to_frame('NK')
     H2 = lab_data.df_mean['H(%)'].to_frame('NK')
