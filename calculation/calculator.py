@@ -1,5 +1,8 @@
 import pandas as pd
 import warnings
+from openpyxl import Workbook
+from openpyxl import load_workbook
+from openpyxl.styles import PatternFill
 
 warnings.filterwarnings('ignore')
 
@@ -76,7 +79,18 @@ def calculator(client, lab):
     # Calculating NK
     NK = R2 * WE * df_KK * ((273.15 + TS2) / (273.15 + TM2)) * (0.995766667 + 0.000045 * H2) / (
                 Ma * R1 * (273.15 + TA1) / (273.15 + TM1))
-    NK = NK / 1000000
+    NK = round(NK / 1000000, 2)
+    NK.columns = ['NK (mGy/nC)']
+
+    # background difference
+    df_difference = pd.DataFrame({"Current PA Before": [BgdMC1_Before, BgdIC1_Before, BgdMC2_Before, BgdIC2_Before],
+                                  "Current PA After": [client_data.df_after_mean['Current1(pA)'].values[0],
+                                                       client_data.df_after_mean['Current2(pA)'].values[0],
+                                                       lab_data.df_after_mean['Current1(pA)'].values[0],
+                                                       lab_data.df_after_mean['Current2(pA)'].values[0]]},
+                                 index=["Monitor 1", "Chamber (client)", "Monitor 1", "Standard (MEFAC)"])
+
+    df_difference = round(df_difference, 2)
 
     # Save result
     writer = pd.ExcelWriter('result.xlsx', engine='xlsxwriter')
@@ -92,8 +106,27 @@ def calculator(client, lab):
     df_lab.to_excel(writer, sheet_name='lab', index=False)
 
     # save result into excel file
+    result_path = 'result.xlsx'
     NK.to_excel(writer, sheet_name='MEX-Results')
+
+    # save background difference into excel file
+    df_difference.to_excel(writer, sheet_name='background-difference')
+
     writer.save()
+
+    wb = load_workbook(result_path)
+    ws = wb['background-difference']
+
+    yellow = PatternFill(start_color='F7FF00',
+                         end_color='F7FF00',
+                         fill_type='solid')
+
+    for row in ws.iter_rows():
+        for cell in row:
+            if type(cell.value) == float and abs(cell.value) > 0.1:
+                cell.fill = yellow
+
+    wb.save(result_path)
 
 
 def extraction(path):
