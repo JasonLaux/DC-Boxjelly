@@ -93,7 +93,8 @@ def calculator(client, lab):
     df_difference = round(df_difference, 2)
 
     # Save result
-    writer = pd.ExcelWriter('result.xlsx', engine='xlsxwriter')
+    result_path = 'result.xlsx'
+    writer = pd.ExcelWriter(result_path, engine='xlsxwriter')
 
     # save client into result excel file
     df_client = pd.read_csv(client, encoding='mac_roman')
@@ -106,7 +107,6 @@ def calculator(client, lab):
     df_lab.to_excel(writer, sheet_name='lab', index=False)
 
     # save result into excel file
-    result_path = 'result.xlsx'
     NK.to_excel(writer, sheet_name='MEX-Results')
 
     # save background difference into excel file
