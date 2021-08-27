@@ -30,9 +30,11 @@ class WithMetaMixin:
         """
         return self._meta.is_file()
 
-    def _ensure_folder_with_meta(self) -> bool:
+    def _ensure_folder_with_meta(self, initial: Optional[Dict[str, str]] = None) -> bool:
         """
         Ensure the folder exists, if not, create the folder with an empty meta file.
+
+        @initial: a dict contains the initial meta data if a new meta file is created
 
         Returns True if the folder already exists.
         """
@@ -41,6 +43,10 @@ class WithMetaMixin:
             return True
         else:
             self._meta.touch()
+            if initial: 
+                for k,v in initial.items():
+                    self._set_meta(k, v)
+
             return False
 
     def _get_meta(self, field: str, section='DEFAULT') -> Optional[str]:

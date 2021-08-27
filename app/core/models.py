@@ -250,9 +250,10 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
                 raise ValueError(f'The model ({model}) and serial {serial} in '
                                  '{parent} should not exist at creation')
 
-            self._ensure_folder_with_meta()
-            self.model = model
-            self.serial = serial
+            self._ensure_folder_with_meta({
+                'model': model,
+                'serial': serial,
+            })
 
         self.mex = MexMeasurements(self)
 
@@ -263,7 +264,8 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
         return f'Equipment({self._id})'
 
     model = meta_property('model', 'The model of the equipment', readonly=True)
-    serial = meta_property('serial', 'The serial of the equipment', readonly=True)
+    serial = meta_property(
+        'serial', 'The serial of the equipment', readonly=True)
     cal_number = meta_property('cal_number', 'ARPANSA Job ID')
 
 
