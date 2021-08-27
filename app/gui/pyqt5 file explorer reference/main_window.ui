@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="client">
      <widget class="QLabel" name="id">
@@ -240,7 +240,7 @@
       </column>
      </widget>
     </widget>
-    <widget class="QWidget" name="jobs">
+    <widget class="QWidget" name="job">
      <widget class="QPushButton" name="btn_job_del">
       <property name="geometry">
        <rect>
@@ -300,6 +300,18 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="files">
+     <widget class="QTreeView" name="treeView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>291</width>
+        <height>711</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -434,7 +446,7 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QGraphicsView" name="graphicsView">
+     <widget class="PlotWidget" name="graphicsView">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -479,17 +491,19 @@
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="btn_open"/>
     <addaction name="btn_call_client"/>
     <addaction name="btn_call_jobs"/>
     <addaction name="btn_output_pdf"/>
     <addaction name="btn_output_dcc"/>
+    <addaction name="btn_call_files"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -519,7 +533,24 @@
     <string>Output DCC</string>
    </property>
   </action>
+  <action name="btn_open">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="btn_call_files">
+   <property name="text">
+    <string>Files</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>pyqtgraph</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
