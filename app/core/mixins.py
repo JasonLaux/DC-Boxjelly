@@ -86,10 +86,13 @@ class WithMetaMixin:
             pass
 
 
-def meta_property(name: str, docstring: Optional[str] = None) -> property:
+def meta_property(name: str, docstring: Optional[str] = None, *,
+                  readonly=False) -> property:
     """
     Create a property that reads and writes a field in meta file. Please ensure the class
     has `WithMetaMixin`
+
+    @readonly: if it is True, only reading is available
 
     Usage:
     ```
@@ -116,7 +119,10 @@ def meta_property(name: str, docstring: Optional[str] = None) -> property:
     def delx(self):
         return self._del_meta(name)
 
-    return property(getx, setx, delx, docstring)
+    if readonly:
+        return property(getx, doc=docstring)
+    else:
+        return property(getx, setx, delx, docstring)
 
 
 def assign_properties(obj, kwargs: Dict[str, str]):

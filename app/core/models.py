@@ -262,8 +262,8 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
     def __str__(self):
         return f'Equipment({self._id})'
 
-    model = meta_property('model', 'The model of the equipment')
-    serial = meta_property('serial', 'The serial of the equipment')
+    model = meta_property('model', 'The model of the equipment', readonly=True)
+    serial = meta_property('serial', 'The serial of the equipment', readonly=True)
     cal_number = meta_property('cal_number', 'ARPANSA Job ID')
 
 
