@@ -266,7 +266,6 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
     model = meta_property('model', 'The model of the equipment', readonly=True)
     serial = meta_property(
         'serial', 'The serial of the equipment', readonly=True)
-    cal_number = meta_property('cal_number', 'ARPANSA Job ID')
 
 
 class MexMeasurements:
