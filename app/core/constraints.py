@@ -40,3 +40,18 @@ The name of the file that contains meta data such as client name or created time
 META_FILE_NAME = 'meta.ini'
 
 JOBS_LOCK_PATH = DATA_FOLDER / 'jobs.lock'
+
+'''
+The name of meta section in exported csv file
+'''
+RAW_META_SECTION_NAME = '[DC_META]'
+
+'''
+The name of the measurement meta data in raw file
+'''
+RAW_MEASUREMENT_SECTION_NAME = '[COMET X-RAY MEASUREMENT]'
+
+'''
+The name of the data section in raw file
+'''
+RAW_DATA_SECTION_NAME = '[DATA]'

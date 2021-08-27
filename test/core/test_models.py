@@ -75,6 +75,14 @@ class TestJob(ModelTestBase):
             'client_name = A client',
         ])
 
+        # test meta dict
+        self.assertDictEqual(j.meta, {
+            'job_id': '1',
+            'client_name': 'A client',
+            'client_address_1': None,
+            'client_address_2': None,
+        })
+
     def test_modify_equipments(self):
         j = models.Job.make('1')
 
@@ -134,6 +142,8 @@ class TestMexRun(ModelTestBase):
         TEST_DATA_FOLDER = Path(__file__).parent / '_assert' / 'Data'
         CLIENT_A_RUN1_CLIENT = TEST_DATA_FOLDER / \
             'CAL00001 Raw ClientA-Run1-Client.csv'
+        EXPORTED_SNAPSHOT = Path(__file__).parent / \
+            '_assert' / 'snapshots' / 'exported_raw_client.csv'
 
         # get object
         job = models.Job.make('CAL0001')
@@ -158,7 +168,7 @@ class TestMexRun(ModelTestBase):
         # test exporting
         r.raw_client.export_to(Path('data/test_exported.csv'))
         self.assertFileEqual(
-            Path('data/test_exported.csv'), CLIENT_A_RUN1_CLIENT)
+            Path('data/test_exported.csv'), EXPORTED_SNAPSHOT)
 
         # test deleting
         r.raw_client.remove()
@@ -166,6 +176,12 @@ class TestMexRun(ModelTestBase):
             Path('data/jobs/CAL0001/AAA_123/MEX/1/raw/client.csv').exists()
         )
         self.assertIsNone(r.raw_client.path)
+
+        # test import raw file with [DC_META] section
+        r.raw_client.upload_from(EXPORTED_SNAPSHOT)
+        r.raw_client.export_to(Path('data/test_exported.csv'))
+        self.assertFileEqual(
+            Path('data/test_exported.csv'), EXPORTED_SNAPSHOT)
 
 
 if __name__ == '__main__':

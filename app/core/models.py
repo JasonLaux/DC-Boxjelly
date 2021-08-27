@@ -8,14 +8,14 @@ Data consistency is not guaranteed if a folder is access by multiple instences
 """
 
 from pathlib import Path
-from typing import Iterable, Iterator, Optional, Tuple
+from typing import Dict, Iterable, Iterator, Optional, Tuple
 from datetime import datetime
 import shutil
 import os
 import errno
 
 from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
-from .constraints import JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME
+from .constraints import RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME
 from .utils import count_iter_items, datetime_to_iso, ensure_folder, iter_subfolders
 
 
@@ -199,6 +199,18 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
         """
         return Equipment(self, model=model, serial=serial)
 
+    @property
+    def meta(self) -> Dict[str, str]:
+        """
+        Export job meta data into a dict
+        """
+        return {
+            'job_id': self.id,
+            'client_name': self.client_name,
+            'client_address_1': self.client_address_1,
+            'client_address_2': self.client_address_2,
+        }
+
 
 class Equipment(WithMetaMixin, DeleteFolderMixin):
     """
@@ -266,6 +278,16 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
     model = meta_property('model', 'The model of the equipment', readonly=True)
     serial = meta_property(
         'serial', 'The serial of the equipment', readonly=True)
+
+    @property
+    def meta(self) -> Dict[str, str]:
+        """
+        Export equipment meta data into a dict
+        """
+        return {
+            'equipment_model': self.model,
+            'equipment_serial': self.serial,
+        }
 
 
 class MexMeasurements:
@@ -403,6 +425,17 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
 
     operator = meta_property('operator', 'Who did the measurement')
 
+    @property
+    def meta(self) -> Dict[str, str]:
+        """
+        Export run meta data into a dict
+        """
+        return {
+            'run_id': str(self.id),
+            'operator': self.operator,
+        }
+
+
 class MexRawFile:
     """
     Representing a raw file
@@ -438,7 +471,18 @@ class MexRawFile:
         """
         if not Path(source).is_file():
             raise ValueError(f'Source path {source} is not a file')
-        shutil.copyfile(source, self._path)
+
+        with source.open() as f:
+            lines = f.readlines()
+
+        if lines[0].strip() == RAW_META_SECTION_NAME:
+            beg = [i for i, line in enumerate(lines)
+                   if line.strip().startswith(RAW_MEASUREMENT_SECTION_NAME)]
+            assert len(beg) == 1
+            lines = lines[beg[0]:]
+
+        with self._path.open('w') as f:
+            f.writelines(lines)
 
     def remove(self):
         """
@@ -461,9 +505,26 @@ class MexRawFile:
         """
         assert path.parent.is_dir()
 
-        # TODO: add an extra header to the exported raw data
-
         if not self._path.exists():
             raise FileNotFoundError('The raw file does not exist!')
 
-        shutil.copyfile(self._path, path)
+        with self._path.open() as f:
+            lines = f.readlines()
+
+        run = self._parent
+        equipment = run._parent._parent
+        job = equipment._parent
+
+        meta_section = [
+            RAW_META_SECTION_NAME + '\n',
+            *_meta_dict_to_csv_line(job),
+            *_meta_dict_to_csv_line(equipment),
+            *_meta_dict_to_csv_line(run),
+        ]
+
+        with path.open('w') as f:
+            f.writelines(meta_section)
+            f.writelines(lines)
+
+def _meta_dict_to_csv_line(obj):
+    return ['{k},{v}\n'.format(k=k, v=v if v else '') for k, v in obj.meta.items()]
