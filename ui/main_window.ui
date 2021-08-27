@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
-    <height>729</height>
+    <width>871</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -662,1061 +662,6 @@ background-color: white;
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="import_page">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">tabwidget.setStyleSheet(&quot;QTabWidget::pane { border: 0; }&quot;);</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_50">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>30</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Import Files</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_35">
-                <item>
-                 <spacer name="horizontalSpacer_21">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_35">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_36">
-                    <item>
-                     <widget class="QPushButton" name="pushButton">
-                      <property name="styleSheet">
-                       <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                      </property>
-                      <property name="text">
-                       <string>Client File</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_18">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_37">
-                    <item>
-                     <widget class="QPushButton" name="pushButton_16">
-                      <property name="styleSheet">
-                       <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                      </property>
-                      <property name="text">
-                       <string>Lab FIle</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_19">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);
-</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_22">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>13</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_38">
-                <item>
-                 <spacer name="horizontalSpacer_23">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_15">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>Upload</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_24">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_16">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="constants_page">
-             <layout class="QVBoxLayout" name="verticalLayout_36">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_49">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>30</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Constants</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QTableWidget" name="constantTable">
-                <row>
-                 <property name="text">
-                  <string>MA</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </row>
-                <row>
-                 <property name="text">
-                  <string>KK</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </row>
-                <row>
-                 <property name="text">
-                  <string>WE</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </row>
-                <row>
-                 <property name="text">
-                  <string>Constant 1</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </row>
-                <row>
-                 <property name="text">
-                  <string>Constant 2</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </row>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_40">
-                <item>
-                 <spacer name="horizontalSpacer_25">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_17">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>Save</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_26">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="analyse_page">
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_48">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>30</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Analysis</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_39">
-                <item>
-                 <widget class="QTabWidget" name="tabWidget">
-                  <property name="currentIndex">
-                   <number>0</number>
-                  </property>
-                  <widget class="QWidget" name="Run1">
-                   <attribute name="title">
-                    <string>Tab 1</string>
-                   </attribute>
-                   <layout class="QVBoxLayout" name="verticalLayout_8">
-                    <item>
-                     <widget class="QTableWidget" name="analysisTable">
-                      <row>
-                       <property name="text">
-                        <string>Monitor 1</string>
-                       </property>
-                       <property name="font">
-                        <font>
-                         <pointsize>20</pointsize>
-                        </font>
-                       </property>
-                      </row>
-                      <row>
-                       <property name="text">
-                        <string>New Row</string>
-                       </property>
-                       <property name="font">
-                        <font>
-                         <pointsize>20</pointsize>
-                        </font>
-                       </property>
-                      </row>
-                      <row>
-                       <property name="text">
-                        <string>Chamber (Client)</string>
-                       </property>
-                       <property name="font">
-                        <font>
-                         <pointsize>20</pointsize>
-                        </font>
-                       </property>
-                      </row>
-                      <row>
-                       <property name="text">
-                        <string>Standard (MEFAC)</string>
-                       </property>
-                       <property name="font">
-                        <font>
-                         <pointsize>20</pointsize>
-                        </font>
-                       </property>
-                      </row>
-                      <column>
-                       <property name="text">
-                        <string>Current pA (Before)</string>
-                       </property>
-                       <property name="font">
-                        <font>
-                         <pointsize>20</pointsize>
-                        </font>
-                       </property>
-                      </column>
-                      <column>
-                       <property name="text">
-                        <string>Current pA (After)</string>
-                       </property>
-                       <property name="font">
-                        <font>
-                         <pointsize>20</pointsize>
-                        </font>
-                       </property>
-                      </column>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                  <widget class="QWidget" name="tab_4">
-                   <attribute name="title">
-                    <string>Tab 2</string>
-                   </attribute>
-                  </widget>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QTableWidget" name="summaryTable">
-                <column>
-                 <property name="text">
-                  <string>Beam Quality</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>E_eff</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Run1_NK</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Run2_NK</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Run3_NK</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Average</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Run1/Average</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Run2/Average</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>Run3/Average</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="add_page">
-             <layout class="QVBoxLayout" name="verticalLayout_10">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_17">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>30</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>ADD NEW CLIENT</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_6">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>10</height>
-                 </size>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_9">
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_9">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_4">
-                    <item>
-                     <widget class="QLabel" name="label_18">
-                      <property name="text">
-                       <string>CAL Number</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_5">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_5">
-                    <item>
-                     <widget class="QLabel" name="label_19">
-                      <property name="text">
-                       <string>Client Name</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_6">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);
-</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>13</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_10">
-                <item>
-                 <spacer name="horizontalSpacer_4">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_7">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>Submit</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_5">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_5">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="viewequipment_page">
-             <layout class="QVBoxLayout" name="verticalLayout_29">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_33">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>30</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>View/Edit Equipment</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_25">
-                <item>
-                 <spacer name="horizontalSpacer_11">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_28">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_26">
-                    <item>
-                     <widget class="QLabel" name="label_34">
-                      <property name="text">
-                       <string>Serial Number</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_14">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_27">
-                    <item>
-                     <widget class="QLabel" name="label_35">
-                      <property name="text">
-                       <string>Make/Model Number</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_15">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);
-</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_12">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>13</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_28">
-                <item>
-                 <spacer name="horizontalSpacer_13">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_13">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>Update</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_14">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_13">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="addequipment_page">
-             <layout class="QVBoxLayout" name="verticalLayout_31">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_36">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>30</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Add New Equipment</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_29">
-                <item>
-                 <spacer name="horizontalSpacer_15">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_30">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_30">
-                    <item>
-                     <widget class="QLabel" name="label_37">
-                      <property name="text">
-                       <string>Serial Number</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_16">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_31">
-                    <item>
-                     <widget class="QLabel" name="label_38">
-                      <property name="text">
-                       <string>Make/Model Number</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEdit_17">
-                      <property name="styleSheet">
-                       <string notr="true">background-color: rgb(255, 255, 255);
-</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_16">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>13</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_32">
-                <item>
-                 <spacer name="horizontalSpacer_17">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_14">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>Add</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_18">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QFrame" name="frame_14">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
             <widget class="QWidget" name="viewclientinfo_page">
              <layout class="QVBoxLayout" name="verticalLayout_18">
               <item alignment="Qt::AlignHCenter">
@@ -1904,35 +849,6 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="viewequipmentButton">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>View/Edit Equipment</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QPushButton" name="deleteequipmentButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
@@ -1958,6 +874,35 @@ background-color: white;
                   </property>
                   <property name="text">
                    <string>Delete Equipment</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="returnButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton{
+background-color: rgb(211, 213, 213);
+color:black;
+border-style:outset;
+border-width:2px;
+border-radius:10px;
+border-color: black;
+font:bold 16px;
+padding: 6;
+}
+
+QPushButton:hover{
+background-color: rgb(83, 82, 82);
+color: white;
+}
+
+QPushButton:pressed{
+background-color: white;
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string>Return</string>
                   </property>
                  </widget>
                 </item>
@@ -2211,6 +1156,35 @@ background-color: white;
                   </property>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="returnButton_2">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton{
+background-color: rgb(211, 213, 213);
+color:black;
+border-style:outset;
+border-width:2px;
+border-radius:10px;
+border-color: black;
+font:bold 16px;
+padding: 6;
+}
+
+QPushButton:hover{
+background-color: rgb(83, 82, 82);
+color: white;
+}
+
+QPushButton:pressed{
+background-color: white;
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string>Return</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
@@ -2271,5 +1245,93 @@ background-color: white;
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>constantButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openConstantsWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1027</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openAddClientWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-113</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addnewequipmentButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openAddEquipmentWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>322</x>
+     <y>298</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-76</x>
+     <y>377</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>importButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openImportWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>247</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-129</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>analyseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openAnalysisWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>330</x>
+     <y>259</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-35</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>openConstantsWindow()</slot>
+  <slot>openAddClientWindow()</slot>
+  <slot>openAnalysisWindow()</slot>
+  <slot>openAddEquipmentWindow()</slot>
+  <slot>openImportWindow()</slot>
+ </slots>
 </ui>

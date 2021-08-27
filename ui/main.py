@@ -5,7 +5,12 @@ import datetime
 import sys
 
 # GUI FILE
-from sprint1_john import Ui_MainWindow
+from main_window_ui import Ui_MainWindow
+from import_page_ui import Ui_import_page
+from constants_page_ui import Ui_constants_page
+from analyse_page_ui import Ui_analyse_page
+from add_client_page_ui import Ui_add_client_page
+from add_equipment_page_ui import Ui_add_equipment_page
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -13,103 +18,126 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        def center(self):
-            frameGm = self.frameGeometry()
-            screen = QtGui.QApplication.desktop().screenNumber(QtGui.QApplication.desktop().cursor().pos())
-            centerPoint = QtGui.QApplication.desktop().screenGeometry(screen).center()
-            frameGm.moveCenter(centerPoint)
-            self.move(frameGm.topLeft())
-
-        # PAGES
-        ########################################################################
-
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.home_page))
-        # Add New Client
-        self.ui.addButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.add_page))
         # View/Edit Client Info 
         self.ui.viewButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.viewclientinfo_page))
-        #Add New Equipment
-        self.ui.addnewequipmentButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.addequipment_page))
-        # View/Edit Equipment
-        self.ui.viewequipmentButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.viewequipment_page))
-
         #compare page
         self.ui.compareButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.compare_page))
+        # Return to Home Page
+        self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.home_page))
+        # Return to Client Info Page
+        self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.viewclientinfo_page))
+        
+        ## Table insertion
 
-        self.ui.importButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.import_page))
+    # define open window functions
+    def openConstantsWindow(self):
+        constantsWindow.show()
+    
+    def openAddClientWindow(self):
+        addClientWindow.show()
 
-        self.ui.analyseButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.analyse_page))
+    def openAddEquipmentWindow(self):
+        addEquipmentWindow.show()
 
-        self.ui.constantButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.constants_page))
+    def openImportWindow(self):
+        importWindow.show()
+    
+    def openAnalysisWindow(self):
+        analysisWindow.show()
+    
+    def closeEvent(self, event):  
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want to exit?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()  
+        else:
+            event.ignore() 
 
+class ImportWindow(QMainWindow):
+    def __init__(self, parent = None):
+        super(ImportWindow, self).__init__(parent)
+        self.ui = Ui_import_page()
+        self.ui.setupUi(self)
+    def closeEvent(self, event):  
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()  
+        else:
+            event.ignore() 
 
+class ConstantsWindow(QMainWindow):
+    def __init__(self, parent = None):
+        super(ConstantsWindow, self).__init__(parent)
+        self.ui = Ui_constants_page()
+        self.ui.setupUi(self)
 
-
-        ## Home Page Table UI Design
-        # Stretch column to fix window size
-        #can do a for loop next time -> length?
-        header = self.ui.homeTable.horizontalHeader()      
-        header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-
-        clientHeader = self.ui.clientTable.horizontalHeader()
-        clientHeader.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        clientHeader.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        clientHeader.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-
-        compareHeader = self.ui.compareTable.horizontalHeader()
-        compareHeader.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        compareHeader.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        compareHeader.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        compareHeader.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
-
-        analysisHeader = self.ui.analysisTable.horizontalHeader()
-        analysisHeader.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        analysisHeader.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-
-        summaryHeader = self.ui.summaryTable.horizontalHeader()
-        summaryHeader.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(4, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(5, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(6, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(7, QtWidgets.QHeaderView.Stretch)
-        summaryHeader.setSectionResizeMode(8, QtWidgets.QHeaderView.Stretch)
-
-
-        constantsHeader = self.ui.constantTable.verticalHeader()
-        constantsHeader.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        constantsHeader.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        constantsHeader.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        constantsHeader.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)        
-        constantsHeader.setSectionResizeMode(4, QtWidgets.QHeaderView.Stretch)         
-
-
-
-        calNumber=["12123NN", "!@1233123"]
-        clientName = ["John", "Winnie"]
-
-        self.ui.homeTable.setRowCount(len(calNumber)) #have to do this else won't work
-        self.ui.homeTable.setColumnCount(3)#have to do this else won't work | Use cal number as it will not be empty but client name will
-
-        for i in range(len(calNumber)):
-            self.ui.homeTable.setItem(i,1,QTableWidgetItem(calNumber[i]))
-            self.ui.homeTable.setItem(i,2,QTableWidgetItem(clientName[i]))
-
-        ## SHOW ==> MAIN WINDOW
-        ########################################################################
-        self.show()
-        ## ==> END ##
+        ## Table insertion
 
 
+    def closeEvent(self, event):  
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()  
+        else:
+            event.ignore() 
+
+class AnalyseWindow(QMainWindow):
+    def __init__(self, parent = None):
+        super(AnalyseWindow, self).__init__(parent)
+        self.ui = Ui_analyse_page()
+        self.ui.setupUi(self)
+
+        ## Table insertion
+
+
+    def closeEvent(self, event):  
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()  
+        else:
+            event.ignore() 
+
+
+class AddClientWindow(QMainWindow):
+    def __init__(self, parent = None):
+        super(AddClientWindow, self).__init__(parent)
+        self.ui = Ui_add_client_page()
+        self.ui.setupUi(self)
+    def closeEvent(self, event):  
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()  
+        else:
+            event.ignore() 
+
+
+class AddEquipmentWindow(QMainWindow):
+    def __init__(self, parent = None):
+        super(AddEquipmentWindow, self).__init__(parent)
+        self.ui = Ui_add_equipment_page()
+        self.ui.setupUi(self)
+    def closeEvent(self, event):  
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()  
+        else:
+            event.ignore() 
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    w = MainWindow()
-    w.show()
+    mainWindow = MainWindow()
+    mainWindow.show()
+    constantsWindow = ConstantsWindow()
+    importWindow = ImportWindow()
+    analysisWindow = AnalyseWindow()
+    addClientWindow = AddClientWindow()
+    addEquipmentWindow = AddEquipmentWindow()
     sys.exit(app.exec_())
