@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>add_client_page</class>
- <widget class="QMainWindow" name="add_client_page">
+ <class>addClientPage</class>
+ <widget class="QMainWindow" name="addClientPage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item alignment="Qt::AlignHCenter">
-     <widget class="QLabel" name="label_4">
+     <widget class="QLabel" name="headerLabel">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -103,7 +103,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="idLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -122,7 +122,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="id_line">
+             <widget class="QLineEdit" name="idLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -194,7 +194,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="clientNameLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -213,7 +213,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="id_line_2">
+             <widget class="QLineEdit" name="clientNameLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -340,7 +340,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="add_client_submit_button">
+       <widget class="QPushButton" name="submitButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>

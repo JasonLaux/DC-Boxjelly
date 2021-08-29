@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>constants_page</class>
- <widget class="QMainWindow" name="constants_page">
+ <class>constantsPage</class>
+ <widget class="QMainWindow" name="constantsPage">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>389</width>
+    <width>444</width>
     <height>466</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
        <item row="0" column="0">
         <layout class="QVBoxLayout" name="verticalLayout">
          <item alignment="Qt::AlignHCenter">
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="headerLabel">
            <property name="font">
             <font>
              <family>SimSun-ExtB</family>
@@ -34,10 +34,10 @@
           </widget>
          </item>
          <item>
-          <widget class="QTableView" name="constants_table"/>
+          <widget class="QTableView" name="constantsTable"/>
          </item>
          <item alignment="Qt::AlignHCenter">
-          <widget class="QPushButton" name="save_button">
+          <widget class="QPushButton" name="saveButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>

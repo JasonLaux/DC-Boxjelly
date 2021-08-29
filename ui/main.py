@@ -12,15 +12,15 @@ class MainWindow(QMainWindow):
         self.ui = window
 
         #Home Page
-        self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.home_page))
+        self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         # View/Edit Client Info 
-        self.ui.viewButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientinfo_page))
+        self.ui.chooseClientButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
         #compare page
-        self.ui.compareButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentinfo_page))
+        self.ui.chooseEquipmentButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage))
         # Return to Home Page
-        self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.home_page))
+        self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         # Return to Client Info Page
-        self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientinfo_page))
+        self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
         
         ## Table insertion
 

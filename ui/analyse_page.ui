@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>analyse_page</class>
- <widget class="QMainWindow" name="analyse_page">
+ <class>analysePage</class>
+ <widget class="QMainWindow" name="analysePage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
      <widget class="QWidget" name="widget" native="true">
       <layout class="QGridLayout" name="gridLayout_6">
        <item row="0" column="0" alignment="Qt::AlignHCenter">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="headerLabel">
          <property name="font">
           <font>
            <family>SimSun-ExtB</family>
@@ -36,7 +36,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QGraphicsView" name="graph_2"/>
+            <widget class="QGraphicsView" name="resultGraph"/>
            </item>
            <item>
             <widget class="QTabWidget" name="tabWidget_2">
@@ -49,7 +49,7 @@
               </attribute>
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="0">
-                <widget class="QTableView" name="run1_table_2"/>
+                <widget class="QTableView" name="run1Table"/>
                </item>
               </layout>
              </widget>
@@ -59,7 +59,7 @@
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
-                <widget class="QTableView" name="run2_table_2"/>
+                <widget class="QTableView" name="run2Table"/>
                </item>
               </layout>
              </widget>
@@ -68,12 +68,12 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableView" name="result_table"/>
+          <widget class="QTableView" name="resultTable"/>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <widget class="QPushButton" name="generate_pdf_button">
+            <widget class="QPushButton" name="generatePdfButton">
              <property name="styleSheet">
               <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -102,7 +102,7 @@ background-color: white;
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="generate_dcc_button">
+            <widget class="QPushButton" name="generateDccButton">
              <property name="styleSheet">
               <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);

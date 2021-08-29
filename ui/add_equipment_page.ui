@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>add_equipment_page</class>
- <widget class="QMainWindow" name="add_equipment_page">
+ <class>addEquipmentPage</class>
+ <widget class="QMainWindow" name="addEquipmentPage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,7 +24,7 @@
           <number>15</number>
          </property>
          <item alignment="Qt::AlignHCenter">
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="headerLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -62,7 +62,7 @@
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
-                <widget class="QLabel" name="label">
+                <widget class="QLabel" name="makeModelLabel">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -81,7 +81,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="serialLabel">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -104,7 +104,7 @@
              <item>
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
-                <widget class="QLineEdit" name="model_line">
+                <widget class="QLineEdit" name="modelLine">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -120,7 +120,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="serial_line">
+                <widget class="QLineEdit" name="serialLine">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -155,7 +155,7 @@
           </layout>
          </item>
          <item alignment="Qt::AlignHCenter">
-          <widget class="QPushButton" name="submit_button">
+          <widget class="QPushButton" name="submitButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>

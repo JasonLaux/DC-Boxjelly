@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -482,7 +482,7 @@ background-color: white;
             <property name="currentIndex">
              <number>0</number>
             </property>
-            <widget class="QWidget" name="home_page">
+            <widget class="QWidget" name="homePage">
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_4">
@@ -512,7 +512,7 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_4">
+                 <widget class="QLineEdit" name="searchlineEdit">
                   <property name="styleSheet">
                    <string notr="true">background-color: rgb(255, 255, 255);
 </string>
@@ -524,7 +524,7 @@ background-color: white;
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <item>
-                 <widget class="QPushButton" name="viewButton">
+                 <widget class="QPushButton" name="chooseClientButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -553,7 +553,7 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="addButton">
+                 <widget class="QPushButton" name="addClientButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -582,7 +582,7 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="deleteButton">
+                 <widget class="QPushButton" name="deleteClientButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -613,7 +613,7 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="homeTable">
+               <widget class="QTableWidget" name="jobsTable">
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
@@ -662,7 +662,7 @@ background-color: white;
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="clientinfo_page">
+            <widget class="QWidget" name="clientInfoPage">
              <layout class="QVBoxLayout" name="verticalLayout_18">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_16">
@@ -733,10 +733,10 @@ background-color: white;
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEdit"/>
+                    <widget class="QLineEdit" name="clientNamelineEdit"/>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEdit_8">
+                    <widget class="QLineEdit" name="address1lineEdit">
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 255, 255);
 </string>
@@ -744,7 +744,7 @@ background-color: white;
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEdit_9">
+                    <widget class="QLineEdit" name="address2lineEdit">
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 255, 255);</string>
                      </property>
@@ -753,7 +753,7 @@ background-color: white;
                   </layout>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_5">
+                  <widget class="QPushButton" name="updateClientButton">
                    <property name="styleSheet">
                     <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -787,7 +787,7 @@ background-color: white;
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_15">
                 <item>
-                 <widget class="QPushButton" name="compareButton">
+                 <widget class="QPushButton" name="chooseEquipmentButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -816,7 +816,7 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="addnewequipmentButton">
+                 <widget class="QPushButton" name="addEquipmentButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -845,7 +845,7 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="deleteequipmentButton">
+                 <widget class="QPushButton" name="deleteEquipmentButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -905,7 +905,7 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="clientTable">
+               <widget class="QTableWidget" name="equipmentsTable">
                 <column>
                  <property name="text">
                   <string>SELECT</string>
@@ -940,7 +940,7 @@ background-color: white;
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="equipmentinfo_page">
+            <widget class="QWidget" name="equipmentInfoPage">
              <layout class="QVBoxLayout" name="verticalLayout_34">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_47">
@@ -1124,7 +1124,7 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="viewequipmentButton_3">
+                 <widget class="QPushButton" name="deleteRunButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -1184,7 +1184,7 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="compareTable">
+               <widget class="QTableWidget" name="runsTable">
                 <column>
                  <property name="text">
                   <string>RUN NUMBER</string>
@@ -1245,7 +1245,7 @@ background-color: white;
   <connection>
    <sender>constantButton</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>mainWindow</receiver>
    <slot>openConstantsWindow()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1259,9 +1259,9 @@ background-color: white;
    </hints>
   </connection>
   <connection>
-   <sender>addButton</sender>
+   <sender>addClientButton</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>mainWindow</receiver>
    <slot>openAddClientWindow()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1275,9 +1275,9 @@ background-color: white;
    </hints>
   </connection>
   <connection>
-   <sender>addnewequipmentButton</sender>
+   <sender>addEquipmentButton</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>mainWindow</receiver>
    <slot>openAddEquipmentWindow()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1293,7 +1293,7 @@ background-color: white;
   <connection>
    <sender>importButton</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>mainWindow</receiver>
    <slot>openImportWindow()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1309,7 +1309,7 @@ background-color: white;
   <connection>
    <sender>analyseButton</sender>
    <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>mainWindow</receiver>
    <slot>openAnalysisWindow()</slot>
    <hints>
     <hint type="sourcelabel">

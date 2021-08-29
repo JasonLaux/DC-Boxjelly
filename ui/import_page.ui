@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>import_page</class>
- <widget class="QMainWindow" name="import_page">
+ <class>importPage</class>
+ <widget class="QMainWindow" name="importPage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -27,7 +27,7 @@
           <number>15</number>
          </property>
          <item alignment="Qt::AlignHCenter">
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="headerLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -68,7 +68,7 @@
                 <number>15</number>
                </property>
                <item>
-                <widget class="QPushButton" name="client_file_button">
+                <widget class="QPushButton" name="importClientFilebutton">
                  <property name="styleSheet">
                   <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -97,7 +97,7 @@ background-color: white;
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="lab_file_button">
+                <widget class="QPushButton" name="importLabFileButton">
                  <property name="styleSheet">
                   <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -133,7 +133,7 @@ background-color: white;
                 <number>15</number>
                </property>
                <item>
-                <widget class="QLineEdit" name="client_file_path_line">
+                <widget class="QLineEdit" name="clientFilePathLine">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -149,7 +149,7 @@ background-color: white;
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="lab_file_path_line">
+                <widget class="QLineEdit" name="labFilePathLine">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -184,7 +184,7 @@ background-color: white;
           </layout>
          </item>
          <item alignment="Qt::AlignHCenter">
-          <widget class="QPushButton" name="submit_button">
+          <widget class="QPushButton" name="submitButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
