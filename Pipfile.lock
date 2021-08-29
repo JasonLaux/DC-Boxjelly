@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1f316ce2866745dda97548e39c5b303514e7fd84cf9cafcce73886be3d18de3a"
+            "sha256": "ece3491d11bfa3195ca8b5e4a619843aaae89ee4d0173c9e540d105b42bd4dcc"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -314,14 +314,6 @@
             "index": "pypi",
             "version": "==0.12.2"
         },
-        "pysimplegui": {
-            "hashes": [
-                "sha256:3bead2f540f742efd03b15ef419b3ca8ae5908aced4485ff8b38a4f395161c37",
-                "sha256:fc47431c56c81e6d0ca5f48f44397f63e4bb670a3ef99a3515ba90ea37a082bb"
-            ],
-            "index": "pypi",
-            "version": "==4.46.0"
-        },
         "python-dateutil": {
             "hashes": [
                 "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86",
@@ -368,13 +360,6 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
-        },
-        "tksheet": {
-            "hashes": [
-                "sha256:b1f149e5546ba235c8f1a6c599b1aef8c533a22a698f95040e34611f9c69c0f9"
-            ],
-            "index": "pypi",
-            "version": "==5.0.29"
         }
     },
     "develop": {
