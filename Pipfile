@@ -10,6 +10,9 @@ pysimplegui = "*"
 portalocker = "*"
 pyqt5 = "*"
 pyqtgraph = "*"
+pandas = "*"
+numpy = "*"
+pyinstaller = "*"
 
 [dev-packages]
 autopep8 = "*"
