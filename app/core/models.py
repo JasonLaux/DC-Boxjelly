@@ -411,6 +411,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
 
         self._ensure_folder_with_meta({
             'added_at': datetime_to_iso(datetime.now()),
+            'edited_at': datetime_to_iso(datetime.now()),
         })
         ensure_folder(self._raw)
 
@@ -427,6 +428,8 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
     operator = meta_property('operator', 'Who did the measurement')
     added_at = meta_property(
         'added_at', 'The datetime when this run is created', readonly=True)
+    edited_at = meta_property('edited_at', 'The datetime when this run is edited (changing RAW data)',
+                              setter=lambda time: datetime_to_iso(time) if type(time) is datetime else str(time))
 
     @property
     def meta(self) -> Dict[str, str]:
@@ -437,6 +440,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
             'run_id': str(self.id),
             'operator': self.operator,
             'run_added_at': self.added_at,
+            'run_edited_at': self.edited_at,
         }
 
 
@@ -488,6 +492,8 @@ class MexRawFile:
         with self._path.open('w') as f:
             f.writelines(lines)
 
+        self._update_edit_time()
+
     def remove(self):
         """
         Remove the raw data file.
@@ -500,6 +506,8 @@ class MexRawFile:
         except OSError as e:
             if e.errno != errno.ENOENT:  # no such file or directory
                 raise
+
+        self._update_edit_time()
 
     def export_to(self, path: Path):
         """
@@ -529,6 +537,10 @@ class MexRawFile:
         with path.open('w') as f:
             f.writelines(meta_section)
             f.writelines(lines)
+
+    def _update_edit_time(self):
+        self._parent.edited_at = datetime.now()
+
 
 def _meta_dict_to_csv_line(obj):
     return ['{k},{v}\n'.format(k=k, v=v if v else '') for k, v in obj.meta.items()]

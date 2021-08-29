@@ -133,10 +133,11 @@ class TestMexRun(ModelTestBase):
         # meta file
         lines = Path(
             'data/jobs/CAL0001/AAA_123/MEX/1/meta.ini').read_text().strip().splitlines()
-        self.assertEqual(len(lines), 3)
+        self.assertEqual(len(lines), 4)
         self.assertEqual(lines[0], '[DEFAULT]')
         self.assertRegexpMatches(lines[1], r'^added_at = ')
-        self.assertEqual(lines[2], 'operator = Random Person')
+        self.assertRegexpMatches(lines[2], r'^edited_at = ')
+        self.assertEqual(lines[3], 'operator = Random Person')
 
     def test_raw_file(self):
         TEST_DATA_FOLDER = Path(__file__).parent / '_assert' / 'Data'

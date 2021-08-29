@@ -1,7 +1,7 @@
 from pathlib import Path
 import configparser
 import shutil
-from typing import Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 from .constraints import META_FILE_NAME
 from .utils import ensure_folder
@@ -43,8 +43,8 @@ class WithMetaMixin:
             return True
         else:
             self._meta.touch()
-            if initial: 
-                for k,v in initial.items():
+            if initial:
+                for k, v in initial.items():
                     self._set_meta(k, v)
 
             return False
@@ -93,12 +93,14 @@ class WithMetaMixin:
 
 
 def meta_property(name: str, docstring: Optional[str] = None, *,
-                  readonly=False) -> property:
+                  readonly=False,
+                  setter: Callable[[Any], str] = None) -> property:
     """
     Create a property that reads and writes a field in meta file. Please ensure the class
     has `WithMetaMixin`
 
     @readonly: if it is True, only reading is available
+    @setter: if it is provided, use it to transform input before writing meta data 
 
     Usage:
     ```
@@ -120,6 +122,8 @@ def meta_property(name: str, docstring: Optional[str] = None, *,
         return self._get_meta(name)
 
     def setx(self, value):
+        if setter:
+            value = setter(value)
         return self._set_meta(name, value)
 
     def delx(self):
