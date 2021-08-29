@@ -512,7 +512,7 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="searchlineEdit">
+                 <widget class="QLineEdit" name="searchBar">
                   <property name="styleSheet">
                    <string notr="true">background-color: rgb(255, 255, 255);
 </string>
@@ -613,52 +613,7 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="jobsTable">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>20</pointsize>
-                 </font>
-                </property>
-                <property name="sizeAdjustPolicy">
-                 <enum>QAbstractScrollArea::AdjustToContents</enum>
-                </property>
-                <column>
-                 <property name="text">
-                  <string>SELECT</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>CAL NUMBER</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>CLIENT NAME</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-               </widget>
+               <widget class="QTableView" name="homeTable"/>
               </item>
              </layout>
             </widget>
