@@ -409,8 +409,9 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         self.raw_client = MexRawFile(self, self._client)
         self.raw_lab = MexRawFile(self, self._lab)
 
-        if not self._ensure_folder_with_meta():
-            self._set_meta('added_at', datetime_to_iso(datetime.now()))
+        self._ensure_folder_with_meta({
+            'added_at': datetime_to_iso(datetime.now()),
+        })
         ensure_folder(self._raw)
 
     def __repr__(self) -> str:
@@ -424,6 +425,8 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         return self._id
 
     operator = meta_property('operator', 'Who did the measurement')
+    added_at = meta_property(
+        'added_at', 'The datetime when this run is created', readonly=True)
 
     @property
     def meta(self) -> Dict[str, str]:
@@ -433,6 +436,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         return {
             'run_id': str(self.id),
             'operator': self.operator,
+            'run_added_at': self.added_at,
         }
 
 
