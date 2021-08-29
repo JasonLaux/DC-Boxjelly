@@ -1,22 +1,15 @@
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QGridLayout, QRadioButton, QWidget, QDesktopWidget, QTableWidgetItem, QHeaderView, QDockWidget, QTableWidget
-from datetime import datetime
-import datetime
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
-
-# GUI FILE
-from main_window_ui import Ui_MainWindow
-from import_page_ui import Ui_import_page
-from constants_page_ui import Ui_constants_page
-from analyse_page_ui import Ui_analyse_page
-from add_client_page_ui import Ui_add_client_page
-from add_equipment_page_ui import Ui_add_equipment_page
+from utils import loadUI
 
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        
+        # load main window ui
+        window = loadUI("main_window.ui", self)
+        self.ui = window
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.home_page))
@@ -55,11 +48,15 @@ class MainWindow(QMainWindow):
         else:
             event.ignore() 
 
+
 class ImportWindow(QMainWindow):
     def __init__(self, parent = None):
         super(ImportWindow, self).__init__(parent)
-        self.ui = Ui_import_page()
-        self.ui.setupUi(self)
+        
+        # load import page ui
+        window = loadUI("import_page.ui", self)
+        self.ui = window
+
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -67,15 +64,17 @@ class ImportWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
+
 
 class ConstantsWindow(QMainWindow):
     def __init__(self, parent = None):
         super(ConstantsWindow, self).__init__(parent)
-        self.ui = Ui_constants_page()
-        self.ui.setupUi(self)
+        
+        # load constants page ui
+        window = loadUI("constants_page.ui", self)
+        self.ui = window
 
         ## Table insertion
-
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -85,14 +84,16 @@ class ConstantsWindow(QMainWindow):
         else:
             event.ignore() 
 
+
 class AnalyseWindow(QMainWindow):
     def __init__(self, parent = None):
         super(AnalyseWindow, self).__init__(parent)
-        self.ui = Ui_analyse_page()
-        self.ui.setupUi(self)
+        
+        # load analyse page ui
+        window = loadUI("analyse_page.ui", self)
+        self.ui = window
 
         ## Table insertion
-
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -106,8 +107,11 @@ class AnalyseWindow(QMainWindow):
 class AddClientWindow(QMainWindow):
     def __init__(self, parent = None):
         super(AddClientWindow, self).__init__(parent)
-        self.ui = Ui_add_client_page()
-        self.ui.setupUi(self)
+        
+        # load add client page ui
+        window = loadUI("add_client_page.ui", self)
+        self.ui = window
+
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -120,8 +124,11 @@ class AddClientWindow(QMainWindow):
 class AddEquipmentWindow(QMainWindow):
     def __init__(self, parent = None):
         super(AddEquipmentWindow, self).__init__(parent)
-        self.ui = Ui_add_equipment_page()
-        self.ui.setupUi(self)
+        
+        # load add equipment page ui
+        window = loadUI("add_equipment_page.ui", self)
+        self.ui = window
+
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -133,11 +140,11 @@ class AddEquipmentWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    mainWindow = MainWindow()
-    mainWindow.show()
     constantsWindow = ConstantsWindow()
     importWindow = ImportWindow()
     analysisWindow = AnalyseWindow()
     addClientWindow = AddClientWindow()
     addEquipmentWindow = AddEquipmentWindow()
+    mainWindow = MainWindow()
+    mainWindow.show()
     sys.exit(app.exec_())
