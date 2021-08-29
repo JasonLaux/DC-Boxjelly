@@ -8,6 +8,8 @@ matplotlib = "*"
 tksheet = "*"
 pysimplegui = "*"
 portalocker = "*"
+pyqt5 = "*"
+pyqtgraph = "*"
 
 [dev-packages]
 autopep8 = "*"
