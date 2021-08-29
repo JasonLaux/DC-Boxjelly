@@ -23,6 +23,9 @@ class MainWindow(QMainWindow):
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
         
         ## Table insertion
+        # self.ui.jobsTable
+        # self.ui.equipmentsTable
+        # self.ui.runsTable
 
     # define open window functions
     def openConstantsWindow(self):
@@ -75,6 +78,7 @@ class ConstantsWindow(QMainWindow):
         self.ui = window
 
         ## Table insertion
+        # self.ui.constantsTable
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -93,7 +97,11 @@ class AnalyseWindow(QMainWindow):
         window = loadUI("analyse_page.ui", self)
         self.ui = window
 
-        ## Table insertion
+        ## Table and Graph insertion
+        # self.ui.resultGraph
+        # self.ui.run1Table
+        # self.ui.run2Table  (This should be dynamic)
+        # self.ui.resultTable
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
