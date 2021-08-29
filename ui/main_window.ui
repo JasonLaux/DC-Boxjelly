@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>871</width>
-    <height>710</height>
+    <width>863</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -524,6 +524,35 @@ background-color: white;
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <item>
+                 <widget class="QPushButton" name="viewButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton{
+background-color: rgb(211, 213, 213);
+color:black;
+border-style:outset;
+border-width:2px;
+border-radius:10px;
+border-color: black;
+font:bold 16px;
+padding: 6;
+}
+
+QPushButton:hover{
+background-color: rgb(83, 82, 82);
+color: white;
+}
+
+QPushButton:pressed{
+background-color: white;
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string>Choose Client</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="addButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
@@ -549,35 +578,6 @@ background-color: white;
                   </property>
                   <property name="text">
                    <string>Add New Client</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="viewButton">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>View/Edit Client Information</string>
                   </property>
                  </widget>
                 </item>
@@ -662,7 +662,7 @@ background-color: white;
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="viewclientinfo_page">
+            <widget class="QWidget" name="clientinfo_page">
              <layout class="QVBoxLayout" name="verticalLayout_18">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_16">
@@ -732,12 +732,8 @@ background-color: white;
                      </property>
                     </widget>
                    </item>
-                   <item alignment="Qt::AlignHCenter">
-                    <widget class="QLabel" name="label_15">
-                     <property name="text">
-                      <string>Winnie</string>
-                     </property>
-                    </widget>
+                   <item>
+                    <widget class="QLineEdit" name="lineEdit"/>
                    </item>
                    <item>
                     <widget class="QLineEdit" name="lineEdit_8">
@@ -815,7 +811,7 @@ background-color: white;
 </string>
                   </property>
                   <property name="text">
-                   <string>Compare/Analysis</string>
+                   <string>Choose Equipment</string>
                   </property>
                  </widget>
                 </item>
@@ -944,7 +940,7 @@ background-color: white;
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="compare_page">
+            <widget class="QWidget" name="equipmentinfo_page">
              <layout class="QVBoxLayout" name="verticalLayout_34">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_47">
@@ -960,7 +956,7 @@ background-color: white;
                  </font>
                 </property>
                 <property name="text">
-                 <string>Compare/Analysis</string>
+                 <string>EQUIPMENT INFO</string>
                 </property>
                </widget>
               </item>
@@ -1029,21 +1025,21 @@ background-color: white;
                   <item alignment="Qt::AlignHCenter">
                    <widget class="QLabel" name="label_45">
                     <property name="text">
-                     <string>TextLabel</string>
+                     <string>ClientA</string>
                     </property>
                    </widget>
                   </item>
                   <item alignment="Qt::AlignHCenter">
                    <widget class="QLabel" name="label_46">
                     <property name="text">
-                     <string>TextLabel</string>
+                     <string>5122</string>
                     </property>
                    </widget>
                   </item>
                   <item alignment="Qt::AlignHCenter">
                    <widget class="QLabel" name="label_44">
                     <property name="text">
-                     <string>Winnie</string>
+                     <string>PTW 30013</string>
                     </property>
                    </widget>
                   </item>
@@ -1070,35 +1066,6 @@ background-color: white;
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_34">
                 <item>
-                 <widget class="QPushButton" name="importButton">
-                  <property name="styleSheet">
-                   <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 16px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-                  </property>
-                  <property name="text">
-                   <string>Import Raw Files</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QPushButton" name="analyseButton">
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
@@ -1123,7 +1090,36 @@ background-color: white;
 </string>
                   </property>
                   <property name="text">
-                   <string>Analyse Run</string>
+                   <string>Analyse</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="importButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton{
+background-color: rgb(211, 213, 213);
+color:black;
+border-style:outset;
+border-width:2px;
+border-radius:10px;
+border-color: black;
+font:bold 16px;
+padding: 6;
+}
+
+QPushButton:hover{
+background-color: rgb(83, 82, 82);
+color: white;
+}
+
+QPushButton:pressed{
+background-color: white;
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string>Add New Run</string>
                   </property>
                  </widget>
                 </item>
