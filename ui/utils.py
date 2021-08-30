@@ -4,6 +4,7 @@ from PyQt5.uic import loadUi
 import sys
 import pandas as pd
 import os
+from app.core.models import Job
 
 def loadUI(str, window):
     ui_file_name = str
@@ -29,8 +30,6 @@ def getHomeTableData():
     #     'Clinet Address': ['8 Leonerd Street', '12 Collins Street', '5 Sutherland Street']
     # }
 
-    os.chdir(os.getcwd()+"\..")
-    from app.core.models import Job
     data = {
         'status': [],
         'CAL Number': [],
@@ -46,5 +45,4 @@ def getHomeTableData():
         data['Client Address'].append(''),
     
     df = pd.DataFrame(data)
-    os.chdir(os.getcwd()+"\\ui")
     return df
