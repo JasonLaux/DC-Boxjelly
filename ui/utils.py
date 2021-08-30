@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.uic import loadUi
 import sys
 import pandas as pd
+import os
 
 def loadUI(str, window):
     ui_file_name = str
@@ -21,11 +22,29 @@ def loadUI(str, window):
 Return client info data as Dataframe
 '''
 def getHomeTableData():
+    # data = {
+    #     'status': [False, False, False],
+    #     'CAL Number': ['CAL 001', 'CAL 002', 'CAL 003'],
+    #     'Client Name': ['Amy', 'Jay', 'Jack'],
+    #     'Clinet Address': ['8 Leonerd Street', '12 Collins Street', '5 Sutherland Street']
+    # }
+
+    os.chdir(os.getcwd()+"\..")
+    from app.core.models import Job
     data = {
-        'status': [False, False, False],
-        'CAL Number': ['CAL 001', 'CAL 002', 'CAL 003'],
-        'Client Name': ['Amy', 'Jay', 'Jack'],
-        'Clinet Address': ['8 Leonerd Street', '12 Collins Street', '5 Sutherland Street']
+        'status': [],
+        'CAL Number': [],
+        'Client Name': [],
+        'Clinet Address': []
     }
+    for job in Job:
+        print(job)
+        data['status'].append(False),
+        data['CAL Number'].append(job._id),
+        data['Client Name'].append(job.client_name),
+        #data['Clinet Address'].append(str(job.client_address_1)+' '+str(job.client_address_2)),
+        data['Clinet Address'].append(''),
+    
     df = pd.DataFrame(data)
+    os.chdir(os.getcwd()+"\\ui")
     return df
