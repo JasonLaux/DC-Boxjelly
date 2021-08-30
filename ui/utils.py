@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QFile, QIODevice
+from PyQt5.QtWidgets import QMainWindow
 from PyQt5.uic import loadUi
 import sys
+import pandas as pd
 
 def loadUI(str, window):
     ui_file_name = str
@@ -14,3 +16,16 @@ def loadUI(str, window):
         #print(loader.errorString())
         sys.exit(-1)
     return loadedWindow
+
+'''
+Return client info data as Dataframe
+'''
+def getHomeTableData():
+    data = {
+        'status': [False, False, False],
+        'CAL Number': ['CAL 001', 'CAL 002', 'CAL 003'],
+        'Client Name': ['Amy', 'Jay', 'Jack'],
+        'Clinet Address': ['8 Leonerd Street', '12 Collins Street', '5 Sutherland Street']
+    }
+    df = pd.DataFrame(data)
+    return df

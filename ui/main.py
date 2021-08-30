@@ -2,7 +2,10 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
-from utils import loadUI
+
+from pandas.io.pytables import SeriesFixed
+from utils import loadUI, getHomeTableData
+import pandas as pd
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -11,6 +14,7 @@ class MainWindow(QMainWindow):
         # load main window ui
         window = loadUI("main_window.ui", self)
         self.ui = window
+        self.addClientWindow = AddClientWindow()
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
@@ -24,16 +28,16 @@ class MainWindow(QMainWindow):
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
         
         #Dynamic search
-        calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
-        clientName = ["Adams", "Peter", "James"]
-        dataList = []
-        for i in range(len(calNumber)):
-            dataList.append(['',calNumber[i],clientName[i]])
+        # calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
+        # clientName = ["Adams", "Peter", "James"]
+        # dataList = []
+        # for i in range(len(calNumber)):
+        #     dataList.append(['',calNumber[i],clientName[i]])
 
-        self.model = TableModel(dataList)
+        self.clientModel = TableModel(data=getHomeTableData())
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1) # Search all columns.
-        self.proxy_model.setSourceModel(self.model)
+        self.proxy_model.setSourceModel(self.clientModel)
         self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.ui.searchBar.textChanged.connect(self.proxy_model.setFilterFixedString)
         self.ui.homeTable.setModel(self.proxy_model)
@@ -43,16 +47,27 @@ class MainWindow(QMainWindow):
 
 
         ## Table insertion
-        # self.ui.jobsTable
-        # self.ui.equipmentsTable
-        # self.ui.runsTable
+
+        # Change selection behaviour. User can only select rows rather than cells
+        self.homeTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.homeTable.selectionModel().selectionChanged.connect(self.selection_changed)
+        self._selectedRows = []
+
+
+    # Return the index of selected rows in an array
+    def selection_changed(self):
+        self._selectedRows = [idx.row() for idx in self.homeTable.selectionModel().selectedRows()]
+        print(self._selectedRows)
 
     # define open window functions
     def openConstantsWindow(self):
         constantsWindow.show()
     
     def openAddClientWindow(self):
-        addClientWindow.show()
+        
+        self.addClientWindow.show()
+    
+        
 
     def openAddEquipmentWindow(self):
         addEquipmentWindow.show()
@@ -67,10 +82,11 @@ class MainWindow(QMainWindow):
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want to exit?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
+        
             event.accept()  
         else:
             event.ignore() 
-
+    
 
 class ImportWindow(QMainWindow):
     def __init__(self, parent = None):
@@ -133,13 +149,19 @@ class AnalyseWindow(QMainWindow):
 
 
 class AddClientWindow(QMainWindow):
+
     def __init__(self, parent = None):
         super(AddClientWindow, self).__init__(parent)
         
         # load add client page ui
         window = loadUI("add_client_page.ui", self)
         self.ui = window
+        self.clientName = ""
+        self.clientAddress = ""
+        self.calNumber = ""
 
+        self.submitButton.pressed.connect(self.setNewClientInfo)
+        
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -147,6 +169,26 @@ class AddClientWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
+    
+    def getNewClientInfo(self):
+
+        newClient = {
+            'status': False,
+            'CAL Number': self.calNumber,
+            'Client Name': self.clientName,
+            'Clinet Address': self.clientAddress
+        }
+        return pd.DataFrame(newClient, index=[0])
+
+    def setNewClientInfo(self):
+        self.clientName = self.ui.clientNameLine.text()
+        self.clientAddress = self.ui.clientAddressLine.text()
+        self.calNumber = self.ui.calNumLine.text()
+        # TODO: Display another window to confirm information
+
+
+
+
 
 
 class AddEquipmentWindow(QMainWindow):
@@ -165,39 +207,48 @@ class AddEquipmentWindow(QMainWindow):
         else:
             event.ignore() 
 
-class TableModel(QAbstractTableModel):
-    def __init__(self, data):
-        super().__init__()
-        self._data = data
-        self.horizontalHeaders = [''] * 3
-        self.setHeaderData(0, Qt.Horizontal, "SELECT")
-        self.setHeaderData(1, Qt.Horizontal, "CAL NUMBER")
-        self.setHeaderData(2, Qt.Horizontal, "CLIENT NAME")
 
+class TableModel(QAbstractTableModel):
+
+    def __init__(self, data):
+        super(TableModel, self).__init__()
+        self._data = data
+        print(1)
+        print(data)
+    
     def data(self, index, role):
         if role == Qt.DisplayRole:
-            # See below for the nested-list data structure.
-            # .row() indexes into the outer list,
-            # .column() indexes into the sub-list
-            return self._data[index.row()][index.column()]
+            value = self._data.iloc[index.row(), index.column()]
+            return str(value)
 
     def rowCount(self, index):
-        # The length of the outer list.
-        return len(self._data)
+        return self._data.shape[0]
 
     def columnCount(self, index):
-        # The following takes the first sub-list, and returns
-        # the length (only works if all rows are an equal length)
-        return len(self._data[0])
+        return self._data.shape[1]
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            try:
-                return self.horizontalHeaders[section]
-            except:
-                pass
-        return super().headerData(section, orientation, role)
+    def headerData(self, section, orientation, role):
+        # section is the index of the column/row.
+        if role == Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                return str(self._data.columns[section])
 
+            if orientation == Qt.Vertical:
+                return str(self._data.index[section])
+
+    def addData(self, newData):
+        if newData.empty is False:
+            self._data.append(newData, ignore_index=True)
+        else:
+            pass
+
+    def delData(self, idx):
+        if idx:
+            self._data.drop(idx)
+        else:
+            pass
+
+        
     def setHeaderData(self, section, orientation, data, role=Qt.EditRole):
         if orientation == Qt.Horizontal and role in (Qt.DisplayRole, Qt.EditRole):
             try:
@@ -207,6 +258,7 @@ class TableModel(QAbstractTableModel):
             except:
                 return False
         return super().setHeaderData(section, orientation, data, role)
+
 
 class AlignDelegate(QItemDelegate):
     def paint(self, painter, option, index):
@@ -218,7 +270,7 @@ if __name__ == "__main__":
     constantsWindow = ConstantsWindow()
     importWindow = ImportWindow()
     analysisWindow = AnalyseWindow()
-    addClientWindow = AddClientWindow()
+    # addClientWindow = AddClientWindow()
     addEquipmentWindow = AddEquipmentWindow()
     mainWindow = MainWindow()
     mainWindow.show()
