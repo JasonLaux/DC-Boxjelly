@@ -35,7 +35,7 @@ def getHomeTableData():
         'status': [],
         'CAL Number': [],
         'Client Name': [],
-        'Clinet Address': []
+        'Client Address': []
     }
     for job in Job:
         print(job)
@@ -43,7 +43,7 @@ def getHomeTableData():
         data['CAL Number'].append(job._id),
         data['Client Name'].append(job.client_name),
         #data['Clinet Address'].append(str(job.client_address_1)+' '+str(job.client_address_2)),
-        data['Clinet Address'].append(''),
+        data['Client Address'].append(''),
     
     df = pd.DataFrame(data)
     os.chdir(os.getcwd()+"\\ui")

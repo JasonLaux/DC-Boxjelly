@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
         # load main window ui
         window = loadUI("main_window.ui", self)
         self.ui = window
-        self.addClientWindow = AddClientWindow()
+        self.addClientWindow = AddClientWindow(self)
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
@@ -26,6 +26,8 @@ class MainWindow(QMainWindow):
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         # Return to Client Info Page
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
+        # Delete client
+        self.ui.deleteClientButton.clicked.connect(self.deleteClient)
         
         #Dynamic search
         # calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
@@ -53,6 +55,18 @@ class MainWindow(QMainWindow):
         self.homeTable.selectionModel().selectionChanged.connect(self.selection_changed)
         self._selectedRows = []
 
+    def deleteClient(self):
+        if self._selectedRows:
+            # Indexes is a list of a single item in single-select mode.
+            # Remove the item and refresh.
+            self.clientModel.delData(self._selectedRows)
+            # time.sleep(0.2)
+            self.clientModel.layoutChanged.emit()
+            # Clear the selection (as it is no longer valid).
+            self.ui.homeTable.clearSelection()
+            print(self.clientModel._data)
+        else:
+            pass
 
     # Return the index of selected rows in an array
     def selection_changed(self):
@@ -67,7 +81,6 @@ class MainWindow(QMainWindow):
         
         self.addClientWindow.show()
     
-        
 
     def openAddEquipmentWindow(self):
         addEquipmentWindow.show()
@@ -152,7 +165,8 @@ class AddClientWindow(QMainWindow):
 
     def __init__(self, parent = None):
         super(AddClientWindow, self).__init__(parent)
-        
+        self.parent = parent
+    
         # load add client page ui
         window = loadUI("add_client_page.ui", self)
         self.ui = window
@@ -176,7 +190,7 @@ class AddClientWindow(QMainWindow):
             'status': False,
             'CAL Number': self.calNumber,
             'Client Name': self.clientName,
-            'Clinet Address': self.clientAddress
+            'Client Address': self.clientAddress
         }
         return pd.DataFrame(newClient, index=[0])
 
@@ -184,11 +198,13 @@ class AddClientWindow(QMainWindow):
         self.clientName = self.ui.clientNameLine.text()
         self.clientAddress = self.ui.clientAddressLine.text()
         self.calNumber = self.ui.calNumLine.text()
+
+        print(self.getNewClientInfo())
+        self.parent.clientModel.addData(self.getNewClientInfo())
+        self.parent.clientModel.layoutChanged.emit()
+        
+        self.hide()
         # TODO: Display another window to confirm information
-
-
-
-
 
 
 class AddEquipmentWindow(QMainWindow):
@@ -213,18 +229,21 @@ class TableModel(QAbstractTableModel):
     def __init__(self, data):
         super(TableModel, self).__init__()
         self._data = data
+        self.columnNum = self.columnCount()
         print(1)
         print(data)
     
     def data(self, index, role):
         if role == Qt.DisplayRole:
+            # Address is at the end of columns
+            # if index.column() != self.columnNum - 1:
             value = self._data.iloc[index.row(), index.column()]
             return str(value)
 
-    def rowCount(self, index):
+    def rowCount(self, index=None):
         return self._data.shape[0]
 
-    def columnCount(self, index):
+    def columnCount(self, index=None):
         return self._data.shape[1]
 
     def headerData(self, section, orientation, role):
@@ -238,13 +257,18 @@ class TableModel(QAbstractTableModel):
 
     def addData(self, newData):
         if newData.empty is False:
-            self._data.append(newData, ignore_index=True)
+            print("Add data...")
+            print(newData)
+            self._data = self._data.append(newData, ignore_index=True)
+            print(self._data)
         else:
             pass
 
     def delData(self, idx):
         if idx:
-            self._data.drop(idx)
+            self._data = self._data.drop(idx)
+            self._data.reset_index(drop=True, inplace=True)
+            print(self._data)
         else:
             pass
 
