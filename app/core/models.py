@@ -105,8 +105,8 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
     job = Job[5]
 
     # iterate through each equipments
-    for e in job:
-        print(e)
+    
+    
 
     # get an equipment by its id
     job['AAA_123']
@@ -274,6 +274,10 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
 
     def __str__(self):
         return f'Equipment({self._id})'
+
+    @property
+    def id(self):
+        return self._id
 
     model = meta_property('model', 'The model of the equipment', readonly=True)
     serial = meta_property(
