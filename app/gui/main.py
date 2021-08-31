@@ -21,7 +21,13 @@ class MainWindow(QMainWindow):
         # load main window ui
         window = loadUI(".\\app\\gui\\main_window.ui", self)
         self.ui = window
+
+        # load other windows
         self.addClientWindow = AddClientWindow(self)
+        self.constantsWindow = ConstantsWindow(self)
+        self.importWindow = ImportWindow(self)
+        self.analysisWindow = AnalyseWindow(self)
+        self.addEquipmentWindow = AddEquipmentWindow(self)
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
@@ -120,19 +126,19 @@ class MainWindow(QMainWindow):
 
     # define open window functions
     def openConstantsWindow(self):
-        constantsWindow.show()
+        self.constantsWindow.show()
     
     def openAddClientWindow(self):
         self.addClientWindow.show()
     
     def openAddEquipmentWindow(self):
-        addEquipmentWindow.show()
+        self.addEquipmentWindow.show()
 
     def openImportWindow(self):
-        importWindow.show()
+        self.importWindow.show()
     
     def openAnalysisWindow(self):
-        analysisWindow.show()
+        self.analysisWindow.show()
     
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want to exit?', QtWidgets.QMessageBox.Yes,
@@ -366,11 +372,6 @@ class AlignDelegate(QItemDelegate):
 
 def start_event_loop():
     app = QApplication(sys.argv)
-    constantsWindow = ConstantsWindow()
-    importWindow = ImportWindow()
-    analysisWindow = AnalyseWindow()
-    # addClientWindow = AddClientWindow(mainWindow)
-    addEquipmentWindow = AddEquipmentWindow()
     mainWindow = MainWindow()
     mainWindow.show()
     return app.exec_()
