@@ -32,10 +32,9 @@ class MainWindow(QMainWindow):
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         # View/Edit Client Info 
-        self.ui.chooseClientButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
-
+        self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         #compare page
-        self.ui.chooseEquipmentButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage))
+        self.ui.chooseEquipmentButton.clicked.connect(self.chooseEquipment)
         # Return to Home Page
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.returnButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
@@ -67,7 +66,7 @@ class MainWindow(QMainWindow):
 
         ## Table insertion
         # Equipment Table
-        self.equipmentModel = TableModel(data=getEquipmentsTableData(Job('CAL00001')))
+        self.equipmentModel = TableModel(data=pd.DataFrame([]))
         self.ui.equipmentsTable.setModel(self.equipmentModel)
         self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.equipmentsTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
@@ -76,7 +75,7 @@ class MainWindow(QMainWindow):
         self._selectedEquipID = ""
 
         # Run Table
-        self.runModel = TableModel(data=getRunsTableData(Job['CAL00001']['PTW 30013_5122']))
+        self.runModel = TableModel(data=pd.DataFrame([]))
         self.ui.runsTable.setModel(self.runModel)
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
@@ -90,6 +89,15 @@ class MainWindow(QMainWindow):
         self._selectedRows = []
         self._selectedCalNum = ""
 
+    # choose one client and goes into client info page
+    def chooseClient(self):
+        if self._selectedRows:
+            self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
+            self._selectedRows = []
+        # when not choosing any of the client, pop up a warning window
+        else:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
+
     def deleteClient(self):
         if self._selectedRows:
             # Indexes is a list of a single item in single-select mode.
@@ -102,6 +110,15 @@ class MainWindow(QMainWindow):
             print(self.clientModel._data)
         else:
             pass
+    
+    # choose one equipment and goes into Equipment info page
+    def chooseEquipment(self):
+        if self._selectedRows:
+            self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage)
+            self._selectedRows = []
+        # when not choosing any of the equipments, pop up a warning window
+        else:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
 
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
@@ -138,6 +155,7 @@ class MainWindow(QMainWindow):
         self.importWindow.show()
     
     def openAnalysisWindow(self):
+        ## TODO: pop up warning when not choosing any of the runs
         self.analysisWindow.show()
     
     def closeEvent(self, event):  
