@@ -59,14 +59,14 @@ class MainWindow(QMainWindow):
         self.equipmentModel = TableModel(data=getEquipmentsTableData(Job('CAL00001')))
         self.ui.equipmentsTable.setModel(self.equipmentModel)
         self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentTable'))
+        self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
         self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # Run Table
         self.runModel = TableModel(data=getRunsTableData(Job['CAL00001']['PTW 30013_5122']))
         self.ui.runsTable.setModel(self.runModel)
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runTable'))
+        self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
 
