@@ -53,12 +53,14 @@ def getEquipmentsTableData(job: Job):
     data = {
         'status': [],
         'Make/Model': [],
-        'Serial Num': []
+        'Serial Num': [],
+        'ID': []
     }
     for equip in job:
         data['status'].append(False),
         data['Make/Model'].append(equip.model),
         data['Serial Num'].append(equip.serial),
+        data['ID'].append(equip.id),
     df = pd.DataFrame(data)
     return df
 

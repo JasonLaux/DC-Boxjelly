@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
+from numpy import empty
 from pandas.io.pytables import SeriesFixed
 from ui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
 import pandas as pd
@@ -26,12 +27,16 @@ class MainWindow(QMainWindow):
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
+
         #compare page
         self.ui.chooseEquipmentButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage))
         # Return to Home Page
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
+        self.ui.returnButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
         # Return to Client Info Page
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
+        self.ui.returnButton_2.clicked.connect(lambda: self.ui.runsTable.clearSelection())
+
         # Delete client
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
         
@@ -59,8 +64,10 @@ class MainWindow(QMainWindow):
         self.equipmentModel = TableModel(data=getEquipmentsTableData(Job('CAL00001')))
         self.ui.equipmentsTable.setModel(self.equipmentModel)
         self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.equipmentsTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
         self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._selectedEquipID = ""
 
         # Run Table
         self.runModel = TableModel(data=getRunsTableData(Job['CAL00001']['PTW 30013_5122']))
@@ -75,6 +82,7 @@ class MainWindow(QMainWindow):
         self.ui.homeTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.homeTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('homeTable'))
         self._selectedRows = []
+        self._selectedCalNum = ""
 
     def deleteClient(self):
         if self._selectedRows:
@@ -94,16 +102,21 @@ class MainWindow(QMainWindow):
         try:
             # TODO Order is based on the selection. Need to sort first?
             self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedRows()]
+            print(self._selectedRows)
             if tableName == "homeTable":
-                selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
-                self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job(selectedCalNum)))
+                self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+                self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
-                print("Cal Num:")
-                print(selectedCalNum)
+            elif tableName == "equipmentsTable" and self._selectedRows != []:
+                self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+                print('111111111111111111111111111')
+                print(self._selectedEquipID)
+                self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
+                self.runModel.layoutChanged.emit()
         except AttributeError:
             print("Attribute does not exist! Table name may be altered!")
             raise AttributeError("Attribute does not exist! Table name may be altered!")
-        print(self._selectedRows)
+            
 
     # define open window functions
     def openConstantsWindow(self):
