@@ -364,7 +364,7 @@ class AlignDelegate(QItemDelegate):
         option.displayAlignment = Qt.AlignCenter
         QItemDelegate.paint(self, painter, option, index)
 
-if __name__ == "__main__":
+def start_event_loop():
     app = QApplication(sys.argv)
     constantsWindow = ConstantsWindow()
     importWindow = ImportWindow()
@@ -373,4 +373,8 @@ if __name__ == "__main__":
     addEquipmentWindow = AddEquipmentWindow()
     mainWindow = MainWindow()
     mainWindow.show()
-    sys.exit(app.exec_())
+    return app.exec_()
+
+if __name__ == '__main__':
+    ret = start_event_loop()
+    sys.exit(ret)
