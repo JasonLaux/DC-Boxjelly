@@ -37,7 +37,7 @@ def getHomeTableData():
     }
     for job in Job:
         data['status'].append(False),
-        data['CAL Number'].append(job._id),
+        data['CAL Number'].append(job.id),
         data['Client Name'].append(job.client_name),
         # data['Clinet Address'].append(str(job.client_address_1)+' '+str(job.client_address_2)),
         # data['Client Address'].append(''),
@@ -75,7 +75,7 @@ def getRunsTableData(equip: Equipment):
     }
     for run in equip.mex:
         data['status'].append(False),
-        data['ID'].append(run._id),
+        data['ID'].append(run.id),
         data['Added Time'].append(run.added_at),
         data['Edited Time'].append(run.edited_at),
     df = pd.DataFrame(data)
