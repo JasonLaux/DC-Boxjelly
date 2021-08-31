@@ -613,7 +613,11 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableView" name="homeTable"/>
+               <widget class="QTableView" name="homeTable">
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -860,7 +864,11 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableView" name="equipmentsTable"/>
+               <widget class="QTableView" name="equipmentsTable">
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -1108,7 +1116,11 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableView" name="runsTable"/>
+               <widget class="QTableView" name="runsTable">
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+               </widget>
               </item>
              </layout>
             </widget>
