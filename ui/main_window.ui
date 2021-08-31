@@ -860,38 +860,7 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="equipmentsTable">
-                <column>
-                 <property name="text">
-                  <string>SELECT</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>SERIAL NUMBER</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>MAKE/MODEL</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-               </widget>
+               <widget class="QTableView" name="equipmentsTable"/>
               </item>
              </layout>
             </widget>
@@ -1139,48 +1108,7 @@ background-color: white;
                </layout>
               </item>
               <item>
-               <widget class="QTableWidget" name="runsTable">
-                <column>
-                 <property name="text">
-                  <string>RUN NUMBER</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>CLIENT RAW FILE</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>LAB RAW FILE</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-                <column>
-                 <property name="text">
-                  <string>UPLOADED DATETIME</string>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>20</pointsize>
-                  </font>
-                 </property>
-                </column>
-               </widget>
+               <widget class="QTableView" name="runsTable"/>
               </item>
              </layout>
             </widget>

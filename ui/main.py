@@ -57,17 +57,17 @@ class MainWindow(QMainWindow):
         ## Table insertion
         # Equipment Table
         self.equipmentModel = TableModel(data=getEquipmentsTableData(Job('CAL00001')))
-        self.ui.equipmentTable.setModel(self.equipmentModel)
-        self.ui.equipmentTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.ui.equipmentTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentTable'))
-        self.ui.equipmentTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.equipmentsTable.setModel(self.equipmentModel)
+        self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentTable'))
+        self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # Run Table
         self.runModel = TableModel(data=getRunsTableData(Job['CAL00001']['PTW 30013_5122']))
-        self.ui.runTable.setModel(self.runModel)
-        self.ui.runTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.ui.runTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runTable'))
-        self.ui.runTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.runsTable.setModel(self.runModel)
+        self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runTable'))
+        self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
