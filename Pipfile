@@ -15,6 +15,7 @@ pyinstaller = "*"
 [dev-packages]
 autopep8 = "*"
 ipython = "*"
+pyqt5-tools = "*"
 
 [requires]
 python_version = "3.9"
@@ -23,3 +24,4 @@ python_version = "3.9"
 repl = "python app/repl.py"
 test = "python -m unittest discover"
 main = "python -m app.main"
+designer = "qt5-tools designer"

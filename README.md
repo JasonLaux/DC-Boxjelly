@@ -21,3 +21,7 @@ DC-Boxjelly Private Github Repository
 - After the steps above, you can use `pipenv run repl` to start an interactive shell in IPython. You can import modules and test them, like `from models import Job`.
 - If you use repl, modified modules can be reloaded automatically.
   - For documents about auto reloading, see https://ipython.org/ipython-doc/3/config/extensions/autoreload.html
+
+## UI development
+- First of all, please ensure that all dependency are install by `pipenv sync`
+- Run `qt5-tools designer` in pipenv shell or directly use `pipenv run designer` to start a qt designer.
