@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
 from numpy import empty
 from pandas.io.pytables import SeriesFixed
-from ui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
+from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
 import pandas as pd
 import pyqtgraph as pg
 from app.core.models import Job, Equipment
@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         
         # load main window ui
-        window = loadUI(".\\ui\\main_window.ui", self)
+        window = loadUI(".\\app\\gui\\main_window.ui", self)
         self.ui = window
         self.addClientWindow = AddClientWindow(self)
 
@@ -149,7 +149,7 @@ class ImportWindow(QMainWindow):
         super(ImportWindow, self).__init__(parent)
         
         # load import page ui
-        window = loadUI(".\\ui\\import_page.ui", self)
+        window = loadUI(".\\app\\gui\\import_page.ui", self)
         self.ui = window
 
     def closeEvent(self, event):  
@@ -166,7 +166,7 @@ class ConstantsWindow(QMainWindow):
         super(ConstantsWindow, self).__init__(parent)
         
         # load constants page ui
-        window = loadUI(".\\ui\\constants_page.ui", self)
+        window = loadUI(".\\app\\gui\\constants_page.ui", self)
         self.ui = window
 
         ## Table insertion
@@ -186,7 +186,7 @@ class AnalyseWindow(QMainWindow):
         super(AnalyseWindow, self).__init__(parent)
         
         # load analyse page ui
-        window = loadUI(".\\ui\\analyse_page.ui", self)
+        window = loadUI(".\\app\\gui\\analyse_page.ui", self)
         self.ui = window
         self._selectedRows = []
 
@@ -238,7 +238,7 @@ class AddClientWindow(QMainWindow):
         self.parent = parent
     
         # load add client page ui
-        window = loadUI(".\\ui\\add_client_page.ui", self)
+        window = loadUI(".\\app\\gui\\add_client_page.ui", self)
         self.ui = window
         self.clientName = ""
         self.clientAddress = ""
@@ -282,7 +282,7 @@ class AddEquipmentWindow(QMainWindow):
         super(AddEquipmentWindow, self).__init__(parent)
         
         # load add equipment page ui
-        window = loadUI(".\\ui\\add_equipment_page.ui", self)
+        window = loadUI(".\\app\\gui\\add_equipment_page.ui", self)
         self.ui = window
 
     def closeEvent(self, event):  
