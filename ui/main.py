@@ -1,11 +1,13 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
-
 from pandas.io.pytables import SeriesFixed
-from ui.utils import loadUI, getHomeTableData
+from ui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
 import pandas as pd
+import pyqtgraph as pg
+from app.core.models import Job, Equipment
+
 
 '''
 #Run UI main file under root dir
@@ -53,10 +55,24 @@ class MainWindow(QMainWindow):
 
 
         ## Table insertion
+        # Equipment Table
+        self.equipmentModel = TableModel(data=getEquipmentsTableData(Job('CAL00001')))
+        self.ui.equipmentTable.setModel(self.equipmentModel)
+        self.ui.equipmentTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.equipmentTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentTable'))
+        self.ui.equipmentTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        # Run Table
+        self.runModel = TableModel(data=getRunsTableData(Job['CAL00001']['PTW 30013_5122']))
+        self.ui.runTable.setModel(self.runModel)
+        self.ui.runTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.runTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runTable'))
+        self.ui.runTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
 
         # Change selection behaviour. User can only select rows rather than cells
-        self.homeTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.homeTable.selectionModel().selectionChanged.connect(self.selection_changed)
+        self.ui.homeTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.homeTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('homeTable'))
         self._selectedRows = []
 
     def deleteClient(self):
@@ -73,8 +89,12 @@ class MainWindow(QMainWindow):
             pass
 
     # Return the index of selected rows in an array
-    def selection_changed(self):
-        self._selectedRows = [idx.row() for idx in self.homeTable.selectionModel().selectedRows()]
+    def selection_changed(self, tableName):
+        try:
+            self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedRows()]
+        except AttributeError:
+            print("Attribute does not exist! Table name may be altered!")
+            raise AttributeError("Attribute does not exist! Table name may be altered!")
         print(self._selectedRows)
 
     # define open window functions
@@ -82,10 +102,8 @@ class MainWindow(QMainWindow):
         constantsWindow.show()
     
     def openAddClientWindow(self):
-        
         self.addClientWindow.show()
     
-
     def openAddEquipmentWindow(self):
         addEquipmentWindow.show()
 
@@ -149,12 +167,39 @@ class AnalyseWindow(QMainWindow):
         # load analyse page ui
         window = loadUI(".\\ui\\analyse_page.ui", self)
         self.ui = window
+        self._selectedRows = []
 
         ## Table and Graph insertion
         # self.ui.resultGraph
         # self.ui.run1Table
         # self.ui.run2Table  (This should be dynamic)
         # self.ui.resultTable
+        # Result Table
+        self.resultModel = TableModel(data=getResultData())
+        self.ui.resultTable.setModel(self.resultModel)
+        self.ui.resultTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('resultTable'))
+        self.ui.resultTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        
+        # Graph
+        scene = QGraphicsScene()
+        self.ui.resultGraph.setScene(scene)
+        self.plotWdgt = pg.PlotWidget()
+        self.plotWdgt.setBackground('w')
+        data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        plot_item = self.plotWdgt.plot(data, pen=pg.mkPen(width=15))
+        proxy_widget = scene.addWidget(self.plotWdgt)
+    
+    # Return the index of selected rows in an array
+    def selection_changed(self, tableName):
+        try:
+            # Single selection mode
+            idx = getattr(self, tableName).selectionModel().selectedIndexes()[0]
+            print(idx.row(), idx.column())
+            # self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedIndexes()]
+        except AttributeError:
+            print("Attribute does not exist! Table name may be altered!")
+            raise AttributeError("Attribute does not exist! Table name may be altered!")
+        print(self._selectedRows)
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -298,7 +343,7 @@ if __name__ == "__main__":
     constantsWindow = ConstantsWindow()
     importWindow = ImportWindow()
     analysisWindow = AnalyseWindow()
-    # addClientWindow = AddClientWindow()
+    # addClientWindow = AddClientWindow(mainWindow)
     addEquipmentWindow = AddEquipmentWindow()
     mainWindow = MainWindow()
     mainWindow.show()
