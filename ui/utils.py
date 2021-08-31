@@ -33,15 +33,14 @@ def getHomeTableData():
     data = {
         'status': [],
         'CAL Number': [],
-        'Client Name': [],
-        'Client Address': []
+        'Client Name': []
     }
     for job in Job:
         data['status'].append(False),
         data['CAL Number'].append(job._id),
         data['Client Name'].append(job.client_name),
-        #data['Clinet Address'].append(str(job.client_address_1)+' '+str(job.client_address_2)),
-        data['Client Address'].append(''),
+        # data['Clinet Address'].append(str(job.client_address_1)+' '+str(job.client_address_2)),
+        # data['Client Address'].append(''),
     
     df = pd.DataFrame(data)
     return df
@@ -81,3 +80,15 @@ def getRunsTableData(equip: Equipment):
         data['Edited Time'].append(run.edited_at),
     df = pd.DataFrame(data)
     return df
+
+def getResultData():
+    data = {
+        "Beam quality": ["NXJ40", "NXJ50"],
+        "E_eff": [40.1, 40.1],
+        "Run1_NK": [33.1, 33.1],
+        "Run2_NK": [33.6, 33.5],
+        "Average": [36.0, 36.0],
+        "Run1/Average": [0.920, 0.920],
+        "Run2/Average": [0.933, 0.933],
+    }
+    return pd.DataFrame(data)

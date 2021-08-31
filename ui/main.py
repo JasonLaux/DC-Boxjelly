@@ -70,8 +70,9 @@ class MainWindow(QMainWindow):
         self.ui.runTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
 
-        # Change selection behaviour. User can only select rows rather than cells
+        # Change selection behaviour. User can only select rows rather than cells. Single selection
         self.ui.homeTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.homeTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.homeTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('homeTable'))
         self._selectedRows = []
 
@@ -91,7 +92,14 @@ class MainWindow(QMainWindow):
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
         try:
+            # TODO Order is based on the selection. Need to sort first?
             self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedRows()]
+            if tableName == "homeTable":
+                selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+                self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job(selectedCalNum)))
+                self.equipmentModel.layoutChanged.emit()
+                print("Cal Num:")
+                print(selectedCalNum)
         except AttributeError:
             print("Attribute does not exist! Table name may be altered!")
             raise AttributeError("Attribute does not exist! Table name may be altered!")
@@ -278,7 +286,9 @@ class TableModel(QAbstractTableModel):
     def __init__(self, data):
         super(TableModel, self).__init__()
         self._data = data
-        self.columnNum = self.columnCount()
+        # May be required to change logic
+        # if data.empty is False:
+        #     self._display = data.drop(labels=['Address'], axis=1)
         print(1)
         print(data)
     
@@ -321,7 +331,10 @@ class TableModel(QAbstractTableModel):
         else:
             pass
 
-        
+    def initialiseTable(self, data):
+    
+        self._data = data
+
     def setHeaderData(self, section, orientation, data, role=Qt.EditRole):
         if orientation == Qt.Horizontal and role in (Qt.DisplayRole, Qt.EditRole):
             try:
