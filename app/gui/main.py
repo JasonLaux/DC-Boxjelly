@@ -345,7 +345,16 @@ class AddClientWindow(QMainWindow):
 
     def addNewClient(self):
         self.calNumber = self.ui.calNumLine.text()
+        # Check duplicated ID
+        IDs = getHomeTableData()['CAL Number'].values.tolist()
+        if self.calNumber in IDs:
+            QtWidgets.QMessageBox.about(self, "Warning", "CAL number already existed in file system!")
+            return
         self.clientName = self.ui.clientNameLine.text()
+        # Check calNumber and clientName are not empty
+        if len(self.calNumber)==0 or len(self.clientName)==0:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in CAL Number and Client Name!")
+            return
         self.clientAddress1 = self.ui.clientAddress1Line.text()
         self.clientAddress2 = self.ui.clientAddress2Line.text()
         Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2)
