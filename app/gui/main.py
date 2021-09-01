@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
+
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.updateClientButton.setEnabled(False)
@@ -72,7 +73,7 @@ class MainWindow(QMainWindow):
         # for i in range(len(calNumber)):
         #     dataList.append(['',calNumber[i],clientName[i]])
 
-        self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 20pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
+        self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 16pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
         self.clientModel = TableModel(data=getHomeTableData())
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1) # Search all columns.
@@ -86,7 +87,7 @@ class MainWindow(QMainWindow):
 
         ## Table insertion
         # Equipment Table
-        self.ui.equipmentsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 20pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
+        self.ui.equipmentsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 16pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
         self.equipmentModel = TableModel(data=pd.DataFrame([]))
         self.ui.equipmentsTable.setModel(self.equipmentModel)
         self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -97,7 +98,7 @@ class MainWindow(QMainWindow):
         self._selectedEquipID = ""
 
         # Run Table
-        self.ui.runsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 20pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")        
+        self.ui.runsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 16pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")        
         self.runModel = TableModel(data=pd.DataFrame([]))
         self.ui.runsTable.setModel(self.runModel)
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
