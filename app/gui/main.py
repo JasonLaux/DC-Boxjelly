@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         self.constantsWindow = ConstantsWindow(self)
         self.importWindow = ImportWindow(self)
         self.analysisWindow = AnalyseWindow(self)
-        self.addEquipmentWindow = AddEquipmentWindow()
+        self.addEquipmentWindow = AddEquipmentWindow(self)
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
