@@ -282,7 +282,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="clientAddressLabel">
+             <widget class="QLabel" name="clientAddress1Label">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -296,12 +296,12 @@
                </font>
               </property>
               <property name="text">
-               <string>Client Address:</string>
+               <string>Client Address 1:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="clientAddressLine">
+             <widget class="QLineEdit" name="clientAddress1Line">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -343,6 +343,16 @@
              </spacer>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="clientAddress2Label">
+            <property name="text">
+             <string>Client Address 2：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="clientAddress2Line"/>
           </item>
          </layout>
         </item>

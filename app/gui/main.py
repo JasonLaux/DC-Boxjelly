@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
     def chooseClient(self):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
-            # self.ui.homeTable.clearSelection()
+            self._selectedRows = []
         # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
@@ -117,7 +117,7 @@ class MainWindow(QMainWindow):
                 del Job[self._selectedCalNum] 
                 self.clientModel.initialiseTable(data=getHomeTableData())
                 self.clientModel.layoutChanged.emit()
-            self.ui.homeTable.clearSelection()
+            self._selectedRows = []
         # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
@@ -154,7 +154,7 @@ class MainWindow(QMainWindow):
     def chooseEquipment(self):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage)
-            self.ui.homeTable.clearSelection()
+            self._selectedRows = []
         # when not choosing any of the equipments, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
@@ -318,10 +318,11 @@ class AddClientWindow(QMainWindow):
         window = loadUI(".\\app\\gui\\add_client_page.ui", self)
         self.ui = window
         self.clientName = ""
-        self.clientAddress = ""
+        self.clientAddress1 = ""
+        self.clientAddress2 = ""
         self.calNumber = ""
 
-        self.submitButton.pressed.connect(self.setNewClientInfo)
+        self.submitButton.pressed.connect(self.addNewClient)
         
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -337,14 +338,17 @@ class AddClientWindow(QMainWindow):
             'status': False,
             'CAL Number': self.calNumber,
             'Client Name': self.clientName,
-            'Client Address': self.clientAddress
+            'Client Address 1': self.clientAddress1,
+            'Client Address 2': self.clientAddress2,
         }
-        return pd.DataFrame(newClient, index=[0])
+        return pd.DataFrame(newClient, index=[0]) 
 
-    def setNewClientInfo(self):
-        self.clientName = self.ui.clientNameLine.text()
-        self.clientAddress = self.ui.clientAddressLine.text()
+    def addNewClient(self):
         self.calNumber = self.ui.calNumLine.text()
+        self.clientName = self.ui.clientNameLine.text()
+        self.clientAddress1 = self.ui.clientAddress1Line.text()
+        self.clientAddress2 = self.ui.clientAddress2Line.text()
+        Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2)
 
         print(self.getNewClientInfo())
         self.parent.clientModel.addData(self.getNewClientInfo())
