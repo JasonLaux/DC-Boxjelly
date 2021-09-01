@@ -16,6 +16,12 @@
     <height>16777215</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>Comic Sans MS</family>
+    <pointsize>16</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -342,6 +348,12 @@
               </disabled>
              </palette>
             </property>
+            <property name="font">
+             <font>
+              <family>Georgia</family>
+              <pointsize>64</pointsize>
+             </font>
+            </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
@@ -372,6 +384,15 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <family>Comic Sans MS</family>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
+                </font>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton{
 background-color: rgb(253, 255, 199);
@@ -400,7 +421,32 @@ background-color: white;
               </widget>
              </item>
              <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
               <widget class="QPushButton" name="constantButton">
+               <property name="font">
+                <font>
+                 <family>Comic Sans MS</family>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
+                </font>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton{
 background-color: rgb(253, 255, 199);
@@ -435,19 +481,6 @@ background-color: white;
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <widget class="QFrame" name="main_body">
          <property name="styleSheet">
           <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:0, stop:0 rgba(255, 255, 255, 255));</string>
@@ -476,13 +509,26 @@ background-color: white;
           </property>
           <item>
            <widget class="QStackedWidget" name="stackedWidget">
+            <property name="font">
+             <font>
+              <pointsize>30</pointsize>
+             </font>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="homePage">
+             <property name="font">
+              <font>
+               <family>Verdana</family>
+               <pointsize>18</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_4">
@@ -494,8 +540,12 @@ background-color: white;
                 </property>
                 <property name="font">
                  <font>
+                  <family>Verdana</family>
                   <pointsize>30</pointsize>
                  </font>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::WinPanel</enum>
                 </property>
                 <property name="text">
                  <string>HOME</string>
@@ -503,18 +553,46 @@ background-color: white;
                </widget>
               </item>
               <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
                <layout class="QHBoxLayout" name="horizontalLayout_13">
                 <item>
                  <widget class="QLabel" name="label_12">
+                  <property name="font">
+                   <font>
+                    <family>Verdana</family>
+                    <pointsize>14</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="text">
-                   <string>Search: </string>
+                   <string>Search</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QLineEdit" name="searchBar">
+                  <property name="font">
+                   <font>
+                    <family>Verdana</family>
+                    <pointsize>14</pointsize>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
 </string>
                   </property>
                  </widget>
@@ -525,6 +603,15 @@ background-color: white;
                <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <item>
                  <widget class="QPushButton" name="chooseClientButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -554,6 +641,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="addClientButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -583,6 +679,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="deleteClientButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -614,6 +719,15 @@ background-color: white;
               </item>
               <item>
                <widget class="QTableView" name="homeTable">
+                <property name="font">
+                 <font>
+                  <family>Verdana</family>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
                 <attribute name="verticalHeaderVisible">
                  <bool>false</bool>
                 </attribute>
@@ -622,6 +736,14 @@ background-color: white;
              </layout>
             </widget>
             <widget class="QWidget" name="clientInfoPage">
+             <property name="font">
+              <font>
+               <family>Verdana</family>
+               <pointsize>14</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_18">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_16">
@@ -633,13 +755,30 @@ background-color: white;
                 </property>
                 <property name="font">
                  <font>
+                  <family>Verdana</family>
                   <pointsize>30</pointsize>
                  </font>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::WinPanel</enum>
                 </property>
                 <property name="text">
                  <string>CLIENT INFORMATION</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
                <widget class="QFrame" name="horizontalFrame_6">
@@ -654,6 +793,14 @@ background-color: white;
                   <layout class="QVBoxLayout" name="verticalLayout_13">
                    <item>
                     <widget class="QLabel" name="label_10">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>CAL Number</string>
                      </property>
@@ -661,6 +808,14 @@ background-color: white;
                    </item>
                    <item>
                     <widget class="QLabel" name="label_13">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>Client Name</string>
                      </property>
@@ -668,6 +823,14 @@ background-color: white;
                    </item>
                    <item>
                     <widget class="QLabel" name="label_11">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>Address 1</string>
                      </property>
@@ -675,6 +838,14 @@ background-color: white;
                    </item>
                    <item>
                     <widget class="QLabel" name="label_9">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>Address 2</string>
                      </property>
@@ -686,26 +857,58 @@ background-color: white;
                   <layout class="QVBoxLayout" name="verticalLayout_17">
                    <item alignment="Qt::AlignHCenter">
                     <widget class="QLabel" name="label_CALNum">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>CAL00001</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="clientNamelineEdit"/>
+                    <widget class="QLineEdit" name="clientNamelineEdit">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                      </font>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+                     </property>
+                    </widget>
                    </item>
                    <item>
                     <widget class="QLineEdit" name="address1lineEdit">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                      </font>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
 </string>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QLineEdit" name="address2lineEdit">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>14</pointsize>
+                      </font>
+                     </property>
                      <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 255, 255);</string>
+                      <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;</string>
                      </property>
                     </widget>
                    </item>
@@ -713,6 +916,15 @@ background-color: white;
                  </item>
                  <item>
                   <widget class="QPushButton" name="updateClientButton">
+                   <property name="font">
+                    <font>
+                     <family>Comic Sans MS</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -747,6 +959,15 @@ background-color: white;
                <layout class="QHBoxLayout" name="horizontalLayout_15">
                 <item>
                  <widget class="QPushButton" name="chooseEquipmentButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -776,6 +997,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="addEquipmentButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -805,6 +1035,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="deleteEquipmentButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -834,6 +1073,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="returnButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -865,6 +1113,12 @@ background-color: white;
               </item>
               <item>
                <widget class="QTableView" name="equipmentsTable">
+                <property name="font">
+                 <font>
+                  <family>Verdana</family>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
                 <attribute name="verticalHeaderVisible">
                  <bool>false</bool>
                 </attribute>
@@ -873,6 +1127,12 @@ background-color: white;
              </layout>
             </widget>
             <widget class="QWidget" name="equipmentInfoPage">
+             <property name="font">
+              <font>
+               <family>Verdana</family>
+               <pointsize>16</pointsize>
+              </font>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_34">
               <item alignment="Qt::AlignHCenter">
                <widget class="QLabel" name="label_47">
@@ -884,13 +1144,30 @@ background-color: white;
                 </property>
                 <property name="font">
                  <font>
+                  <family>Verdana</family>
                   <pointsize>30</pointsize>
                  </font>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::WinPanel</enum>
                 </property>
                 <property name="text">
                  <string>EQUIPMENT INFO</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_33">
@@ -907,7 +1184,7 @@ background-color: white;
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>250</width>
+                    <width>275</width>
                     <height>20</height>
                    </size>
                   </property>
@@ -917,29 +1194,61 @@ background-color: white;
                  <layout class="QVBoxLayout" name="verticalLayout_32">
                   <item>
                    <widget class="QLabel" name="label_39">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
-                     <string>CAL Number</string>
+                     <string>CAL Number:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QLabel" name="label_40">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
-                     <string>Client Name</string>
+                     <string>Client Name:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QLabel" name="label_41">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
-                     <string>Serial Number</string>
+                     <string>Serial Number:</string>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QLabel" name="label_42">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
-                     <string>Make/Model Number</string>
+                     <string>Make/Model Number:</string>
                     </property>
                    </widget>
                   </item>
@@ -948,28 +1257,52 @@ background-color: white;
                 <item>
                  <layout class="QVBoxLayout" name="verticalLayout_33">
                   <item alignment="Qt::AlignHCenter">
-                   <widget class="QLabel" name="label_equipCALNum">
+                   <widget class="QLabel" name="label_43">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>CAL00001</string>
                     </property>
                    </widget>
                   </item>
                   <item alignment="Qt::AlignHCenter">
-                   <widget class="QLabel" name="label_equipClientName">
+                   <widget class="QLabel" name="label_45">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>ClientA</string>
                     </property>
                    </widget>
                   </item>
                   <item alignment="Qt::AlignHCenter">
-                   <widget class="QLabel" name="label_equipSerNum">
+                   <widget class="QLabel" name="label_46">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>5122</string>
                     </property>
                    </widget>
                   </item>
                   <item alignment="Qt::AlignHCenter">
-                   <widget class="QLabel" name="label_equipModelNum">
+                   <widget class="QLabel" name="label_44">
+                    <property name="font">
+                     <font>
+                      <family>Verdana</family>
+                      <pointsize>14</pointsize>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>PTW 30013</string>
                     </property>
@@ -987,7 +1320,7 @@ background-color: white;
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
-                    <width>350</width>
+                    <width>275</width>
                     <height>20</height>
                    </size>
                   </property>
@@ -999,6 +1332,15 @@ background-color: white;
                <layout class="QHBoxLayout" name="horizontalLayout_34">
                 <item>
                  <widget class="QPushButton" name="analyseButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -1028,6 +1370,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="importButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -1057,6 +1408,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="deleteRunButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -1086,6 +1446,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="returnButton_2">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
@@ -1117,6 +1486,12 @@ background-color: white;
               </item>
               <item>
                <widget class="QTableView" name="runsTable">
+                <property name="font">
+                 <font>
+                  <family>Verdana</family>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
                 <attribute name="verticalHeaderVisible">
                  <bool>false</bool>
                 </attribute>
