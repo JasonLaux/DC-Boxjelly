@@ -45,6 +45,8 @@ class MainWindow(QMainWindow):
         # Return to Home Page
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.returnButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
+        self.ui.returnButton.clicked.connect(lambda: self.ui.updateClientButton.setEnabled(False))
+
         # Return to Client Info Page
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.runsTable.clearSelection())
@@ -123,6 +125,8 @@ class MainWindow(QMainWindow):
     # Update client info on the Client Info Page by clicking 'update' button
     def updateClientInfo(self):
 
+        self.ui.updateClientButton.setEnabled(False)
+
         newClientName = self.ui.clientNamelineEdit.text()
         newFstAddress = self.ui.address1lineEdit.text()
         newSndAddress = self.ui.address2lineEdit.text()
@@ -140,7 +144,6 @@ class MainWindow(QMainWindow):
                 # Update client info on the Home Page
                 self.clientModel.initialiseTable(data=getHomeTableData())
                 self.clientModel.layoutChanged.emit()
-                self.ui.updateClientButton.setEnabled(False)
                 print(Job[self._selectedCalNum].meta)
         else:
             print("No need to update any client info")
@@ -164,7 +167,7 @@ class MainWindow(QMainWindow):
             print(self._selectedRows)
             if tableName == "homeTable":
                 self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
-                self.ui.label_CALNum = self._selectedCalNum
+                self.ui.label_CALNum.setText(self._selectedCalNum)
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
