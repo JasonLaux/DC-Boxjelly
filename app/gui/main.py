@@ -162,7 +162,7 @@ class MainWindow(QMainWindow):
             print(self._selectedRows)
             if tableName == "homeTable":
                 self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
-                self.ui.label_CALNum = self._selectedCalNum
+                self.ui.label_CALNum.setText(self._selectedCalNum)
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
