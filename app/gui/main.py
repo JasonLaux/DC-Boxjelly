@@ -633,6 +633,8 @@ class AlignDelegate(QItemDelegate):
         QItemDelegate.paint(self, painter, option, index)
 
 def start_event_loop():
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+    sys.argv += ['--style', 'fusion']
     app = QApplication(sys.argv)
     mainWindow = MainWindow()
     mainWindow.show()
