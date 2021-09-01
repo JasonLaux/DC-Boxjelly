@@ -53,6 +53,8 @@ class MainWindow(QMainWindow):
 
         # Delete client
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
+        # Delete equipment
+        self.ui.deleteEquipmentButton.clicked.connect(self.deleteEquipment)
         
         #Dynamic search
         # calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
@@ -158,6 +160,21 @@ class MainWindow(QMainWindow):
         # when not choosing any of the equipments, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
+
+    # delete chosen equipment on the Client Info Page by clicking 'delete equipment' button
+    def deleteEquipment(self):
+        if self._selectedRows:
+            self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this Equipment?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                del Job[self._selectedCalNum][self._selectedEquipID]
+                self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
+                self.equipmentModel.layoutChanged.emit()
+            self._selectedRows = []
+        # when not choosing any of the client, pop up a warning window
+        else:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
 
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
@@ -381,6 +398,7 @@ class AddEquipmentWindow(QMainWindow):
         self.ui = window
         self.model = ""
         self.serial = ""
+        self.id = ""
         self.job = None
         self.submitButton.pressed.connect(self.addNewEquip)
     
@@ -389,6 +407,7 @@ class AddEquipmentWindow(QMainWindow):
             'status': False,
             'Make/Model': self.model,
             'Serial Num': self.serial,
+            'ID': self.id,
         }
         return pd.DataFrame(newEquip, index=[0]) 
     
@@ -399,9 +418,8 @@ class AddEquipmentWindow(QMainWindow):
         if len(self.model)==0 or len(self.serial)==0:
             QtWidgets.QMessageBox.about(self, "Warning", "Please fill in Make/Model and Serial!")
             return
-        self.job.add_equipment(model = self.model, serial = self.serial)
-
-        print(self.getNewEquipInfo())
+        equip = self.job.add_equipment(model = self.model, serial = self.serial)
+        self.id = equip.id
         self.parent.equipmentModel.addData(self.getNewEquipInfo())
         self.parent.equipmentModel.layoutChanged.emit()
         
