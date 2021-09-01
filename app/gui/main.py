@@ -42,6 +42,7 @@ class MainWindow(QMainWindow):
 
         #compare page
         self.ui.chooseEquipmentButton.clicked.connect(self.chooseEquipment)
+
         # Return to Home Page
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.returnButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
@@ -157,6 +158,13 @@ class MainWindow(QMainWindow):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage)
             self._selectedRows = []
+
+            # Display the equipment info
+            self.ui.label_equipCALNum.setText(self._selectedCalNum)
+            self.ui.label_equipClientName.setText(Job[self._selectedCalNum].client_name)
+            self.ui.label_equipSerNum.setText(Job[self._selectedCalNum][self._selectedEquipID].serial)
+            self.ui.label_equipModelNum.setText(Job[self._selectedCalNum][self._selectedEquipID].model)
+
         # when not choosing any of the equipments, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
