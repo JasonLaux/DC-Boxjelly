@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         
         # load main window ui
         window = loadUI(".\\app\\gui\\main_window.ui", self)
+        #window = loadUI("./app/gui/main_window.ui", self)
         self.ui = window
 
         # load other windows
@@ -29,6 +30,8 @@ class MainWindow(QMainWindow):
         self.importWindow = ImportWindow(self)
         self.analysisWindow = AnalyseWindow(self)
         self.addEquipmentWindow = AddEquipmentWindow(self)
+
+        
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
@@ -42,7 +45,6 @@ class MainWindow(QMainWindow):
 
         #compare page
         self.ui.chooseEquipmentButton.clicked.connect(self.chooseEquipment)
-
         # Return to Home Page
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.returnButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
@@ -59,6 +61,7 @@ class MainWindow(QMainWindow):
         # Delete run
         self.ui.deleteRunButton.clicked.connect(self.deleteRun)
         
+        
         #Dynamic search
         # calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
         # clientName = ["Adams", "Peter", "James"]
@@ -66,6 +69,7 @@ class MainWindow(QMainWindow):
         # for i in range(len(calNumber)):
         #     dataList.append(['',calNumber[i],clientName[i]])
 
+        self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 20pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
         self.clientModel = TableModel(data=getHomeTableData())
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1) # Search all columns.
@@ -73,27 +77,30 @@ class MainWindow(QMainWindow):
         self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.ui.searchBar.textChanged.connect(self.proxy_model.setFilterFixedString)
         self.ui.homeTable.setModel(self.proxy_model)
-        for i in range(3):
-            self.ui.homeTable.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch) #column stretch to window size
+        self.ui.homeTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) #column stretch to window size
         self.ui.homeTable.setItemDelegate(AlignDelegate()) # text alignment
 
 
         ## Table insertion
         # Equipment Table
+        self.ui.equipmentsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 20pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
         self.equipmentModel = TableModel(data=pd.DataFrame([]))
         self.ui.equipmentsTable.setModel(self.equipmentModel)
         self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.equipmentsTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
         self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.equipmentsTable.setItemDelegate(AlignDelegate())
         self._selectedEquipID = ""
 
         # Run Table
+        self.ui.runsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 20pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")        
         self.runModel = TableModel(data=pd.DataFrame([]))
         self.ui.runsTable.setModel(self.runModel)
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.runsTable.setItemDelegate(AlignDelegate())
 
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
@@ -170,7 +177,6 @@ class MainWindow(QMainWindow):
         # when not choosing any of the equipments, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
-
     # delete chosen equipment on the Client Info Page by clicking 'delete equipment' button
     def deleteEquipment(self):
         if self._selectedRows:
@@ -241,13 +247,16 @@ class MainWindow(QMainWindow):
         self.constantsWindow.show()
     
     def openAddClientWindow(self):
+        self.addClientWindow.setFixedSize(850, 320)
         self.addClientWindow.show()
     
     def openAddEquipmentWindow(self):
+        self.addEquipmentWindow.setFixedSize(850, 320)
         self.addEquipmentWindow.show()
         self.addEquipmentWindow.job = Job[self._selectedCalNum]
 
     def openImportWindow(self):
+        self.importWindow.setFixedSize(850, 320)
         self.importWindow.show()
     
     def openAnalysisWindow(self):
@@ -270,6 +279,7 @@ class ImportWindow(QMainWindow):
         
         # load import page ui
         window = loadUI(".\\app\\gui\\import_page.ui", self)
+        #window = loadUI("./app/gui/import_page.ui", self)
         self.ui = window
 
     def closeEvent(self, event):  
@@ -287,6 +297,7 @@ class ConstantsWindow(QMainWindow):
         
         # load constants page ui
         window = loadUI(".\\app\\gui\\constants_page.ui", self)
+        #window = loadUI("./app/gui/constants_page.ui", self)        
         self.ui = window
 
         ## Table insertion
@@ -307,6 +318,7 @@ class AnalyseWindow(QMainWindow):
         
         # load analyse page ui
         window = loadUI(".\\app\\gui\\analyse_page.ui", self)
+        #window = loadUI("./app/gui/analyse_page.ui", self)        
         self.ui = window
         self._selectedRows = []
 
@@ -359,13 +371,14 @@ class AddClientWindow(QMainWindow):
     
         # load add client page ui
         window = loadUI(".\\app\\gui\\add_client_page.ui", self)
+        #window = loadUI("./app/gui/add_client_page.ui", self)        
         self.ui = window
         self.clientName = ""
         self.clientAddress1 = ""
         self.clientAddress2 = ""
         self.calNumber = ""
 
-        self.submitButton.pressed.connect(self.addNewClient)
+        self.clientSubmitButton.pressed.connect(self.addNewClient)
         
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -420,6 +433,7 @@ class AddEquipmentWindow(QMainWindow):
         
         # load add equipment page ui
         window = loadUI(".\\app\\gui\\add_equipment_page.ui", self)
+        #window = loadUI("./app/gui/add_equipment_page.ui", self)        
         self.ui = window
         self.model = ""
         self.serial = ""
