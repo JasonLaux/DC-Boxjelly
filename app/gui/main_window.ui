@@ -437,7 +437,7 @@ background-color: white;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="constantButton">
+              <widget class="QPushButton" name="constantsButton">
                <property name="font">
                 <font>
                  <family>Comic Sans MS</family>
@@ -541,7 +541,7 @@ background-color: white;
                 <property name="font">
                  <font>
                   <family>Verdana</family>
-                  <pointsize>30</pointsize>
+                  <pointsize>24</pointsize>
                  </font>
                 </property>
                 <property name="frameShape">
@@ -722,7 +722,7 @@ background-color: white;
                 <property name="font">
                  <font>
                   <family>Verdana</family>
-                  <pointsize>18</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -756,7 +756,7 @@ background-color: white;
                 <property name="font">
                  <font>
                   <family>Verdana</family>
-                  <pointsize>30</pointsize>
+                  <pointsize>24</pointsize>
                  </font>
                 </property>
                 <property name="frameShape">
@@ -1116,7 +1116,7 @@ background-color: white;
                 <property name="font">
                  <font>
                   <family>Verdana</family>
-                  <pointsize>18</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <attribute name="verticalHeaderVisible">
@@ -1145,7 +1145,7 @@ background-color: white;
                 <property name="font">
                  <font>
                   <family>Verdana</family>
-                  <pointsize>30</pointsize>
+                  <pointsize>24</pointsize>
                  </font>
                 </property>
                 <property name="frameShape">
@@ -1489,7 +1489,7 @@ background-color: white;
                 <property name="font">
                  <font>
                   <family>Verdana</family>
-                  <pointsize>18</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <attribute name="verticalHeaderVisible">
@@ -1513,7 +1513,7 @@ background-color: white;
  <resources/>
  <connections>
   <connection>
-   <sender>constantButton</sender>
+   <sender>constantsButton</sender>
    <signal>clicked()</signal>
    <receiver>mainWindow</receiver>
    <slot>openConstantsWindow()</slot>

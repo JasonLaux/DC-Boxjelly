@@ -42,7 +42,7 @@
       <property name="font">
        <font>
         <family>Verdana</family>
-        <pointsize>30</pointsize>
+        <pointsize>24</pointsize>
        </font>
       </property>
       <property name="frameShape">
@@ -86,7 +86,14 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QGraphicsView" name="resultGraph"/>
+         <widget class="QGraphicsView" name="resultGraph">
+          <property name="font">
+           <font>
+            <family>Verdana</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget_2">
@@ -99,7 +106,14 @@
            </attribute>
            <layout class="QGridLayout" name="gridLayout_4">
             <item row="0" column="0">
-             <widget class="QTableView" name="run1Table"/>
+             <widget class="QTableView" name="run1Table">
+              <property name="font">
+               <font>
+                <family>Verdana</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -118,7 +132,14 @@
        </layout>
       </item>
       <item>
-       <widget class="QTableView" name="resultTable"/>
+       <widget class="QTableView" name="resultTable">
+        <property name="font">
+         <font>
+          <family>Verdana</family>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
