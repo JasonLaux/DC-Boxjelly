@@ -381,8 +381,8 @@ class AddClientWindow(QMainWindow):
             'status': False,
             'CAL Number': self.calNumber,
             'Client Name': self.clientName,
-            'Client Address 1': self.clientAddress1,
-            'Client Address 2': self.clientAddress2,
+            # 'Client Address 1': self.clientAddress1,
+            # 'Client Address 2': self.clientAddress2,
         }
         return pd.DataFrame(newClient, index=[0]) 
 
