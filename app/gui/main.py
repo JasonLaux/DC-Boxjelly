@@ -125,21 +125,24 @@ class MainWindow(QMainWindow):
         newFstAddress = self.ui.address1lineEdit.text()
         newSndAddress = self.ui.address2lineEdit.text()
         error = False
-        print("22222222222222")
 
-        # if newClientName or newFstAddress or newSndAddress:
-        #     try: 
-        #         Job[self._selectedCalNum].client_name = newClientName
-        #         Job[self._selectedCalNum].client_address_1 = newFstAddress
-        #         Job[self._selectedCalNum].client_address_2 = newSndAddress
-        #     except AttributeError:
-        #         error = True
-        #         raise error("Job ID is not found!")
-
-        #     if error is False:
-        #         pass
-        # else:
-        #     pass
+        if newClientName or newFstAddress or newSndAddress:
+            try: 
+                Job[self._selectedCalNum].client_name = newClientName
+                Job[self._selectedCalNum].client_address_1 = newFstAddress
+                Job[self._selectedCalNum].client_address_2 = newSndAddress
+            except AttributeError:
+                error = True
+                raise error("Job ID is not found!")
+            if error is False:
+                # Update client info on the Home Page
+                self.clientModel.initialiseTable(data=getHomeTableData())
+                self.clientModel.layoutChanged.emit()
+                self.ui.updateClientButton.setEnabled(False)
+                print(Job[self._selectedCalNum].meta)
+        else:
+            print("No need to update any client info")
+            
 
 
     # choose one equipment and goes into Equipment info page
