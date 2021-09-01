@@ -13,7 +13,7 @@ from app.core.models import Job, Equipment
 
 '''
 #Run UI main file under root dir
-py -m ui.main
+py -m app.gui.main
 '''
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -100,23 +100,25 @@ class MainWindow(QMainWindow):
     def chooseClient(self):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
-            self._selectedRows = []
+            self.ui.homeTable.clearSelection()
         # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
 
+    # delete chosen client on the Home Page by clicking 'delete client' button
     def deleteClient(self):
         if self._selectedRows:
-            # Indexes is a list of a single item in single-select mode.
-            # Remove the item and refresh.
-            self.clientModel.delData(self._selectedRows)
-            # time.sleep(0.2)
-            self.clientModel.layoutChanged.emit()
-            # Clear the selection (as it is no longer valid).
+            self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this client?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                del Job[self._selectedCalNum] 
+                self.clientModel.initialiseTable(data=getHomeTableData())
+                self.clientModel.layoutChanged.emit()
             self.ui.homeTable.clearSelection()
-            print(self.clientModel._data)
+        # when not choosing any of the client, pop up a warning window
         else:
-            pass
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
     
     # Update client info on the Client Info Page by clicking 'update' button
     def updateClientInfo(self):
@@ -149,7 +151,7 @@ class MainWindow(QMainWindow):
     def chooseEquipment(self):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage)
-            self._selectedRows = []
+            self.ui.homeTable.clearSelection()
         # when not choosing any of the equipments, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
