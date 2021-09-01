@@ -1,7 +1,7 @@
 from os import error
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
-from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstractItemModel
+from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstractItemModel, QModelIndex
 import sys
 from numpy import empty
 from pandas.io.pytables import SeriesFixed
@@ -37,7 +37,6 @@ class MainWindow(QMainWindow):
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
-
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.updateClientButton.setEnabled(False)
@@ -75,12 +74,13 @@ class MainWindow(QMainWindow):
 
         self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 16pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
         self.clientModel = TableModel(data=getHomeTableData())
+
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1) # Search all columns.
         self.proxy_model.setSourceModel(self.clientModel)
         self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.ui.searchBar.textChanged.connect(self.proxy_model.setFilterFixedString)
-        self.ui.homeTable.setModel(self.proxy_model)
+        self.ui.homeTable.setModel(self.clientModel)
         self.ui.homeTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) #column stretch to window size
         self.ui.homeTable.setItemDelegate(AlignDelegate()) # text alignment
 
@@ -113,12 +113,21 @@ class MainWindow(QMainWindow):
         self.ui.homeTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('homeTable'))
         self._selectedRows = []
         self._selectedCalNum = ""
+    
+    def deleteRows(self, tableName):
+        # Reverse sort rows indexes
+        indexes = sorted(self._selectedRows, reverse=True)
+
+        # Delete rows
+        for row_idx in indexes:
+            self.clientModel.removeRows(position=row_idx)
+
 
     # choose one client and goes into client info page
     def chooseClient(self):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
-            self._selectedRows = []
+            self.ui.homeTable.clearSelection()
         # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
@@ -131,9 +140,11 @@ class MainWindow(QMainWindow):
                                                QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
                 del Job[self._selectedCalNum] 
+
                 self.clientModel.initialiseTable(data=getHomeTableData())
                 self.clientModel.layoutChanged.emit()
-            self._selectedRows = []
+
+            self.ui.homeTable.clearSelection()
         # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
@@ -160,7 +171,6 @@ class MainWindow(QMainWindow):
                 # Update client info on the Home Page
                 self.clientModel.initialiseTable(data=getHomeTableData())
                 self.clientModel.layoutChanged.emit()
-                print(Job[self._selectedCalNum].meta)
         else:
             print("No need to update any client info")
             
@@ -217,7 +227,7 @@ class MainWindow(QMainWindow):
             # TODO Order is based on the selection. Need to sort first?
             self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedRows()]
             print(self._selectedRows)
-            if tableName == "homeTable":
+            if tableName == "homeTable" and self._selectedRows != []:
                 self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
                 self.ui.label_CALNum.setText(self._selectedCalNum)
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
@@ -234,8 +244,6 @@ class MainWindow(QMainWindow):
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
-                print('111111111111111111111111111')
-                print(self._selectedEquipID)
                 # self.runModel._data.loc[self._selectedRows, 'status'] = True
                 # self.runModel.layoutChanged.emit()
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
@@ -567,8 +575,6 @@ class TableModel(QAbstractTableModel):
         # May be required to change logic
         # if data.empty is False:
         #     self._display = data.drop(labels=['Address'], axis=1)
-        print(1)
-        print(data)
     
     def data(self, index, role):
         if role == Qt.DisplayRole:
@@ -626,7 +632,31 @@ class TableModel(QAbstractTableModel):
             except:
                 return False
         return super().setHeaderData(section, orientation, data, role)
+    
+    # def removeRows(self, position, rows=1, index=QModelIndex()):
 
+    #     self.beginRemoveRows(QModelIndex(), position, position + rows - 1)  
+    #     # print("Drop")     
+    #     # print(self._data.drop(position))
+    #     self._data = self._data.drop(position)
+    #     self._data.reset_index(drop=True, inplace=True)
+    #     self.endRemoveRows()
+
+    #     return True
+
+    '''
+    https://stackoverflow.com/questions/28218882/how-to-insert-and-remove-row-from-model-linked-to-qtablevie
+    '''
+    # def insertRows(self, position, rows=1, index=QModelIndex()):
+    #     indexSelected=self.index(position, 0)
+    #     itemSelected=indexSelected.data().toPyObject()
+
+    #     self.beginInsertRows(QModelIndex(), position, position + rows - 1)
+    #     for row in range(rows):
+    #         self.items.insert(position + row,  "%s_%s"% (itemSelected, self.added))
+    #         self.added+=1
+    #     self.endInsertRows()
+    #     return True
 
 class AlignDelegate(QItemDelegate):
     def paint(self, painter, option, index):
@@ -634,8 +664,8 @@ class AlignDelegate(QItemDelegate):
         QItemDelegate.paint(self, painter, option, index)
 
 def start_event_loop():
-    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
-    sys.argv += ['--style', 'fusion']
+    # os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+    # sys.argv += ['--style', 'fusion']
     app = QApplication(sys.argv)
     mainWindow = MainWindow()
     mainWindow.show()
