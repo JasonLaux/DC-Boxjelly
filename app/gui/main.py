@@ -55,6 +55,8 @@ class MainWindow(QMainWindow):
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
         # Delete equipment
         self.ui.deleteEquipmentButton.clicked.connect(self.deleteEquipment)
+        # Delete run
+        self.ui.deleteRunButton.clicked.connect(self.deleteRun)
         
         #Dynamic search
         # calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
@@ -172,9 +174,24 @@ class MainWindow(QMainWindow):
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
             self._selectedRows = []
-        # when not choosing any of the client, pop up a warning window
+        # when not choosing any of the equipment, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
+
+    # delete chosen run on the Client Info Page by clicking 'delete run' button
+    def deleteRun(self):
+        if self._selectedRows:
+            self._selectedRun = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this run?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                del Job[self._selectedCalNum][self._selectedEquipID].mex[self._selectedRun]
+                self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
+                self.runModel.layoutChanged.emit()
+            self._selectedRows = []
+        # when not choosing any of the equipment, pop up a warning window
+        else:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a run to delete.")
 
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
