@@ -1,6 +1,6 @@
 from os import error
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstractItemModel
 import sys
 from numpy import empty
@@ -9,6 +9,8 @@ from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getR
 import pandas as pd
 import pyqtgraph as pg
 from app.core.models import Job, Equipment
+import os
+from pathlib import Path
 
 
 '''
@@ -60,12 +62,6 @@ class MainWindow(QMainWindow):
         self.ui.deleteRunButton.clicked.connect(self.deleteRun)
         
         #Dynamic search
-        # calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
-        # clientName = ["Adams", "Peter", "James"]
-        # dataList = []
-        # for i in range(len(calNumber)):
-        #     dataList.append(['',calNumber[i],clientName[i]])
-
         self.clientModel = TableModel(data=getHomeTableData())
         self.proxy_model = QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1) # Search all columns.
@@ -249,6 +245,7 @@ class MainWindow(QMainWindow):
 
     def openImportWindow(self):
         self.importWindow.show()
+        self.importWindow.equip = Job[self._selectedCalNum][self._selectedEquipID]
     
     def openAnalysisWindow(self):
         ## TODO: pop up warning when not choosing any of the runs
@@ -267,10 +264,76 @@ class MainWindow(QMainWindow):
 class ImportWindow(QMainWindow):
     def __init__(self, parent = None):
         super(ImportWindow, self).__init__(parent)
+        self.parent = parent
         
         # load import page ui
         window = loadUI(".\\app\\gui\\import_page.ui", self)
         self.ui = window
+        self.equip = None
+        self.clientPath = ""
+        self.labPath = ""
+        self.importClientFilebutton.pressed.connect(self.chooseRawClient)
+        self.importLabFileButton.pressed.connect(self.chooseRawLab)
+        self.submitButton.pressed.connect(self.addNewRun)
+    
+    def getNewRunInfo(self):
+        newClient = {
+            'status': [],
+            'ID': [],
+            'Added Time': [],
+            'Edited Time': []
+        }
+        return pd.DataFrame(newClient, index=[0]) 
+    
+    def chooseRawClient(self):
+        file_filter = 'Raw Data File (*.csv)'
+        self.clientPath = QFileDialog.getOpenFileName(
+            parent = self,
+            caption = 'Please Select Client Raw File',
+            directory = os.getcwd(),
+            filter = file_filter,
+            initialFilter = 'Raw Data File (*.csv)'
+        )[0]
+        print("Client raw file: ", self.clientPath)
+        self.ui.clientFilePathLine.setText(self.clientPath)
+    
+    def chooseRawLab(self):
+        file_filter = 'Raw Data File (*.csv)'
+        self.labPath = QFileDialog.getOpenFileName(
+            parent = self,
+            caption = 'Please Select Lab Raw File',
+            directory = os.getcwd(),
+            filter = file_filter,
+            initialFilter = 'Raw Data File (*.csv)'
+        )[0]
+        print("Lab raw file: ", self.labPath)
+        self.ui.labFilePathLine.setText(self.labPath)
+
+    def addNewRun(self):
+        if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose both Client raw file and Lab raw file!")
+            return
+        run = self.equip.mex.add()
+        run.raw_client.upload_from(Path(self.clientPath))
+        run.raw_lab.upload_from(Path(self.labPath))
+        data = {
+            'status': False,
+            'ID': run.id,
+            'Added Time': run.added_at,
+            'Edited Time': run.edited_at,
+        }
+        self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+        self.parent.runModel.layoutChanged.emit()
+        
+        # Finish add new run and quit
+        self.hide()
+        self.equip = None
+        self.clientPath = ""
+        self.labPath = ""
+        self.ui.clientFilePathLine.clear()
+        self.ui.labFilePathLine.clear()
+        # TODO: Display another window to confirm information
+
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
