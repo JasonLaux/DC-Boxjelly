@@ -487,12 +487,19 @@ class AddClientWindow(QMainWindow):
             return
 
         Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2)
-
-        print(self.getNewClientInfo())
         self.parent.clientModel.addData(self.getNewClientInfo())
         self.parent.clientModel.layoutChanged.emit()
         
+        # Finish add new client and quit
         self.hide()
+        self.clientName = ""
+        self.clientAddress1 = ""
+        self.clientAddress2 = ""
+        self.calNumber = ""
+        self.ui.calNumLine.clear()
+        self.ui.clientNameLine.clear()
+        self.ui.clientAddress1Line.clear()
+        self.ui.clientAddress2Line.clear()
         # TODO: Display another window to confirm information
 
 
@@ -532,7 +539,14 @@ class AddEquipmentWindow(QMainWindow):
         self.parent.equipmentModel.addData(self.getNewEquipInfo())
         self.parent.equipmentModel.layoutChanged.emit()
         
+        # Finish add new equipment and quit
         self.hide()
+        self.model = ""
+        self.serial = ""
+        self.id = ""
+        self.job = None
+        self.ui.modelLine.clear()
+        self.ui.serialLine.clear()
         # TODO: Display another window to confirm information
 
     def closeEvent(self, event):  
