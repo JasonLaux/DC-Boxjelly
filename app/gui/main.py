@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         self.constantsWindow = ConstantsWindow(self)
         self.importWindow = ImportWindow(self)
         self.analysisWindow = AnalyseWindow(self)
-        self.addEquipmentWindow = AddEquipmentWindow(self)
+        self.addEquipmentWindow = AddEquipmentWindow()
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
@@ -203,6 +203,7 @@ class MainWindow(QMainWindow):
     
     def openAddEquipmentWindow(self):
         self.addEquipmentWindow.show()
+        self.addEquipmentWindow.job = Job[self._selectedCalNum]
 
     def openImportWindow(self):
         self.importWindow.show()
@@ -345,18 +346,21 @@ class AddClientWindow(QMainWindow):
 
     def addNewClient(self):
         self.calNumber = self.ui.calNumLine.text()
+        self.clientName = self.ui.clientNameLine.text()
+        self.clientAddress1 = self.ui.clientAddress1Line.text()
+        self.clientAddress2 = self.ui.clientAddress2Line.text()
+
         # Check duplicated ID
         IDs = getHomeTableData()['CAL Number'].values.tolist()
         if self.calNumber in IDs:
             QtWidgets.QMessageBox.about(self, "Warning", "CAL number already existed in file system!")
             return
-        self.clientName = self.ui.clientNameLine.text()
+
         # Check calNumber and clientName are not empty
         if len(self.calNumber)==0 or len(self.clientName)==0:
             QtWidgets.QMessageBox.about(self, "Warning", "Please fill in CAL Number and Client Name!")
             return
-        self.clientAddress1 = self.ui.clientAddress1Line.text()
-        self.clientAddress2 = self.ui.clientAddress2Line.text()
+
         Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2)
 
         print(self.getNewClientInfo())
@@ -370,10 +374,39 @@ class AddClientWindow(QMainWindow):
 class AddEquipmentWindow(QMainWindow):
     def __init__(self, parent = None):
         super(AddEquipmentWindow, self).__init__(parent)
+        self.parent = parent
         
         # load add equipment page ui
         window = loadUI(".\\app\\gui\\add_equipment_page.ui", self)
         self.ui = window
+        self.model = ""
+        self.serial = ""
+        self.job = None
+        self.submitButton.pressed.connect(self.addNewEquip)
+    
+    def getNewEquipInfo(self):
+        newEquip = {
+            'status': False,
+            'Make/Model': self.model,
+            'Serial Num': self.serial,
+        }
+        return pd.DataFrame(newEquip, index=[0]) 
+    
+    def addNewEquip(self):
+        self.model = self.ui.modelLine.text()
+        self.serial = self.ui.serialLine.text()
+        # TODO: Check duplicated ID
+        if len(self.model)==0 or len(self.serial)==0:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in Make/Model and Serial!")
+            return
+        self.job.add_equipment(model = self.model, serial = self.serial)
+
+        print(self.getNewEquipInfo())
+        self.parent.equipmentModel.addData(self.getNewEquipInfo())
+        self.parent.equipmentModel.layoutChanged.emit()
+        
+        self.hide()
+        # TODO: Display another window to confirm information
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
