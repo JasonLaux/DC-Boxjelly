@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
     def chooseClient(self):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
-            self.ui.homeTable.clearSelection()
+            # self.ui.homeTable.clearSelection()
         # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
