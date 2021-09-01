@@ -165,7 +165,7 @@ background-color: white;
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="labFilePathLine">
+           <widget class="QLineEdit" name="clientFilePathLine">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -282,7 +282,7 @@ background-color: white;
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="clientFilePathLine">
+           <widget class="QLineEdit" name="labFilePathLine">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
