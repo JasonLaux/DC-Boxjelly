@@ -291,7 +291,7 @@ class ImportWindow(QMainWindow):
         self.labPath = ""
         self.importClientFilebutton.pressed.connect(self.chooseRawClient)
         self.importLabFileButton.pressed.connect(self.chooseRawLab)
-        self.submitButton.pressed.connect(self.addNewRun)
+        self.importSubmitButton.pressed.connect(self.addNewRun)
     
     def getNewRunInfo(self):
         newClient = {
@@ -509,7 +509,7 @@ class AddEquipmentWindow(QMainWindow):
         self.serial = ""
         self.id = ""
         self.job = None
-        self.submitButton.pressed.connect(self.addNewEquip)
+        self.equipmentSubmitButton.pressed.connect(self.addNewEquip)
     
     def getNewEquipInfo(self):
         newEquip = {
