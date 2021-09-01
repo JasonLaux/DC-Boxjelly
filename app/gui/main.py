@@ -35,7 +35,11 @@ class MainWindow(QMainWindow):
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.updateClientButton.setEnabled(False)
-        # self.ui.updateClientButton.textChanged.connect()
+        self.ui.updateClientButton.clicked.connect(self.updateClientInfo)
+        self.ui.clientNamelineEdit.editingFinished.connect(lambda: self.ui.updateClientButton.setEnabled(True))
+        self.ui.address1lineEdit.editingFinished.connect(lambda: self.ui.updateClientButton.setEnabled(True))
+        self.ui.address2lineEdit.editingFinished.connect(lambda: self.ui.updateClientButton.setEnabled(True))
+
         #compare page
         self.ui.chooseEquipmentButton.clicked.connect(self.chooseEquipment)
         # Return to Home Page
@@ -121,20 +125,21 @@ class MainWindow(QMainWindow):
         newFstAddress = self.ui.address1lineEdit.text()
         newSndAddress = self.ui.address2lineEdit.text()
         error = False
+        print("22222222222222")
 
-        if newClientName or newFstAddress or newSndAddress:
-            try: 
-                Job[self._selectedCalNum].client_name = newClientName
-                Job[self._selectedCalNum].client_address_1 = newFstAddress
-                Job[self._selectedCalNum].client_address_2 = newSndAddress
-            except AttributeError:
-                error = True
-                raise error("Job ID is not found!")
+        # if newClientName or newFstAddress or newSndAddress:
+        #     try: 
+        #         Job[self._selectedCalNum].client_name = newClientName
+        #         Job[self._selectedCalNum].client_address_1 = newFstAddress
+        #         Job[self._selectedCalNum].client_address_2 = newSndAddress
+        #     except AttributeError:
+        #         error = True
+        #         raise error("Job ID is not found!")
 
-            if error is False:
-                pass
-        else:
-            pass
+        #     if error is False:
+        #         pass
+        # else:
+        #     pass
 
 
     # choose one equipment and goes into Equipment info page
