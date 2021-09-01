@@ -60,7 +60,7 @@
       <property name="font">
        <font>
         <family>Verdana</family>
-        <pointsize>30</pointsize>
+        <pointsize>24</pointsize>
        </font>
       </property>
       <property name="frameShape">
@@ -145,6 +145,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
@@ -159,28 +165,18 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>24</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="calNumLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="font">
                <font>
@@ -239,6 +235,12 @@ border: 1px solid black;
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
@@ -253,28 +255,18 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_11">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>24</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="clientNameLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="font">
                <font>
@@ -333,6 +325,12 @@ border: 1px solid black;
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
@@ -353,6 +351,12 @@ border: 1px solid black;
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="font">
                <font>
@@ -411,6 +415,12 @@ border: 1px solid black;
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
@@ -431,6 +441,12 @@ border: 1px solid black;
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="font">
                <font>
