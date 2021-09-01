@@ -1,6 +1,7 @@
+from os import error
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene
-from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
+from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstractItemModel
 import sys
 from numpy import empty
 from pandas.io.pytables import SeriesFixed
@@ -33,6 +34,8 @@ class MainWindow(QMainWindow):
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
+        self.ui.updateClientButton.setEnabled(False)
+        # self.ui.updateClientButton.textChanged.connect()
         #compare page
         self.ui.chooseEquipmentButton.clicked.connect(self.chooseEquipment)
         # Return to Home Page
@@ -111,6 +114,29 @@ class MainWindow(QMainWindow):
         else:
             pass
     
+    # Update client info on the Client Info Page by clicking 'update' button
+    def updateClientInfo(self):
+
+        newClientName = self.ui.clientNamelineEdit.text()
+        newFstAddress = self.ui.address1lineEdit.text()
+        newSndAddress = self.ui.address2lineEdit.text()
+        error = False
+
+        if newClientName or newFstAddress or newSndAddress:
+            try: 
+                Job[self._selectedCalNum].client_name = newClientName
+                Job[self._selectedCalNum].client_address_1 = newFstAddress
+                Job[self._selectedCalNum].client_address_2 = newSndAddress
+            except AttributeError:
+                error = True
+                raise error("Job ID is not found!")
+
+            if error is False:
+                pass
+        else:
+            pass
+
+
     # choose one equipment and goes into Equipment info page
     def chooseEquipment(self):
         if self._selectedRows:
@@ -128,16 +154,30 @@ class MainWindow(QMainWindow):
             print(self._selectedRows)
             if tableName == "homeTable":
                 self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+                self.ui.label_CALNum = self._selectedCalNum
+                self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
+                self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
+                self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
+
+                # Create QModelIndex
+                model_index = QAbstractItemModel.createIndex(self.clientModel, self._selectedRows[0], 0)
+                self.clientModel.setData(model_index, True)
+                # Top-left to bottom-right area. Only one element is changed so they are equal.
+                self.clientModel.dataChanged.emit(model_index, model_index) 
+
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
                 print('111111111111111111111111111')
                 print(self._selectedEquipID)
+                # self.runModel._data.loc[self._selectedRows, 'status'] = True
+                # self.runModel.layoutChanged.emit()
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.runModel.layoutChanged.emit()
+            # elif tableName == "runsTable" and self._selectedRows != []:
+
         except AttributeError:
-            print("Attribute does not exist! Table name may be altered!")
             raise AttributeError("Attribute does not exist! Table name may be altered!")
             
 
@@ -367,6 +407,10 @@ class TableModel(QAbstractTableModel):
             print(self._data)
         else:
             pass
+    
+    def setData(self, index, value):
+        self._data.iloc[index.row(), index.column()] = value
+        return True
 
     def initialiseTable(self, data):
     
