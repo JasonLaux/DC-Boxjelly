@@ -265,8 +265,15 @@ class MainWindow(QMainWindow):
         self.importWindow.equip = Job[self._selectedCalNum][self._selectedEquipID]
     
     def openAnalysisWindow(self):
-        ## TODO: pop up warning when not choosing any of the runs
-        self.analysisWindow.show()
+        # Pop up warning when not choosing any of the runs
+        if self._selectedRows:
+            self._selectedRuns = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
+            print(self._selectedRuns)
+            self.analysisWindow.analyze()
+            self._selectedRows = []
+        else:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
+        
     
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want to exit?', QtWidgets.QMessageBox.Yes,
@@ -390,6 +397,8 @@ class AnalyseWindow(QMainWindow):
         #window = loadUI("./app/gui/analyse_page.ui", self)        
         self.ui = window
         self._selectedRows = []
+        self.tabCount = 0
+        self.runsNum = 0
 
         ## Table and Graph insertion
         # self.ui.resultGraph
@@ -410,6 +419,9 @@ class AnalyseWindow(QMainWindow):
         data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         plot_item = self.plotWdgt.plot(data, pen=pg.mkPen(width=15))
         proxy_widget = scene.addWidget(self.plotWdgt)
+
+        # Tab and table
+        print(self.ui.tabWidget.count())
     
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
@@ -422,6 +434,11 @@ class AnalyseWindow(QMainWindow):
             print("Attribute does not exist! Table name may be altered!")
             raise AttributeError("Attribute does not exist! Table name may be altered!")
         print(self._selectedRows)
+    
+    def analyze(self):
+        # TODO: insert analyze functions here
+        self.show()
+        return
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
