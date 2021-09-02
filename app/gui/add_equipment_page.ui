@@ -129,14 +129,14 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>180</width>
+                <width>190</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -163,7 +163,7 @@
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -203,14 +203,14 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>180</width>
+                <width>190</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -237,7 +237,7 @@ border: 1px solid black;
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">

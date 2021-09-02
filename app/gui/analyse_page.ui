@@ -67,13 +67,29 @@
      </spacer>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>650</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
       <item>
        <widget class="QLabel" name="label">
         <property name="font">
          <font>
           <family>Verdana</family>
-          <pointsize>14</pointsize>
+          <pointsize>12</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -83,6 +99,10 @@
         </property>
        </widget>
       </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -90,16 +110,47 @@
           <property name="font">
            <font>
             <family>Verdana</family>
-            <pointsize>14</pointsize>
+            <pointsize>12</pointsize>
            </font>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QTabWidget" name="tabWidget">
+         <widget class="QTabWidget" name="tabWidget_2">
           <property name="currentIndex">
-           <number>-1</number>
+           <number>1</number>
           </property>
+          <widget class="QWidget" name="run_3">
+           <attribute name="title">
+            <string>Run 1</string>
+           </attribute>
+           <widget class="QTableView" name="run1Table">
+            <property name="geometry">
+             <rect>
+              <x>9</x>
+              <y>9</y>
+              <width>256</width>
+              <height>192</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <family>Verdana</family>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="run_4">
+           <attribute name="title">
+            <string>Run 2</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QTableView" name="run2Table"/>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -109,7 +160,7 @@
         <property name="font">
          <font>
           <family>Verdana</family>
-          <pointsize>14</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
        </widget>

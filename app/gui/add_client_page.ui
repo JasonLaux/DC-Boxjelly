@@ -96,7 +96,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
+          <width>20</width>
           <height>20</height>
          </size>
         </property>
@@ -131,7 +131,7 @@
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>100</width>
+                <width>60</width>
                 <height>20</height>
                </size>
               </property>
@@ -154,7 +154,7 @@
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -174,14 +174,14 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>300</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -205,7 +205,7 @@ border: 1px solid black;
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>100</width>
+                <width>60</width>
                 <height>20</height>
                </size>
               </property>
@@ -228,7 +228,7 @@ border: 1px solid black;
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -248,14 +248,14 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>300</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -279,7 +279,7 @@ border: 1px solid black;
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>100</width>
+                <width>60</width>
                 <height>20</height>
                </size>
               </property>
@@ -302,7 +302,7 @@ border: 1px solid black;
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -322,14 +322,14 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>300</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -353,7 +353,7 @@ border: 1px solid black;
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>100</width>
+                <width>60</width>
                 <height>20</height>
                </size>
               </property>
@@ -376,7 +376,7 @@ border: 1px solid black;
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -396,14 +396,14 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>300</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="font">
                <font>
                 <family>Verdana</family>
-                <pointsize>14</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -442,7 +442,7 @@ border: 1px solid black;
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>90</width>
+          <width>70</width>
           <height>20</height>
          </size>
         </property>
