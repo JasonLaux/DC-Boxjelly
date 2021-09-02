@@ -187,7 +187,7 @@ class MainWindow(QMainWindow):
             self.ui.label_eqCN.setText(Job[self._selectedCalNum].client_name)
             self.ui.label_eqSN.setText(Job[self._selectedCalNum][self._selectedEquipID].serial)
             self.ui.label_eqMN.setText(Job[self._selectedCalNum][self._selectedEquipID].model)
-
+            self.ui.equipmentsTable.clearSelection()
         # when not choosing any of the equipments, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
