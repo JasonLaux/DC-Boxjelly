@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
         # for i in range(len(calNumber)):
         #     dataList.append(['',calNumber[i],clientName[i]])
 
-        self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 16pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
+        self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")       
         self.clientModel = TableModel(data=getHomeTableData())
 
         self.proxy_model = QSortFilterProxyModel()
@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
 
         ## Table insertion
         # Equipment Table
-        self.ui.equipmentsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 16pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")
+        self.ui.equipmentsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")
         self.equipmentModel = TableModel(data=pd.DataFrame([]))
         self.ui.equipmentsTable.setModel(self.equipmentModel)
         self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
         self._selectedEquipID = ""
 
         # Run Table
-        self.ui.runsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 16pt; font-family: Verdana; font-weight: bold;  border: 0.5px solid black; }")        
+        self.ui.runsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")        
         self.runModel = TableModel(data=pd.DataFrame([]))
         self.ui.runsTable.setModel(self.runModel)
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -435,7 +435,7 @@ class AnalyseWindow(QMainWindow):
             print("Attribute does not exist! Table name may be altered!")
             raise AttributeError("Attribute does not exist! Table name may be altered!")
         print(self._selectedRows)
-    
+
     def setRuns(self, runs):
         self.runs = runs
         for run in runs:
