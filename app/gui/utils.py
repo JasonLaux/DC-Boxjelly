@@ -31,12 +31,10 @@ def getHomeTableData():
     # }
 
     data = {
-        'status': [],
         'CAL Number': [],
         'Client Name': []
     }
     for job in Job:
-        data['status'].append(False),
         data['CAL Number'].append(job.id),
         data['Client Name'].append(job.client_name),
         # data['Clinet Address'].append(str(job.client_address_1)+' '+str(job.client_address_2)),
@@ -51,13 +49,11 @@ Return equipments data as Dataframe
 def getEquipmentsTableData(job: Job):
     #job = Job[jobID]
     data = {
-        'status': [],
         'Make/Model': [],
         'Serial Num': [],
         'ID': []
     }
     for equip in job:
-        data['status'].append(False),
         data['Make/Model'].append(equip.model),
         data['Serial Num'].append(equip.serial),
         data['ID'].append(equip.id),
@@ -70,13 +66,11 @@ Return runs data as Dataframe
 def getRunsTableData(equip: Equipment):
     #equip = Job[jobID][equipID]
     data = {
-        'status': [],
         'ID': [],
         'Added Time': [],
         'Edited Time': []
     }
     for run in equip.mex:
-        data['status'].append(False),
         data['ID'].append(run.id),
         data['Added Time'].append(run.added_at),
         data['Edited Time'].append(run.edited_at),

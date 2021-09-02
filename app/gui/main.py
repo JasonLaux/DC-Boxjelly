@@ -183,10 +183,10 @@ class MainWindow(QMainWindow):
             self._selectedRows = []
 
             # Display the equipment info
-            self.ui.label_equipCALNum.setText(self._selectedCalNum)
-            self.ui.label_equipClientName.setText(Job[self._selectedCalNum].client_name)
-            self.ui.label_equipSerNum.setText(Job[self._selectedCalNum][self._selectedEquipID].serial)
-            self.ui.label_equipModelNum.setText(Job[self._selectedCalNum][self._selectedEquipID].model)
+            self.ui.label_eqCAL.setText(self._selectedCalNum)
+            self.ui.label_eqCN.setText(Job[self._selectedCalNum].client_name)
+            self.ui.label_eqSN.setText(Job[self._selectedCalNum][self._selectedEquipID].serial)
+            self.ui.label_eqMN.setText(Job[self._selectedCalNum][self._selectedEquipID].model)
 
         # when not choosing any of the equipments, pop up a warning window
         else:
@@ -234,18 +234,10 @@ class MainWindow(QMainWindow):
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
 
-                # Create QModelIndex
-                model_index = QAbstractItemModel.createIndex(self.clientModel, self._selectedRows[0], 0)
-                self.clientModel.setData(model_index, True)
-                # Top-left to bottom-right area. Only one element is changed so they are equal.
-                self.clientModel.dataChanged.emit(model_index, model_index) 
-
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
-                # self.runModel._data.loc[self._selectedRows, 'status'] = True
-                # self.runModel.layoutChanged.emit()
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.runModel.layoutChanged.emit()
             # elif tableName == "runsTable" and self._selectedRows != []:
@@ -304,7 +296,6 @@ class ImportWindow(QMainWindow):
     
     def getNewRunInfo(self):
         newClient = {
-            'status': [],
             'ID': [],
             'Added Time': [],
             'Edited Time': []
@@ -343,7 +334,6 @@ class ImportWindow(QMainWindow):
         run.raw_client.upload_from(Path(self.clientPath))
         run.raw_lab.upload_from(Path(self.labPath))
         data = {
-            'status': False,
             'ID': run.id,
             'Added Time': run.added_at,
             'Edited Time': run.edited_at,
@@ -470,11 +460,8 @@ class AddClientWindow(QMainWindow):
     def getNewClientInfo(self):
 
         newClient = {
-            'status': False,
             'CAL Number': self.calNumber,
-            'Client Name': self.clientName,
-            # 'Client Address 1': self.clientAddress1,
-            # 'Client Address 2': self.clientAddress2,
+            'Client Name': self.clientName
         }
         return pd.DataFrame(newClient, index=[0]) 
 
@@ -529,7 +516,6 @@ class AddEquipmentWindow(QMainWindow):
     
     def getNewEquipInfo(self):
         newEquip = {
-            'status': False,
             'Make/Model': self.model,
             'Serial Num': self.serial,
             'ID': self.id,
