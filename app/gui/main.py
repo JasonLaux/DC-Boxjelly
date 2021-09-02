@@ -1,10 +1,11 @@
 from os import error
+from typing import Counter
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstractItemModel, QModelIndex
 import sys
 from numpy import empty
-from pandas.io.pytables import SeriesFixed
+from pandas.io.pytables import Selection, SeriesFixed
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, getLeakageCurrentData
 import pandas as pd
 import pyqtgraph as pg
@@ -39,6 +40,7 @@ class MainWindow(QMainWindow):
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
+        self.ui.addClientButton.clicked.connect(lambda: self.ui.homeTable.clearSelection())
         self.ui.updateClientButton.setEnabled(False)
         self.ui.updateClientButton.clicked.connect(self.updateClientInfo)
         self.ui.clientNamelineEdit.editingFinished.connect(lambda: self.ui.updateClientButton.setEnabled(True))
@@ -75,12 +77,14 @@ class MainWindow(QMainWindow):
         self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")       
         self.clientModel = TableModel(data=getHomeTableData())
 
-        self.proxy_model = QSortFilterProxyModel()
+        self.proxy_model = QSortFilterProxyModel(self)
         self.proxy_model.setFilterKeyColumn(-1) # Search all columns.
         self.proxy_model.setSourceModel(self.clientModel)
         self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.ui.searchBar.textChanged.connect(self.proxy_model.setFilterFixedString)
-        self.ui.homeTable.setModel(self.clientModel)
+        # self.ui.searchBar.textChanged.connect(lambda: self.proxy_model.invalidateFilter())
+
+        self.ui.homeTable.setModel(self.proxy_model)
         self.ui.homeTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) #column stretch to window size
         self.ui.homeTable.setItemDelegate(AlignDelegate()) # text alignment
 
@@ -135,6 +139,7 @@ class MainWindow(QMainWindow):
     # delete chosen client on the Home Page by clicking 'delete client' button
     def deleteClient(self):
         if self._selectedRows:
+            self.clientModel.layoutAboutToBeChanged.emit()
             self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this client?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -143,15 +148,17 @@ class MainWindow(QMainWindow):
 
                 self.clientModel.initialiseTable(data=getHomeTableData())
                 self.clientModel.layoutChanged.emit()
-
             self.ui.homeTable.clearSelection()
+
+            if self.clientModel.isTableEmpty:
+                self._selectedRows = []
         # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
     
     # Update client info on the Client Info Page by clicking 'update' button
     def updateClientInfo(self):
-
+        self.clientModel.layoutAboutToBeChanged.emit()
         self.ui.updateClientButton.setEnabled(False)
 
         newClientName = self.ui.clientNamelineEdit.text()
@@ -194,6 +201,7 @@ class MainWindow(QMainWindow):
     # delete chosen equipment on the Client Info Page by clicking 'delete equipment' button
     def deleteEquipment(self):
         if self._selectedRows:
+            self.equipmentModel.layoutAboutToBeChanged.emit()
             self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this Equipment?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -209,6 +217,7 @@ class MainWindow(QMainWindow):
     # delete chosen run on the Client Info Page by clicking 'delete run' button
     def deleteRun(self):
         if self._selectedRows:
+            self.runModel.layoutAboutToBeChanged.emit()
             self._selectedRun = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this run?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -228,7 +237,9 @@ class MainWindow(QMainWindow):
             self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedRows()]
             print(self._selectedRows)
             if tableName == "homeTable" and self._selectedRows != []:
+                self.equipmentModel.layoutAboutToBeChanged.emit()
                 self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+                print(self._selectedCalNum)
                 self.ui.label_CALNum.setText(self._selectedCalNum)
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
@@ -237,6 +248,7 @@ class MainWindow(QMainWindow):
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
+                self.runModel.layoutAboutToBeChanged.emit()
                 self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.runModel.layoutChanged.emit()
@@ -284,7 +296,23 @@ class MainWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
-    
+ 
+class ClientFilter(QSortFilterProxyModel):
+    def __init__(self, parent):
+        super(ClientFilter,self).__init__(parent)
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        sourceModel = self.sourceModel()
+        for i in range(sourceModel._data.shape[0]): # Bad practice
+            idx = sourceModel.index(source_row, i, source_parent)
+            print(idx.row(), idx.column())
+            if not idx.isValid():
+                print("Invalid")
+                return False
+            else:
+                print("Valid")
+                return True
+
 
 class ImportWindow(QMainWindow):
     def __init__(self, parent = None):
@@ -335,6 +363,7 @@ class ImportWindow(QMainWindow):
         self.ui.labFilePathLine.setText(self.labPath)
 
     def addNewRun(self):
+        self.parent.runModel.layoutAboutToBeChanged.emit()
         if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose both Client raw file and Lab raw file!")
             return
@@ -498,6 +527,8 @@ class AddClientWindow(QMainWindow):
         return pd.DataFrame(newClient, index=[0]) 
 
     def addNewClient(self):
+        self.parent.clientModel.layoutAboutToBeChanged.emit()
+        self.parent.ui.homeTable.clearSelection()
         self.calNumber = self.ui.calNumLine.text()
         self.clientName = self.ui.clientNameLine.text()
         self.clientAddress1 = self.ui.clientAddress1Line.text()
@@ -555,6 +586,7 @@ class AddEquipmentWindow(QMainWindow):
         return pd.DataFrame(newEquip, index=[0]) 
     
     def addNewEquip(self):
+        self.parent.equipmentModel.layoutAboutToBeChanged.emit()
         self.model = self.ui.modelLine.text()
         self.serial = self.ui.serialLine.text()
         # TODO: Check duplicated ID
@@ -620,6 +652,7 @@ class TableModel(QAbstractTableModel):
         if newData.empty is False:
             print("Add data...")
             print(newData)
+
             self._data = self._data.append(newData, ignore_index=True)
             print(self._data)
         else:
@@ -650,6 +683,10 @@ class TableModel(QAbstractTableModel):
             except:
                 return False
         return super().setHeaderData(section, orientation, data, role)
+    
+    def isTableEmpty(self):
+
+        return self._data.empty
     
     # def removeRows(self, position, rows=1, index=QModelIndex()):
 
