@@ -116,41 +116,10 @@
          </widget>
         </item>
         <item>
-         <widget class="QTabWidget" name="tabWidget_2">
+         <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>-1</number>
           </property>
-          <widget class="QWidget" name="run_3">
-           <attribute name="title">
-            <string>Run 1</string>
-           </attribute>
-           <widget class="QTableView" name="run1Table">
-            <property name="geometry">
-             <rect>
-              <x>9</x>
-              <y>9</y>
-              <width>256</width>
-              <height>192</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <family>Verdana</family>
-              <pointsize>14</pointsize>
-             </font>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="run_4">
-           <attribute name="title">
-            <string>Run 2</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0">
-             <widget class="QTableView" name="run2Table"/>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </item>
        </layout>
