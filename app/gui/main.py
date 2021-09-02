@@ -1,11 +1,11 @@
 from os import error
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
+from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstractItemModel, QModelIndex
 import sys
 from numpy import empty
 from pandas.io.pytables import SeriesFixed
-from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
+from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, getLeakageCurrentData
 import pandas as pd
 import pyqtgraph as pg
 from app.core.models import Job, Equipment
@@ -268,7 +268,8 @@ class MainWindow(QMainWindow):
         # Pop up warning when not choosing any of the runs
         if self._selectedRows:
             self._selectedRuns = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
-            print(self._selectedRuns)
+            runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], self._selectedRuns))
+            self.analysisWindow.setRuns(runs) 
             self.analysisWindow.analyze()
             self._selectedRows = []
         else:
@@ -397,8 +398,8 @@ class AnalyseWindow(QMainWindow):
         #window = loadUI("./app/gui/analyse_page.ui", self)        
         self.ui = window
         self._selectedRows = []
-        self.tabCount = 0
-        self.runsNum = 0
+        self.runs = []
+        self.tabTables = []
 
         ## Table and Graph insertion
         # self.ui.resultGraph
@@ -435,8 +436,21 @@ class AnalyseWindow(QMainWindow):
             raise AttributeError("Attribute does not exist! Table name may be altered!")
         print(self._selectedRows)
     
+    def setRuns(self, runs):
+        self.runs = runs
+        for run in runs:
+            # get Leakage Current Data of each run
+            data = getLeakageCurrentData()
+            self.tabTables.append(data)
+            self.leakageCurrentModel = TableModel(data)
+            self.tabTable = QTableView()
+            self.tabTable.setModel(self.leakageCurrentModel)
+            self.tabTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+            self.ui.tabWidget.addTab(self.tabTable, "Run "+str(run.id))
+        
     def analyze(self):
         # TODO: insert analyze functions here
+        print(self.runs)
         self.show()
         return
 
@@ -444,6 +458,7 @@ class AnalyseWindow(QMainWindow):
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
+            self.__init__()
             event.accept()  
         else:
             event.ignore() 
