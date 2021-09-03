@@ -383,8 +383,11 @@ class ImportWindow(QMainWindow):
 
     def addNewRun(self):
         self.parent.runModel.layoutAboutToBeChanged.emit()
+        if len(self.clientPath) == 0 or len(self.labPath) == 0:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose or fill in both Client file and Lab file path.")
+            return
         if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
-            QtWidgets.QMessageBox.about(self, "Warning", "Please choose both Client raw file and Lab raw file!")
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
             return
         run = self.equip.mex.add()
         run.raw_client.upload_from(Path(self.clientPath))
