@@ -261,7 +261,9 @@ class MainWindow(QMainWindow):
 
     # define open window functions
     def openConstantsWindow(self):
-        self.constantsWindow.show()
+        # open constant file instead of open constant window
+        os.startfile('.\\app\\core\\constant.xlsx')
+        #self.constantsWindow.show()
     
     def openAddClientWindow(self):
         self.addClientWindow.setFixedSize(850, 320)
