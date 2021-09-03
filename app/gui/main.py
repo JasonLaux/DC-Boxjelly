@@ -82,7 +82,7 @@ class MainWindow(QMainWindow):
         self.proxy_model.setSourceModel(self.clientModel)
         self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.ui.searchBar.textChanged.connect(self.proxy_model.setFilterFixedString)
-        # self.ui.searchBar.textChanged.connect(lambda: self.proxy_model.invalidateFilter())
+        self.ui.searchBar.textEdited.connect(self.ui.homeTable.clearSelection)
 
         self.ui.homeTable.setModel(self.proxy_model)
         self.ui.homeTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) #column stretch to window size
@@ -235,11 +235,14 @@ class MainWindow(QMainWindow):
     def selection_changed(self, tableName):
         try:
             # TODO Order is based on the selection. Need to sort first?
-            self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedRows()]
+            modelIndex = getattr(self, tableName).selectionModel().selectedRows() # QModelIndexList
+            self._selectedRows = [idx.row() for idx in modelIndex]
             print(self._selectedRows)
             if tableName == "homeTable" and self._selectedRows != []:
                 self.equipmentModel.layoutAboutToBeChanged.emit()
-                self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+                source_selectedIndex = [self.proxy_model.mapToSource(modelIndex[0]).row()]
+                print(source_selectedIndex)
+                self._selectedCalNum = self.clientModel._data.loc[source_selectedIndex, 'CAL Number'].to_list()[0]
                 print(self._selectedCalNum)
                 self.ui.label_CALNum.setText(self._selectedCalNum)
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
