@@ -11,6 +11,7 @@ pyqtgraph = "*"
 pandas = "*"
 numpy = "*"
 pyinstaller = "*"
+openpyxl = "*"
 
 [dev-packages]
 autopep8 = "*"
