@@ -7,8 +7,8 @@ equipment_model,AAA
 equipment_serial,123
 run_id,1
 operator,
-run_added_at,2021-08-29T20:36:39+10:00
-run_edited_at,2021-08-29T20:36:39+10:00
+run_added_at,2021-01-01T13:20:00+11:00
+run_edited_at,2021-01-01T13:20:00+11:00
 [COMET X-RAY MEASUREMENT],,,,,,,,,,,,,,,,
 Filename,,C:\CRData\12Feb2021-4-31P.csv,,,,,,,,,,,,,,
 Date,,12/02/2021,,,,,,,,,,,,,,
