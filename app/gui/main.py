@@ -171,6 +171,7 @@ class MainWindow(QMainWindow):
                 Job[self._selectedCalNum].client_name = newClientName
                 Job[self._selectedCalNum].client_address_1 = newFstAddress
                 Job[self._selectedCalNum].client_address_2 = newSndAddress
+                QtWidgets.QMessageBox.about(self, ' ', "Successfully updated user information.")
             except AttributeError:
                 error = True
                 raise error("Job ID is not found!")
