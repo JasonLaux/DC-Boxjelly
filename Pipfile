@@ -16,6 +16,7 @@ pyinstaller = "*"
 autopep8 = "*"
 ipython = "*"
 pyqt5-tools = "*"
+time-machine = "*"
 
 [requires]
 python_version = "3.9"

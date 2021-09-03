@@ -3,7 +3,7 @@ import portalocker
 from PyQt5.QtWidgets import QMessageBox, QApplication
 import sys
 
-from app.core.constraints import JOBS_LOCK_PATH
+from app.core.definition import JOBS_LOCK_PATH
 from app.gui.main import start_event_loop
 
 

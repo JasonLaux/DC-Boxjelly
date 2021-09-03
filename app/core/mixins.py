@@ -3,7 +3,7 @@ import configparser
 import shutil
 from typing import Any, Callable, Dict, Optional
 
-from .constraints import META_FILE_NAME
+from .definition import META_FILE_NAME
 from .utils import ensure_folder
 
 

@@ -1,16 +1,19 @@
+import datetime
 from pathlib import Path
 import unittest
 import shutil
 import importlib
+import time_machine
+import pytz
 
-from app.core import constraints, models
+from app.core import definition, models
 
 
 class ModelTestBase(unittest.TestCase):
     def setUp(self) -> None:
-        shutil.rmtree(constraints.DATA_FOLDER)
-        importlib.reload(constraints)  # creatate necessary folders
-        (constraints.DATA_FOLDER / '.gitkeep').touch()
+        shutil.rmtree(definition.DATA_FOLDER)
+        importlib.reload(definition)  # creatate necessary folders
+        (definition.DATA_FOLDER / '.gitkeep').touch()
 
     def assertMetaContent(self, path, value: list):
         meta = Path(path).read_text().strip().splitlines()
@@ -135,10 +138,12 @@ class TestMexRun(ModelTestBase):
             'data/jobs/CAL0001/AAA_123/MEX/1/meta.ini').read_text().strip().splitlines()
         self.assertEqual(len(lines), 4)
         self.assertEqual(lines[0], '[DEFAULT]')
-        self.assertRegexpMatches(lines[1], r'^added_at = ')
-        self.assertRegexpMatches(lines[2], r'^edited_at = ')
+        self.assertRegex(lines[1], r'^added_at = ')
+        self.assertRegex(lines[2], r'^edited_at = ')
         self.assertEqual(lines[3], 'operator = Random Person')
 
+    @time_machine.travel(datetime.datetime(2021, 1, 1, 12, 0, 0,
+                                           tzinfo=pytz.timezone('Australia/Melbourne')))
     def test_raw_file(self):
         TEST_DATA_FOLDER = Path(__file__).parent / '_assert' / 'Data'
         CLIENT_A_RUN1_CLIENT = TEST_DATA_FOLDER / \
