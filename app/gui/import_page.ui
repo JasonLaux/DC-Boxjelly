@@ -78,7 +78,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>150</width>
+          <width>80</width>
           <height>20</height>
          </size>
         </property>
@@ -99,7 +99,7 @@
             <property name="maximumSize">
              <size>
               <width>113</width>
-              <height>35</height>
+              <height>43</height>
              </size>
             </property>
             <property name="font">
@@ -148,7 +148,7 @@ background-color: white;
             </property>
             <property name="maximumSize">
              <size>
-              <width>500</width>
+              <width>560</width>
               <height>16777215</height>
              </size>
             </property>
@@ -162,6 +162,56 @@ background-color: white;
              <string notr="true">background-color: rgb(255, 255, 255);
 border: 1px solid black;
 </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clientOpenFile">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>113</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Comic Sans MS</family>
+              <pointsize>-1</pointsize>
+              <weight>75</weight>
+              <italic>false</italic>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+background-color: rgb(211, 213, 213);
+color:black;
+border-style:outset;
+border-width:2px;
+border-radius:10px;
+border-color: black;
+font:bold 20px;
+padding: 6;
+}
+
+QPushButton:hover{
+background-color: rgb(83, 82, 82);
+color: white;
+}
+
+QPushButton:pressed{
+background-color: white;
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Open File</string>
             </property>
            </widget>
           </item>
@@ -196,7 +246,7 @@ border: 1px solid black;
             <property name="maximumSize">
              <size>
               <width>113</width>
-              <height>35</height>
+              <height>43</height>
              </size>
             </property>
             <property name="font">
@@ -245,7 +295,7 @@ background-color: white;
             </property>
             <property name="maximumSize">
              <size>
-              <width>500</width>
+              <width>560</width>
               <height>16777215</height>
              </size>
             </property>
@@ -259,6 +309,56 @@ background-color: white;
              <string notr="true">background-color: rgb(255, 255, 255);
 border: 1px solid black;
 </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="labOpenFile">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>113</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Comic Sans MS</family>
+              <pointsize>-1</pointsize>
+              <weight>75</weight>
+              <italic>false</italic>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+background-color: rgb(211, 213, 213);
+color:black;
+border-style:outset;
+border-width:2px;
+border-radius:10px;
+border-color: black;
+font:bold 20px;
+padding: 6;
+}
+
+QPushButton:hover{
+background-color: rgb(83, 82, 82);
+color: white;
+}
+
+QPushButton:pressed{
+background-color: white;
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Open File</string>
             </property>
            </widget>
           </item>
