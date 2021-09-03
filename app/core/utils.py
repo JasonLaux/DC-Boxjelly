@@ -13,7 +13,7 @@ def ensure_folder(path: Path) -> bool:
     """
     Ensure the folder in path exists. If it does not exist, create the folder
 
-    Return whether the folder exists before invoking this function.
+    Return whether the folder exists.
     """
 
     if not path.exists():
