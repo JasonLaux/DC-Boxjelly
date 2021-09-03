@@ -271,15 +271,18 @@ class MainWindow(QMainWindow):
     
     def openAddClientWindow(self):
         self.addClientWindow.setFixedSize(850, 320)
+        self.addClientWindow.setWindowModality(Qt.ApplicationModal)
         self.addClientWindow.show()
     
     def openAddEquipmentWindow(self):
         self.addEquipmentWindow.setFixedSize(850, 320)
+        self.addEquipmentWindow.setWindowModality(Qt.ApplicationModal)
         self.addEquipmentWindow.show()
         self.addEquipmentWindow.job = Job[self._selectedCalNum]
 
     def openImportWindow(self):
         self.importWindow.setFixedSize(850, 320)
+        self.importWindow.setWindowModality(Qt.ApplicationModal)
         self.importWindow.show()
         self.importWindow.equip = Job[self._selectedCalNum][self._selectedEquipID]
     
@@ -514,6 +517,7 @@ class AnalyseWindow(QMainWindow):
     def analyze(self):
         # TODO: insert analyze functions here
         print(self.runs)
+        self.setWindowModality(Qt.ApplicationModal)
         self.show()
         return
 
