@@ -84,7 +84,17 @@ def calculator(client, lab):
     NK = round(NK / 1000000, 2)
     NK.columns = ['NK']
 
-    return NK
+    # leakage
+    df_leakage = pd.DataFrame({"Current PA Before": [BgdMC1_Before, BgdIC1_Before, BgdMC2_Before, BgdIC2_Before],
+                                  "Current PA After": [client_data.df_after_mean['Current1(pA)'].values[0],
+                                                       client_data.df_after_mean['Current2(pA)'].values[0],
+                                                       lab_data.df_after_mean['Current1(pA)'].values[0],
+                                                       lab_data.df_after_mean['Current2(pA)'].values[0]]},
+                                 index=["Monitor 1", "Chamber (client)", "Monitor 1", "Standard (MEFAC)"])
+
+    df_leakage = df_leakage.style.applymap(over_threshold)
+
+    return NK, df_leakage, None
 
 
 def extraction(path):
@@ -155,3 +165,12 @@ def extraction(path):
     # return number of duplicate_beam since kk need to know how many beams measure two times
     return data, len(duplicate_beam)
 
+
+# color dataframe
+def over_threshold(value):
+    if abs(value) > 0.1:
+        color = 'yellow'
+    else:
+        color = 'whight'
+
+    return 'background-color: %s' % color
