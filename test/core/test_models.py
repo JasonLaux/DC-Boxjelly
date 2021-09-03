@@ -3,14 +3,14 @@ import unittest
 import shutil
 import importlib
 
-from app.core import constraints, models
+from app.core import definition, models
 
 
 class ModelTestBase(unittest.TestCase):
     def setUp(self) -> None:
-        shutil.rmtree(constraints.DATA_FOLDER)
-        importlib.reload(constraints)  # creatate necessary folders
-        (constraints.DATA_FOLDER / '.gitkeep').touch()
+        shutil.rmtree(definition.DATA_FOLDER)
+        importlib.reload(definition)  # creatate necessary folders
+        (definition.DATA_FOLDER / '.gitkeep').touch()
 
     def assertMetaContent(self, path, value: list):
         meta = Path(path).read_text().strip().splitlines()

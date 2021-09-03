@@ -15,7 +15,7 @@ import os
 import errno
 
 from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
-from .constraints import RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME
+from .definition import RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME
 from .utils import count_iter_items, datetime_to_iso, ensure_folder, iter_subfolders
 
 
