@@ -331,11 +331,23 @@ class ImportWindow(QMainWindow):
         #window = loadUI("./app/gui/import_page.ui", self)
         self.ui = window
         self.equip = None
-        self.clientPath = ""
-        self.labPath = ""
+        self.clientPath = self.ui.clientFilePathLine.text()
+        self.labPath = self.ui.labFilePathLine.text()
+        self.ui.clientFilePathLine.textChanged.connect(self.sync_clientLineEdit)
+        self.ui.labFilePathLine.textChanged.connect(self.sync_labLineEdit)
+
+        # link buttons to actions
         self.importClientFilebutton.pressed.connect(self.chooseRawClient)
         self.importLabFileButton.pressed.connect(self.chooseRawLab)
         self.importSubmitButton.pressed.connect(self.addNewRun)
+        self.clientOpenFile.pressed.connect(self.openClientFile)
+        self.labOpenFile.pressed.connect(self.openLabFile)
+
+    def sync_clientLineEdit(self):
+        self.clientPath = self.ui.clientFilePathLine.text()
+    
+    def sync_labLineEdit(self):
+        self.labPath = self.ui.labFilePathLine.text()
     
     def getNewRunInfo(self):
         newClient = {
@@ -393,6 +405,18 @@ class ImportWindow(QMainWindow):
         self.ui.clientFilePathLine.clear()
         self.ui.labFilePathLine.clear()
         # TODO: Display another window to confirm information
+    
+    def openClientFile(self):
+        try:
+            os.startfile(self.clientPath)
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
+    
+    def openLabFile(self):
+        try:
+            os.startfile(self.labPath)
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
 
 
     def closeEvent(self, event):  
