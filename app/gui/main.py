@@ -284,10 +284,18 @@ class MainWindow(QMainWindow):
     def openConstantsWindow(self):
         # open constant file instead of open constant window
         try:
-            os.startfile('.\\app\\core\\constant.xlsx')
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        constantFilePath = os.path.join(base_path, 'app\\core\\constant.xlsx')
+
+        try:
+            os.startfile(constantFilePath)
         except FileNotFoundError:
             QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
         
+
         #self.constantsWindow.show()
     
     def openAddClientWindow(self):

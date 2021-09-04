@@ -8,6 +8,7 @@ import pandas as pd
 import warnings
 import numpy as np
 import os
+import sys
 
 warnings.filterwarnings('ignore')
 
@@ -63,8 +64,13 @@ def calculator(client, lab):
     H2 = lab_data.df_mean['H(%)'].to_frame('NK')
 
     # read constant and KK from constant excel file
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    constant = dir_path+'\\constant.xlsx'
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    # dir_path = os.path.dirname(os.path.realpath(__file__))
+    constant = os.path.join(base_path, 'app\\core\\constant.xlsx')
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_beams = pd.read_excel(constant, sheet_name='Beams')
 
