@@ -88,10 +88,3 @@ def getResultData():
         "Run2/Average": [0.933, 0.933],
     }
     return pd.DataFrame(data)
-
-def getLeakageCurrentData():
-    fakedata = {
-        "Before": ["-0.1 pA", "0.1 pA", "0.1 pA", "-0.2 pA"],
-        "After": ["-0.2 pA", "-0.1 pA", "0.2 pA", "-0.1 pA"],
-    }
-    return pd.DataFrame(fakedata, index = ["Monitor", "MEFAC", "Monitor", "Client"])

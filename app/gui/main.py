@@ -6,10 +6,11 @@ from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstra
 import sys
 from numpy import empty
 from pandas.io.pytables import Selection, SeriesFixed
-from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, getLeakageCurrentData
+from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
 import pandas as pd
 import pyqtgraph as pg
 from app.core.models import Job, Equipment
+from app.core.resolvers import calculator
 import os
 from pathlib import Path
 
@@ -509,9 +510,10 @@ class AnalyseWindow(QMainWindow):
         self.runs = runs
         for run in runs:
             # get Leakage Current Data of each run
-            data = getLeakageCurrentData()
-            self.tabTables.append(data)
-            self.leakageCurrentModel = TableModel(data)
+            # get data from resolver
+            NK, df_leakage, graph_data = calculator(run.raw_client.path, run.raw_lab.path)
+            self.tabTables.append(df_leakage.data)
+            self.leakageCurrentModel = TableModel(df_leakage.data)
             self.tabTable = QTableView()
             self.tabTable.setModel(self.leakageCurrentModel)
             self.tabTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

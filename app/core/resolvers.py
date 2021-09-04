@@ -50,7 +50,7 @@ def calculator(client, lab):
     H2 = lab_data.df_mean['H(%)'].to_frame('NK')
 
     # read constant and KK from constant excel file
-    constant = r'constant.xlsx'
+    constant = r'.\\app\\core\\constant.xlsx'
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_KK = pd.read_excel(constant, sheet_name='Beams', usecols=[0, 9])
 

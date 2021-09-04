@@ -12,6 +12,7 @@ pandas = "*"
 numpy = "*"
 pyinstaller = "*"
 openpyxl = "*"
+jinja2 = "*"
 
 [dev-packages]
 autopep8 = "*"
