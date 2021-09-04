@@ -37,8 +37,8 @@ def calculator(client, lab):
     cats = client_data.df_mean.index.tolist()
     lab_data.df_mean.reset_index(inplace=True)
     lab_data.df_mean['Filter'] = pd.CategoricalIndex(lab_data.df_mean['Filter'], ordered=True, categories=cats)
-    lab_data.df_mean = lab_data.df_mean.sort_values('Filter')
-    lab_data.df_mean = lab_data.df_mean.set_index('Filter')
+    lab_data.df_mean.sort_values('Filter', inplace=True)
+    lab_data.df_mean.set_index('Filter', inplace=True)
 
     # client calculation part
     BgdMC1_Before = client_data.df_before_mean['Current1(pA)'].values[0]
@@ -62,7 +62,7 @@ def calculator(client, lab):
     H2 = lab_data.df_mean['H(%)'].to_frame('NK')
 
     # read constant and KK from constant excel file
-    constant = '.\\app\\core\\constant.xlsx'
+    constant = r'E:\Unimelb\2021 S2\Software Project\test\constant\constant2.xlsx'
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_beams = pd.read_excel(constant, sheet_name='Beams')
 
@@ -77,17 +77,17 @@ def calculator(client, lab):
     df_beams = df_beams[df_beams.Filter.isin(client_data.df_mean.index)]
     cats = client_data.df_mean.index[:-duplicate_num]
     df_beams['Filter'] = pd.CategoricalIndex(df_beams['Filter'], ordered=True, categories=cats)
-    df_beams = df_beams.sort_values('Filter')
+    df_beams.sort_values('Filter', inplace=True)
 
     # get the filter which measure two times from KK
-    df_beams_dupkicate = df_beams[df_beams.Filter.isin(client_data.df_mean.index[:duplicate_num])]
+    df_beams_duplicate = df_beams[df_beams.Filter.isin(client_data.df_mean.index[:duplicate_num])]
     cats = client_data.df_mean.index[:duplicate_num]
-    df_beams_dupkicate['Filter'] = pd.CategoricalIndex(df_beams_dupkicate['Filter'], ordered=True, categories=cats)
-    df_beams_dupkicate['Filter'] = [Filter + '*' for Filter in df_beams_dupkicate.Filter.tolist()]
-    df_beams_dupkicate = df_beams_dupkicate.sort_values('Filter')
+    df_beams_duplicate['Filter'] = pd.CategoricalIndex(df_beams_duplicate['Filter'], ordered=True, categories=cats)
+    df_beams_duplicate['Filter'] = [Filter + '*' for Filter in df_beams_duplicate.Filter.tolist()]
+    df_beams_duplicate.sort_values('Filter', inplace=True)
 
     # concat together so that KK will have the same order as client_data.df_mean
-    df_KK = pd.concat([df_beams, df_beams_dupkicate], axis=0).set_index('Filter')['Product'].to_frame('NK')
+    df_KK = pd.concat([df_beams, df_beams_duplicate], axis=0).set_index('Filter')['Product'].to_frame('NK')
 
     # Calculating NK
     NK = R2 * WE * df_KK * ((273.15 + TS2) / (273.15 + TM2)) * (0.995766667 + 0.000045 * H2) / (
@@ -101,10 +101,10 @@ def calculator(client, lab):
                                                        client_data.df_after_mean['Current2(pA)'].values[0],
                                                        lab_data.df_after_mean['Current1(pA)'].values[0],
                                                        lab_data.df_after_mean['Current2(pA)'].values[0]]},
-                                 index=["Monitor 1", "Chamber (client)", "Monitor 1", "Standard (MEFAC)"])
+                                 index=["Monitor 1", "Chamber (client)", "Monitor 2", "Standard (MEFAC)"])
 
     # extract the effective energy for plotting the graph
-    df_energy = pd.concat([df_beams, df_beams_dupkicate], axis=0).set_index('Filter')['E_eff'].to_frame()
+    df_energy = pd.concat([df_beams, df_beams_duplicate], axis=0).set_index('Filter')['E_eff'].to_frame()
 
     # create an object to save result
     result = result_data()
@@ -126,32 +126,23 @@ def calculator(client, lab):
 
 
 def extraction(path):
-    df = pd.read_csv(path, encoding='mac_roman')
-
-    title_index = 0
     Backgrounds_num = 0
     Measurements_num = 0
+    df_total = None
 
-    for i in range(len(df)):
-        # get where the data start
-        if 'DATA' in df.iloc[i].tolist()[0]:
-            title_index = i + 1
-            break
+    with open(path, newline='') as f:
+        for line in f:
+            if 'DATA' in line:
+                break
+            # get the Background number
+            elif 'Backgrounds' in line:
+                Backgrounds_num = int(line.split(',')[2])
 
-        # get the Background number
-        elif 'Backgrounds' in df.iloc[i].tolist()[0]:
-            Backgrounds_num = int(df.iloc[i].tolist()[2])
+            # get the measurement number
+            elif 'Measurements' in line:
+                Measurements_num = int(line.split(',')[2])
+        df_total = pd.read_csv(f)
 
-        # get the measurement number
-        elif 'Measurements' in df.iloc[i].tolist()[0]:
-            Measurements_num = int(df.iloc[i].tolist()[2])
-
-    # store the title
-    title = df.iloc[title_index].values.tolist()
-
-    # extract all data
-    df_total = df[title_index + 1:]
-    df_total.columns = title
     df_total.drop(['kV', 'mA', 'HVLFilter(mm)', 'N', 'P(kPa)', 'Comment'], axis=1, inplace=True)
 
     # change the column type to numeric
