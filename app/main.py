@@ -25,24 +25,32 @@ def main():
 
     std_out_log = logging.StreamHandler()
     std_out_log.setLevel(logging.DEBUG)
+
     file_log = RotatingFileHandler('dc.log')
     file_log.setLevel(logging.INFO)
 
+    qt5_logger = logging.getLogger('PyQt5')
+    qt5_logger.setLevel(logging.WARNING)
+
+    logger = logging.getLogger(__name__)
+
     logging.basicConfig(
+        level=logging.NOTSET,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
             std_out_log,
             file_log,
         ])
 
-    logging.info('Starting application')
+    logger.info('Starting application')
 
     try:
         with portalocker.Lock(JOBS_LOCK_PATH, fail_when_locked=True):
-            logging.info('Data log required, starting event loop')
+            logger.info('Data log required, starting event loop')
             ret = start_event_loop()
 
     except AlreadyLocked:
-        logging.error('Multiple instance detected')
+        logger.error('Multiple instance detected')
 
         app = QApplication(sys.argv)
         msg = QMessageBox(QMessageBox.Icon.Critical,
