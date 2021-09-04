@@ -6,14 +6,18 @@ from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
 from numpy import empty
 from pandas.io.pytables import Selection, SeriesFixed
-from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
 import pandas as pd
 import pyqtgraph as pg
-from app.core.models import Job, Equipment
-from app.core.resolvers import calculator, result_data
 import os
 from pathlib import Path
+import logging
+
+from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
+from app.core.models import Job, Equipment
+from app.core.resolvers import calculator, result_data
 from app.gui import resources
+
+logger = logging.getLogger(__name__)
 
 '''
 #Run UI main file under root dir

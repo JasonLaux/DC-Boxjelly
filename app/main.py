@@ -2,16 +2,48 @@ from portalocker.exceptions import AlreadyLocked
 import portalocker
 from PyQt5.QtWidgets import QMessageBox, QApplication
 import sys
+import logging
+from logging.handlers import RotatingFileHandler
 
 from app.core.definition import JOBS_LOCK_PATH
 from app.gui.main import start_event_loop
 
 
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    logging.critical("Uncaught exception", exc_info=(
+        exc_type, exc_value, exc_traceback))
+
+
+sys.excepthook = handle_exception
+
+
 def main():
+
+    std_out_log = logging.StreamHandler()
+    std_out_log.setLevel(logging.DEBUG)
+    file_log = RotatingFileHandler('dc.log')
+    file_log.setLevel(logging.INFO)
+
+    logging.basicConfig(
+        handlers=[
+            std_out_log,
+            file_log,
+        ])
+
+    logging.info('Starting application')
+
     try:
         with portalocker.Lock(JOBS_LOCK_PATH, fail_when_locked=True):
+            logging.info('Data log required, starting event loop')
             ret = start_event_loop()
+
     except AlreadyLocked:
+        logging.error('Multiple instance detected')
+
         app = QApplication(sys.argv)
         msg = QMessageBox(QMessageBox.Icon.Critical,
                           'Error: Multiple instance detected!',
