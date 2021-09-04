@@ -18,6 +18,7 @@ from app.core.resolvers import calculator, result_data
 from app.gui import resources
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 '''
 #Run UI main file under root dir
@@ -197,7 +198,7 @@ class MainWindow(QMainWindow):
                 self.clientModel.initialiseTable(data=getHomeTableData())
                 self.clientModel.layoutChanged.emit()
         else:
-            print("No need to update any client info")
+            logger.warn("No need to update any client info")
             
 
 
@@ -254,13 +255,13 @@ class MainWindow(QMainWindow):
             # TODO Order is based on the selection. Need to sort first?
             modelIndex = getattr(self, tableName).selectionModel().selectedRows() # QModelIndexList
             self._selectedRows = [idx.row() for idx in modelIndex]
-            print(self._selectedRows)
+            logger.debug(self._selectedRows)
             if tableName == "homeTable" and self._selectedRows != []:
                 self.equipmentModel.layoutAboutToBeChanged.emit()
                 source_selectedIndex = [self.proxy_model.mapToSource(modelIndex[0]).row()]
-                print(source_selectedIndex)
+                logger.debug(source_selectedIndex)
                 self._selectedCalNum = self.clientModel._data.loc[source_selectedIndex, 'CAL Number'].to_list()[0]
-                print(self._selectedCalNum)
+                logger.debug(self._selectedCalNum)
                 self.ui.label_CALNum.setText(self._selectedCalNum)
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
@@ -318,7 +319,7 @@ class MainWindow(QMainWindow):
             else:
                 QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
         except:
-            print("Can't resolve raw data file!")
+            logging.error("Can't resolve raw data file!")
             QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
         
     
@@ -339,12 +340,13 @@ class ClientFilter(QSortFilterProxyModel):
         sourceModel = self.sourceModel()
         for i in range(sourceModel._data.shape[0]): # Bad practice
             idx = sourceModel.index(source_row, i, source_parent)
-            print(idx.row(), idx.column())
+            logger.debug(idx.row())
+            logger.debug(idx.column())
             if not idx.isValid():
-                print("Invalid")
+                logger.debug("Invalid")
                 return False
             else:
-                print("Valid")
+                logger.debug("Valid")
                 return True
 
 
@@ -395,7 +397,7 @@ class ImportWindow(QMainWindow):
             filter = file_filter,
             initialFilter = 'Raw Data File (*.csv)'
         )[0]
-        print("Client raw file: ", self.clientPath)
+        logger.debug("Client raw file: %s", self.clientPath)
         self.ui.clientFilePathLine.setText(self.clientPath)
     
     def chooseRawLab(self):
@@ -407,7 +409,7 @@ class ImportWindow(QMainWindow):
             filter = file_filter,
             initialFilter = 'Raw Data File (*.csv)'
         )[0]
-        print("Lab raw file: ", self.labPath)
+        logger.debug("Lab raw file: %s", self.labPath)
         self.ui.labFilePathLine.setText(self.labPath)
 
     def addNewRun(self):
@@ -518,19 +520,19 @@ class AnalyseWindow(QMainWindow):
         proxy_widget = scene.addWidget(self.plotWdgt)
 
         # Tab and table
-        print(self.ui.tabWidget.count())
+        logger.debug(self.ui.tabWidget.count())
     
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
         try:
             # Single selection mode
             idx = getattr(self, tableName).selectionModel().selectedIndexes()[0]
-            print(idx.row(), idx.column())
+            logger.debug(idx.row(), idx.column())
             # self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedIndexes()]
         except AttributeError:
-            print("Attribute does not exist! Table name may be altered!")
+            logger.error("Attribute does not exist! Table name may be altered!")
             raise AttributeError("Attribute does not exist! Table name may be altered!")
-        print(self._selectedRows)
+        logger.debug(self._selectedRows)
 
     def setRuns(self, runs):
         self.runs = runs
@@ -549,7 +551,7 @@ class AnalyseWindow(QMainWindow):
         
     def analyze(self):
         # TODO: insert analyze functions here
-        print(self.runs)
+        logger.debug(self.runs)
         self.setWindowModality(Qt.ApplicationModal)
         self.show()
         return
@@ -723,11 +725,11 @@ class TableModel(QAbstractTableModel):
 
     def addData(self, newData):
         if newData.empty is False:
-            print("Add data...")
-            print(newData)
+            logger.debug("Add data...")
+            logger.debug(newData)
 
             self._data = self._data.append(newData, ignore_index=True)
-            print(self._data)
+            logger.debug(self._data)
         else:
             pass
 
@@ -735,7 +737,7 @@ class TableModel(QAbstractTableModel):
         if idx:
             self._data = self._data.drop(idx)
             self._data.reset_index(drop=True, inplace=True)
-            print(self._data)
+            logger.debug(self._data)
         else:
             pass
     
@@ -764,8 +766,8 @@ class TableModel(QAbstractTableModel):
     # def removeRows(self, position, rows=1, index=QModelIndex()):
 
     #     self.beginRemoveRows(QModelIndex(), position, position + rows - 1)  
-    #     # print("Drop")     
-    #     # print(self._data.drop(position))
+    #     # logger.debug("Drop")     
+    #     # logger.debug(self._data.drop(position))
     #     self._data = self._data.drop(position)
     #     self._data.reset_index(drop=True, inplace=True)
     #     self.endRemoveRows()

@@ -9,12 +9,15 @@ from app.core.definition import JOBS_LOCK_PATH
 from app.gui.main import start_event_loop
 
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 def handle_exception(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
 
-    logging.critical("Uncaught exception", exc_info=(
+    logger.critical("Uncaught exception", exc_info=(
         exc_type, exc_value, exc_traceback))
 
 
@@ -29,13 +32,7 @@ def main():
     file_log = RotatingFileHandler('dc.log')
     file_log.setLevel(logging.INFO)
 
-    qt5_logger = logging.getLogger('PyQt5')
-    qt5_logger.setLevel(logging.WARNING)
-
-    logger = logging.getLogger(__name__)
-
     logging.basicConfig(
-        level=logging.NOTSET,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
             std_out_log,
@@ -46,7 +43,7 @@ def main():
 
     try:
         with portalocker.Lock(JOBS_LOCK_PATH, fail_when_locked=True):
-            logger.info('Data log required, starting event loop')
+            logger.info('Data lock acquired, starting event loop')
             ret = start_event_loop()
 
     except AlreadyLocked:
