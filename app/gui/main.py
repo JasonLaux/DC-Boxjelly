@@ -304,14 +304,18 @@ class MainWindow(QMainWindow):
     
     def openAnalysisWindow(self):
         # Pop up warning when not choosing any of the runs
-        if self._selectedRows:
-            self._selectedRuns = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
-            runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], self._selectedRuns))
-            self.analysisWindow.setRuns(runs) 
-            self.analysisWindow.analyze()
-            self._selectedRows = []
-        else:
-            QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
+        try:
+            if self._selectedRows:
+                self._selectedRuns = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
+                runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], self._selectedRuns))
+                self.analysisWindow.setRuns(runs) 
+                self.analysisWindow.analyze()
+                self._selectedRows = []
+            else:
+                QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
+        except:
+            print("Can't resolve raw data file!")
+            QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
         
     
     def closeEvent(self, event):  
