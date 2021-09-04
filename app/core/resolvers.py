@@ -7,6 +7,7 @@ be a model or just a matrix.
 import pandas as pd
 import warnings
 import numpy as np
+import os
 
 warnings.filterwarnings('ignore')
 
@@ -62,7 +63,8 @@ def calculator(client, lab):
     H2 = lab_data.df_mean['H(%)'].to_frame('NK')
 
     # read constant and KK from constant excel file
-    constant = '.\\app\\core\\constant.xlsx'
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    constant = dir_path+'\\constant.xlsx'
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_beams = pd.read_excel(constant, sheet_name='Beams')
 
