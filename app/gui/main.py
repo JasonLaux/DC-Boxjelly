@@ -10,7 +10,7 @@ from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getR
 import pandas as pd
 import pyqtgraph as pg
 from app.core.models import Job, Equipment
-from app.core.resolvers import calculator
+from app.core.resolvers import calculator, result_data
 import os
 from pathlib import Path
 
@@ -511,9 +511,9 @@ class AnalyseWindow(QMainWindow):
         for run in runs:
             # get Leakage Current Data of each run
             # get data from resolver
-            NK, df_leakage, graph_data = calculator(run.raw_client.path, run.raw_lab.path)
-            self.tabTables.append(df_leakage.data)
-            self.leakageCurrentModel = TableModel(df_leakage.data)
+            result = calculator(run.raw_client.path, run.raw_lab.path)
+            self.tabTables.append(result.df_leakage)
+            self.leakageCurrentModel = TableModel(result.df_leakage)
             self.tabTable = QTableView()
             self.tabTable.setModel(self.leakageCurrentModel)
             self.tabTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
