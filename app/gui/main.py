@@ -1,8 +1,8 @@
 from os import error
 from typing import Counter
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
-from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel, QAbstractItemModel, QModelIndex
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
+from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
 from numpy import empty
 from pandas.io.pytables import Selection, SeriesFixed
@@ -13,18 +13,30 @@ from app.core.models import Job, Equipment
 from app.core.resolvers import calculator, result_data
 import os
 from pathlib import Path
-
+from app.gui import resources
 
 '''
 #Run UI main file under root dir
 py -m app.gui.main
 '''
+
+'''
+Alter Python identifier to custom one for the purpose of icon placement
+'''
+try:
+    # Include in try/except block if you're also targeting Mac/Linux
+    from PyQt5.QtWinExtras import QtWin
+    myappid = 'com.unimelb.software.dc'
+    QtWin.setCurrentProcessExplicitAppUserModelID(myappid)    
+except ImportError:
+    pass
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         
         # load main window ui
-        window = loadUI(".\\app\\gui\\main_window.ui", self)
+        window = loadUI(':/ui/main_window.ui', self)
         #window = loadUI("./app/gui/main_window.ui", self)
         self.ui = window
 
@@ -334,8 +346,10 @@ class ImportWindow(QMainWindow):
         self.parent = parent
         
         # load import page ui
-        window = loadUI(".\\app\\gui\\import_page.ui", self)
+        # window = loadUI(".\\app\\gui\\import_page.ui", self)
         #window = loadUI("./app/gui/import_page.ui", self)
+        window = loadUI(':/ui/import_page.ui', self)
+
         self.ui = window
         self.equip = None
         self.clientPath = self.ui.clientFilePathLine.text()
@@ -443,8 +457,10 @@ class ConstantsWindow(QMainWindow):
         super(ConstantsWindow, self).__init__(parent)
         
         # load constants page ui
-        window = loadUI(".\\app\\gui\\constants_page.ui", self)
-        #window = loadUI("./app/gui/constants_page.ui", self)        
+        # window = loadUI(".\\app\\gui\\constants_page.ui", self)
+        #window = loadUI("./app/gui/constants_page.ui", self)
+        window = loadUI(':/ui/constants_page.ui', self)
+
         self.ui = window
 
         ## Table insertion
@@ -464,8 +480,9 @@ class AnalyseWindow(QMainWindow):
         super(AnalyseWindow, self).__init__(parent)
         
         # load analyse page ui
-        window = loadUI(".\\app\\gui\\analyse_page.ui", self)
-        #window = loadUI("./app/gui/analyse_page.ui", self)        
+        # window = loadUI(".\\app\\gui\\analyse_page.ui", self)
+        #window = loadUI("./app/gui/analyse_page.ui", self) 
+        window = loadUI(':/ui/analyse_page.ui', self)
         self.ui = window
         self._selectedRows = []
         self.runs = []
@@ -543,8 +560,10 @@ class AddClientWindow(QMainWindow):
         self.parent = parent
     
         # load add client page ui
-        window = loadUI(".\\app\\gui\\add_client_page.ui", self)
-        #window = loadUI("./app/gui/add_client_page.ui", self)        
+        # window = loadUI(".\\app\\gui\\add_client_page.ui", self)
+        #window = loadUI("./app/gui/add_client_page.ui", self) 
+        window = loadUI(':/ui/add_client_page.ui', self)
+       
         self.ui = window
         self.clientName = ""
         self.clientAddress1 = ""
@@ -611,8 +630,10 @@ class AddEquipmentWindow(QMainWindow):
         self.parent = parent
         
         # load add equipment page ui
-        window = loadUI(".\\app\\gui\\add_equipment_page.ui", self)
-        #window = loadUI("./app/gui/add_equipment_page.ui", self)        
+        # window = loadUI(".\\app\\gui\\add_equipment_page.ui", self)
+        #window = loadUI("./app/gui/add_equipment_page.ui", self)
+        window = loadUI(':/ui/add_equipment_page.ui', self)
+        
         self.ui = window
         self.model = ""
         self.serial = ""
@@ -765,6 +786,7 @@ def start_event_loop():
     # os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     # sys.argv += ['--style', 'fusion']
     app = QApplication(sys.argv)
+    app.setWindowIcon(QtGui.QIcon(':/icons/app.ico'))
     mainWindow = MainWindow()
     mainWindow.show()
     return app.exec_()

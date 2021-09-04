@@ -1,0 +1,14 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="ui">
+        <file alias="main_window.ui">resources/main_window.ui</file>
+        <file alias="add_client_page.ui">resources/add_client_page.ui</file>
+        <file alias="add_equipment_page.ui">resources/add_equipment_page.ui</file>
+        <file alias="analyse_page.ui">resources/analyse_page.ui</file>
+        <file alias="import_page.ui">resources/import_page.ui</file>
+        <file alias="constants_page.ui">resources/constants_page.ui</file>
+    </qresource>
+    <qresource prefix="icons">
+        <file alias="app.ico">resources/app.ico</file>
+    </qresource>
+</RCC>
