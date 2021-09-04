@@ -78,7 +78,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
+          <width>120</width>
           <height>20</height>
          </size>
         </property>
@@ -103,22 +103,6 @@
          <layout class="QVBoxLayout" name="verticalLayout_12">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_29">
-            <item>
-             <spacer name="horizontalSpacer_71">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>100</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item>
              <widget class="QLabel" name="serialLabel">
               <property name="sizePolicy">
@@ -145,6 +129,22 @@
                <string>Serial Number:</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_71">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>50</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QLineEdit" name="serialLine">
@@ -178,22 +178,6 @@ border: 1px solid black;
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_30">
             <item>
-             <spacer name="horizontalSpacer_74">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>100</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLabel" name="makeModelLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -219,6 +203,22 @@ border: 1px solid black;
                <string>Make/Model Number:</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_74">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>50</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QLineEdit" name="modelLine">
@@ -279,7 +279,7 @@ border: 1px solid black;
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>150</width>
+          <width>120</width>
           <height>20</height>
          </size>
         </property>
