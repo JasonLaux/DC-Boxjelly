@@ -4,13 +4,16 @@ from PyQt5.uic import loadUi
 import sys
 import pandas as pd
 import os
+import logging
 from app.core.models import Job, Equipment
+
+logger = logging.getLogger(__name__)
 
 def loadUI(str, window):
     ui_file_name = str
     ui_file = QFile(ui_file_name)
     if not ui_file.open(QIODevice.ReadOnly):
-        print(f"Cannot open {ui_file_name}: {ui_file.errorString()}")
+        logger.critical(f"Cannot open {ui_file_name}: {ui_file.errorString()}")
         sys.exit(-1)
     loadedWindow = loadUi(ui_file, window)
     ui_file.close()
