@@ -6,6 +6,8 @@ be a model or just a matrix.
 """
 import pandas as pd
 import warnings
+import numpy as np
+
 warnings.filterwarnings('ignore')
 
 # the object to store data
@@ -14,6 +16,16 @@ class Processed_data():
         self.df_before_mean = None
         self.df_mean = None
         self.df_after_mean = None
+
+
+# Using object to save result in order to avoid too much returned elements
+class result_data():
+    def __init__(self):
+        self.df_NK = None
+        self.df_leakage = None
+        self.highlight = []
+        self.X = []
+        self.Y = []
 
 
 def calculator(client, lab):
@@ -50,9 +62,9 @@ def calculator(client, lab):
     H2 = lab_data.df_mean['H(%)'].to_frame('NK')
 
     # read constant and KK from constant excel file
-    constant = r'.\\app\\core\\constant.xlsx'
+    constant = r'E:\Unimelb\2021 S2\Software Project\test\constant\constant2.xlsx'
     df_constant = pd.read_excel(constant, sheet_name='constant')
-    df_KK = pd.read_excel(constant, sheet_name='Beams', usecols=[0, 9])
+    df_beams = pd.read_excel(constant, sheet_name='Beams')
 
     # get ma and WE
     Ma = df_constant['ma'].values[0]
@@ -62,21 +74,20 @@ def calculator(client, lab):
     # (do not need to extract the same index to do calculation. We can just calculate on data frame).
 
     # get the filter of the first measurement from KK
-    df_KK = df_KK[df_KK.Filter.isin(client_data.df_mean.index)]
+    df_beams = df_beams[df_beams.Filter.isin(client_data.df_mean.index)]
     cats = client_data.df_mean.index[:-duplicate_num]
-    df_KK['Filter'] = pd.CategoricalIndex(df_KK['Filter'], ordered=True, categories=cats)
-    df_KK = df_KK.sort_values('Filter')
+    df_beams['Filter'] = pd.CategoricalIndex(df_beams['Filter'], ordered=True, categories=cats)
+    df_beams = df_beams.sort_values('Filter')
 
     # get the filter which measure two times from KK
-    df_KK_dupkicate = df_KK[df_KK.Filter.isin(client_data.df_mean.index[:duplicate_num])]
+    df_beams_dupkicate = df_beams[df_beams.Filter.isin(client_data.df_mean.index[:duplicate_num])]
     cats = client_data.df_mean.index[:duplicate_num]
-    df_KK_dupkicate['Filter'] = pd.CategoricalIndex(df_KK_dupkicate['Filter'], ordered=True, categories=cats)
-    df_KK_dupkicate['Filter'] = [Filter + '*' for Filter in df_KK_dupkicate.Filter.tolist()]
-    df_KK_dupkicate = df_KK_dupkicate.sort_values('Filter')
+    df_beams_dupkicate['Filter'] = pd.CategoricalIndex(df_beams_dupkicate['Filter'], ordered=True, categories=cats)
+    df_beams_dupkicate['Filter'] = [Filter + '*' for Filter in df_beams_dupkicate.Filter.tolist()]
+    df_beams_dupkicate = df_beams_dupkicate.sort_values('Filter')
 
     # concat together so that KK will have the same order as client_data.df_mean
-    df_KK = pd.concat([df_KK, df_KK_dupkicate], axis=0).set_index('Filter')
-    df_KK.columns = ['NK']
+    df_KK = pd.concat([df_beams, df_beams_dupkicate], axis=0).set_index('Filter')['Product'].to_frame('NK')
 
     # Calculating NK
     NK = R2 * WE * df_KK * ((273.15 + TS2) / (273.15 + TM2)) * (0.995766667 + 0.000045 * H2) / (
@@ -92,9 +103,26 @@ def calculator(client, lab):
                                                        lab_data.df_after_mean['Current2(pA)'].values[0]]},
                                  index=["Monitor 1", "Chamber (client)", "Monitor 1", "Standard (MEFAC)"])
 
-    df_leakage = df_leakage.style.applymap(over_threshold)
+    # extract the effective energy for plotting the graph
+    df_energy = pd.concat([df_beams, df_beams_dupkicate], axis=0).set_index('Filter')['E_eff'].to_frame()
 
-    return NK, df_leakage, None
+    # create an object to save result
+    result = result_data()
+
+    # saving NK
+    result.df_NK = NK
+
+    # saving leakage
+    result.df_leakage = df_leakage
+
+    # get the coordinate which the cell need to be highlighted
+    result.highlight = [(x, y) for x, y in zip(*np.where(abs(result.df_leakage.values) > 0.1))]
+
+    # saving the graph required data
+    result.X = df_energy['E_eff'].tolist()
+    result.Y = NK['NK'].tolist()
+
+    return result
 
 
 def extraction(path):
@@ -164,13 +192,3 @@ def extraction(path):
 
     # return number of duplicate_beam since kk need to know how many beams measure two times
     return data, len(duplicate_beam)
-
-
-# color dataframe
-def over_threshold(value):
-    if abs(value) > 0.1:
-        color = 'yellow'
-    else:
-        color = 'whight'
-
-    return 'background-color: %s' % color
