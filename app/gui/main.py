@@ -494,11 +494,12 @@ class AnalyseWindow(QMainWindow):
         # self.ui.run2Table  (This should be dynamic)
         # self.ui.resultTable
         # Result Table
+        self.ui.resultTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")       
         self.resultModel = TableModel(data=getResultData())
         self.ui.resultTable.setModel(self.resultModel)
         self.ui.resultTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('resultTable'))
         self.ui.resultTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        
+        self.ui.resultTable.setItemDelegate(AlignDelegate()) # text alignment
         # Graph
         scene = QGraphicsScene()
         self.ui.resultGraph.setScene(scene)
@@ -532,9 +533,11 @@ class AnalyseWindow(QMainWindow):
             self.tabTables.append(result.df_leakage)
             self.leakageCurrentModel = TableModel(result.df_leakage)
             self.tabTable = QTableView()
+            self.tabTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")       
             self.tabTable.setModel(self.leakageCurrentModel)
             self.tabTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
             self.ui.tabWidget.addTab(self.tabTable, "Run "+str(run.id))
+            self.tabTable.setItemDelegate(AlignDelegate()) # text alignment
         
     def analyze(self):
         # TODO: insert analyze functions here
@@ -563,7 +566,6 @@ class AddClientWindow(QMainWindow):
         # window = loadUI(".\\app\\gui\\add_client_page.ui", self)
         #window = loadUI("./app/gui/add_client_page.ui", self) 
         window = loadUI(':/ui/add_client_page.ui', self)
-       
         self.ui = window
         self.clientName = ""
         self.clientAddress1 = ""
@@ -633,7 +635,6 @@ class AddEquipmentWindow(QMainWindow):
         # window = loadUI(".\\app\\gui\\add_equipment_page.ui", self)
         #window = loadUI("./app/gui/add_equipment_page.ui", self)
         window = loadUI(':/ui/add_equipment_page.ui', self)
-        
         self.ui = window
         self.model = ""
         self.serial = ""
@@ -787,6 +788,7 @@ def start_event_loop():
     # sys.argv += ['--style', 'fusion']
     app = QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon(':/icons/app.ico'))
+
     mainWindow = MainWindow()
     mainWindow.show()
     return app.exec_()
