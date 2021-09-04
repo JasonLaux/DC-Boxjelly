@@ -267,7 +267,7 @@ class MainWindow(QMainWindow):
     def openConstantsWindow(self):
         # open constant file instead of open constant window
         try:
-            os.startfile('.\\app\\core\\constant2.xlsx')
+            os.startfile('.\\app\\core\\constant.xlsx')
         except FileNotFoundError:
             QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
         
