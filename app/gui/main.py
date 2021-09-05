@@ -59,11 +59,10 @@ class MainWindow(QMainWindow):
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.addClientButton.clicked.connect(lambda: self.ui.homeTable.clearSelection())
-        self.ui.updateClientButton.setEnabled(False)
         self.ui.updateClientButton.clicked.connect(self.updateClientInfo)
-        self.ui.clientNamelineEdit.editingFinished.connect(lambda: self.ui.updateClientButton.setEnabled(True))
-        self.ui.address1lineEdit.editingFinished.connect(lambda: self.ui.updateClientButton.setEnabled(True))
-        self.ui.address2lineEdit.editingFinished.connect(lambda: self.ui.updateClientButton.setEnabled(True))
+        self.ui.clientNamelineEdit.textChanged.connect(lambda: self.ui.updateClientButton.setEnabled(True))
+        self.ui.address1lineEdit.textChanged.connect(lambda: self.ui.updateClientButton.setEnabled(True))
+        self.ui.address2lineEdit.textChanged.connect(lambda: self.ui.updateClientButton.setEnabled(True))
 
         #compare page
         self.ui.chooseEquipmentButton.clicked.connect(self.chooseEquipment)
@@ -148,6 +147,7 @@ class MainWindow(QMainWindow):
     # choose one client and goes into client info page
     def chooseClient(self):
         if self._selectedRows:
+            self.ui.updateClientButton.setEnabled(False)
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
             self.ui.homeTable.clearSelection()
         # when not choosing any of the client, pop up a warning window
@@ -182,23 +182,19 @@ class MainWindow(QMainWindow):
         newClientName = self.ui.clientNamelineEdit.text()
         newFstAddress = self.ui.address1lineEdit.text()
         newSndAddress = self.ui.address2lineEdit.text()
-        error = False
 
-        if newClientName or newFstAddress or newSndAddress:
-            try: 
-                Job[self._selectedCalNum].client_name = newClientName
-                Job[self._selectedCalNum].client_address_1 = newFstAddress
-                Job[self._selectedCalNum].client_address_2 = newSndAddress
-                QtWidgets.QMessageBox.about(self, ' ', "Successfully updated user information.")
-            except AttributeError:
-                error = True
-                raise error("Job ID is not found!")
-            if error is False:
-                # Update client info on the Home Page
-                self.clientModel.initialiseTable(data=getHomeTableData())
-                self.clientModel.layoutChanged.emit()
-        else:
-            logger.warn("No need to update any client info")
+        try: 
+            Job[self._selectedCalNum].client_name = newClientName
+            Job[self._selectedCalNum].client_address_1 = newFstAddress
+            Job[self._selectedCalNum].client_address_2 = newSndAddress
+            QtWidgets.QMessageBox.about(self, ' ', "Successfully updated user information.")
+        except AttributeError:
+            raise error("Job ID is not found!")
+
+        # Update client info on the Home Page
+        self.clientModel.initialiseTable(data=getHomeTableData())
+        self.clientModel.layoutChanged.emit()
+
             
 
 
