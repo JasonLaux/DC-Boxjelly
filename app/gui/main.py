@@ -1,16 +1,17 @@
-from os import error
+from os import error, name
 from typing import Counter
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
-from numpy import empty
+from numpy import clongdouble, empty
 from pandas.io.pytables import Selection, SeriesFixed
 import pandas as pd
 import pyqtgraph as pg
 import os
 from pathlib import Path
 import logging
+import numpy as np
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
 from app.core.models import Job, Equipment
@@ -501,6 +502,8 @@ class AnalyseWindow(QMainWindow):
         self._selectedRows = []
         self.runs = []
         self.tabTables = []
+        self.lastClicked = []
+        self.color = ['b', 'k', 'c', 'm', 'y']
 
         ## Table and Graph insertion
         # self.ui.resultGraph
@@ -515,15 +518,12 @@ class AnalyseWindow(QMainWindow):
         self.ui.resultTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.resultTable.setItemDelegate(AlignDelegate()) # text alignment
         # Graph
-        scene = QGraphicsScene()
-        self.ui.resultGraph.setScene(scene)
-        self.plotWdgt = pg.PlotWidget()
-        self.plotWdgt.setBackground('w')
-        data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        plot_item = self.plotWdgt.plot(data, pen=pg.mkPen(width=15))
-        proxy_widget = scene.addWidget(self.plotWdgt)
-
-        # Tab and table
+        self.ui.resultGraph.setBackground(background=None)
+        self.plot_item = self.ui.resultGraph.addPlot()
+        self.plot_item.setLabel('bottom', "Effective Energy (keV)")
+        self.plot_item.setLabel('left', "Calibration Factor (mGy/nc)")
+        self.plot_item.addLegend(offset=(-30, 30))
+        self.plot_item.showGrid(y=True)
         logger.debug(self.ui.tabWidget.count())
     
     # Return the index of selected rows in an array
@@ -545,13 +545,17 @@ class AnalyseWindow(QMainWindow):
             # get data from resolver
             result = calculator(run.raw_client.path, run.raw_lab.path)
             self.tabTables.append(result.df_leakage)
-            self.leakageCurrentModel = TableModel(result.df_leakage)
+            self.leakageCurrentModel = TableModel(result.df_leakage, set_bg=True, bg_index=result.highlight)
             self.tabTable = QTableView()
             self.tabTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 8pt; font-family: Verdana; font-weight: bold; }")       
             self.tabTable.setModel(self.leakageCurrentModel)
             self.tabTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
             self.ui.tabWidget.addTab(self.tabTable, "Run "+str(run.id))
             self.tabTable.setItemDelegate(AlignDelegate()) # text alignment
+
+            # Draw graph
+            self.plot_item.addItem(self.plot(result.X, result.Y, color=self.color[run.id % len(self.color) - 1], runId=run.id))
+
         
     def analyze(self):
         # TODO: insert analyze functions here
@@ -568,6 +572,50 @@ class AnalyseWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
+
+    def createGraph(self):
+        print(111111111111)
+        view = self.ui.resultGraph
+        plot_item = view.addPlot()
+        n = 300
+        scatter_item = pg.ScatterPlotItem(size=10, pen=pg.mkPen(None), brush=pg.mkBrush(255, 255, 255, 120))
+        pos = np.random.normal(size=(2,n), scale=1e-5)
+        spots = [{'pos': pos[:,i], 'data': 1} for i in range(n)] + [{'pos': [0,0], 'data': 1}]
+        scatter_item.addPoints(spots)
+        plot_item.addItem(scatter_item)
+        scatter_item.sigClicked.connect(self.clicked)
+        print(2222222222222)
+
+    def plot(self, x, y, color, runId):
+        scatter_item = pg.ScatterPlotItem(
+            size=10,
+            pen=pg.mkPen(None),
+            brush=pg.mkBrush(color),
+            hoverable=True,
+            hoverSymbol='s',
+            hoverSize=15,
+            hoverPen=pg.mkPen('r', width=2),
+            hoverBrush=pg.mkBrush('g'),
+            name="Run " + str(runId)
+        )
+        scatter_item.addPoints(
+            x=np.array(x),
+            y=np.array(y)
+            # size=(np.random.random(n) * 20.).astype(int),
+            # brush=[pg.mkBrush(x) for x in np.random.randint(0, 256, (n, 3))],
+            # data=np.arange(n)
+        )
+        # scatter_item.sigClicked.connect(self.clicked)
+        return scatter_item
+    
+    # def clicked(self, plot, points):
+    #     for p in self.lastClicked:
+    #         p.resetPen()
+    #     print("clicked points", points)
+    #     for point in points:
+    #         print(33333333)
+    #         point.setPen(pg.mkPen('b', width=2))
+    #     self.lastClicked = points
 
 
 class AddClientWindow(QMainWindow):
@@ -698,12 +746,14 @@ class AddEquipmentWindow(QMainWindow):
 
 class TableModel(QAbstractTableModel):
 
-    def __init__(self, data):
+    def __init__(self, data, set_bg = False, bg_index=None):
         super(TableModel, self).__init__()
         self._data = data
         # May be required to change logic
         # if data.empty is False:
         #     self._display = data.drop(labels=['Address'], axis=1)
+        self._bg = set_bg
+        self._bgCellIdx = bg_index
     
     def data(self, index, role):
         if role == Qt.DisplayRole:
@@ -711,6 +761,12 @@ class TableModel(QAbstractTableModel):
             # if index.column() != self.columnNum - 1:
             value = self._data.iloc[index.row(), index.column()]
             return str(value)
+
+        if role == Qt.BackgroundRole:
+            if self._bg and (index.row(), index.column()) in self._bgCellIdx:
+                return QtGui.QColor('yellow')
+
+
 
     def rowCount(self, index=None):
         return self._data.shape[0]

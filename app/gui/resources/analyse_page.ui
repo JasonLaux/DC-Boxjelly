@@ -131,7 +131,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QGraphicsView" name="resultGraph">
+         <widget class="GraphicsLayoutWidget" name="resultGraph">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -241,6 +241,13 @@ background-color: white;
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GraphicsLayoutWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>pyqtgraph</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
