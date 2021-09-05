@@ -78,7 +78,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>120</width>
+          <width>100</width>
           <height>20</height>
          </size>
         </property>
@@ -200,7 +200,7 @@ border: 1px solid black;
                </font>
               </property>
               <property name="text">
-               <string>Make/Model Number:</string>
+               <string>Make/Model Num:</string>
               </property>
              </widget>
             </item>
@@ -279,7 +279,7 @@ border: 1px solid black;
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>120</width>
+          <width>100</width>
           <height>20</height>
          </size>
         </property>
