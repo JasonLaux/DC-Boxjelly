@@ -104,8 +104,8 @@ def calculator(client, lab):
     NK.columns = ['NK']
 
     # leakage
-    df_leakage = pd.DataFrame({"Current PA Before": [BgdMC1_Before, BgdIC1_Before, BgdMC2_Before, BgdIC2_Before],
-                                  "Current PA After": [client_data.df_after_mean['Current1(pA)'].values[0],
+    df_leakage = pd.DataFrame({"Before": [BgdMC1_Before, BgdIC1_Before, BgdMC2_Before, BgdIC2_Before],
+                                  "After": [client_data.df_after_mean['Current1(pA)'].values[0],
                                                        client_data.df_after_mean['Current2(pA)'].values[0],
                                                        lab_data.df_after_mean['Current1(pA)'].values[0],
                                                        lab_data.df_after_mean['Current2(pA)'].values[0]]},
@@ -191,3 +191,4 @@ def extraction(path):
 
     # return number of duplicate_beam since kk need to know how many beams measure two times
     return data, len(duplicate_beam)
+
