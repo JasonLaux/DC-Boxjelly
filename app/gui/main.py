@@ -551,7 +551,7 @@ class AnalyseWindow(QMainWindow):
             self.tabTables.append(result.df_leakage)
             self.leakageCurrentModel = TableModel(result.df_leakage)
             self.tabTable = QTableView()
-            self.tabTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")       
+            self.tabTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 8pt; font-family: Verdana; font-weight: bold; }")       
             self.tabTable.setModel(self.leakageCurrentModel)
             self.tabTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
             self.ui.tabWidget.addTab(self.tabTable, "Run "+str(run.id))
