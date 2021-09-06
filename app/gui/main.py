@@ -196,8 +196,6 @@ class MainWindow(QMainWindow):
         self.clientModel.initialiseTable(data=getHomeTableData())
         self.clientModel.layoutChanged.emit()
 
-            
-
 
     # choose one equipment and goes into Equipment info page
     def chooseEquipment(self):
@@ -241,7 +239,9 @@ class MainWindow(QMainWindow):
                 del Job[self._selectedCalNum][self._selectedEquipID].mex[self._selectedRun]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.runModel.layoutChanged.emit()
-            self._selectedRows = []
+            
+            self.ui.runsTable.clearSelection()
+
         # when not choosing any of the equipment, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a run to delete.")
