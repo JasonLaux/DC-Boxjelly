@@ -430,7 +430,7 @@ class ImportWindow(QMainWindow):
         run.raw_client.upload_from(Path(self.clientPath))
         run.raw_lab.upload_from(Path(self.labPath))
         data = {
-            'ID': run.id,
+            'ID': int(run.id),
             'Added Time': run.added_at,
             'Edited Time': run.edited_at,
         }
