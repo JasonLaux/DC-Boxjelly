@@ -573,27 +573,15 @@ class AnalyseWindow(QMainWindow):
         else:
             event.ignore() 
 
-    def createGraph(self):
-        print(111111111111)
-        view = self.ui.resultGraph
-        plot_item = view.addPlot()
-        n = 300
-        scatter_item = pg.ScatterPlotItem(size=10, pen=pg.mkPen(None), brush=pg.mkBrush(255, 255, 255, 120))
-        pos = np.random.normal(size=(2,n), scale=1e-5)
-        spots = [{'pos': pos[:,i], 'data': 1} for i in range(n)] + [{'pos': [0,0], 'data': 1}]
-        scatter_item.addPoints(spots)
-        plot_item.addItem(scatter_item)
-        scatter_item.sigClicked.connect(self.clicked)
-        print(2222222222222)
-
     def plot(self, x, y, color, runId):
         scatter_item = pg.ScatterPlotItem(
-            size=10,
+            size=8,
             pen=pg.mkPen(None),
             brush=pg.mkBrush(color),
+            symbol='s',
             hoverable=True,
             hoverSymbol='s',
-            hoverSize=15,
+            hoverSize=12,
             hoverPen=pg.mkPen('r', width=2),
             hoverBrush=pg.mkBrush('g'),
             name="Run " + str(runId)
@@ -606,6 +594,7 @@ class AnalyseWindow(QMainWindow):
             # data=np.arange(n)
         )
         # scatter_item.sigClicked.connect(self.clicked)
+        # scatter_item.sigHovered.connect(self.hovered)
         return scatter_item
     
     # def clicked(self, plot, points):
@@ -616,6 +605,10 @@ class AnalyseWindow(QMainWindow):
     #         print(33333333)
     #         point.setPen(pg.mkPen('b', width=2))
     #     self.lastClicked = points
+    
+    # def hovered(self, plot, points):
+    #     if points:
+    #         print(points[0].viewPos())
 
 
 class AddClientWindow(QMainWindow):
