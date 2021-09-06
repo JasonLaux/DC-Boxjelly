@@ -121,7 +121,7 @@ def calculator(client, lab):
     result.df_NK = NK
 
     # saving leakage
-    result.df_leakage = round(df_leakage, 2)
+    result.df_leakage = round(df_leakage, 2) + 0  # +0 to remove -0.0
 
     # get the coordinate which the cell need to be highlighted
     result.highlight = [(x, y) for x, y in zip(*np.where(abs(result.df_leakage.values) > 0.1))]
