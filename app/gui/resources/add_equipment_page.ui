@@ -94,7 +94,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
          </spacer>
@@ -106,7 +106,7 @@
             <item>
              <widget class="QLabel" name="serialLabel">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -131,22 +131,6 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_71">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>50</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="serialLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -156,7 +140,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>290</width>
+                <width>16777215</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -180,7 +164,7 @@ border: 1px solid black;
             <item>
              <widget class="QLabel" name="makeModelLabel">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -205,22 +189,6 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_74">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>50</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="modelLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -230,7 +198,7 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>290</width>
+                <width>16777215</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -262,7 +230,7 @@ border: 1px solid black;
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>10</height>
            </size>
           </property>
          </spacer>

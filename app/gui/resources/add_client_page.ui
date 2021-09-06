@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>689</width>
-    <height>370</height>
+    <width>952</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>600</width>
-    <height>370</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>900</width>
-    <height>369</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -96,7 +96,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
+          <width>100</width>
           <height>20</height>
          </size>
         </property>
@@ -124,14 +124,14 @@
             <item>
              <widget class="QLabel" name="calNumLabel">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="maximumSize">
                <size>
-                <width>150</width>
+                <width>170</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -149,22 +149,6 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_9">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>30</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="calNumLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -174,7 +158,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>300</width>
+                <width>16777215</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -198,14 +182,14 @@ border: 1px solid black;
             <item>
              <widget class="QLabel" name="clientNameLabel">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="maximumSize">
                <size>
-                <width>150</width>
+                <width>170</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -223,22 +207,6 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_10">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>30</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="clientNameLine">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -248,7 +216,7 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>300</width>
+                <width>16777215</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -272,14 +240,14 @@ border: 1px solid black;
             <item>
              <widget class="QLabel" name="clientAddress1Label">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="maximumSize">
                <size>
-                <width>150</width>
+                <width>170</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -297,22 +265,6 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_40">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>30</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="clientAddress1Line">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -322,7 +274,7 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>300</width>
+                <width>16777215</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -346,14 +298,14 @@ border: 1px solid black;
             <item>
              <widget class="QLabel" name="clientAddress2Label">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="maximumSize">
                <size>
-                <width>150</width>
+                <width>170</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -371,22 +323,6 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_44">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>30</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLineEdit" name="clientAddress2Line">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -396,7 +332,7 @@ border: 1px solid black;
               </property>
               <property name="maximumSize">
                <size>
-                <width>300</width>
+                <width>16777215</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -442,26 +378,13 @@ border: 1px solid black;
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
+          <width>100</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
      </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>162</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -562,6 +485,19 @@ background-color: white;
        </spacer>
       </item>
      </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>162</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item>
      <spacer name="verticalSpacer">
