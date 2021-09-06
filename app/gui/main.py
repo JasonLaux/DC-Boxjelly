@@ -80,7 +80,8 @@ class MainWindow(QMainWindow):
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
         # Delete equipment
         self.ui.deleteEquipmentButton.clicked.connect(self.deleteEquipment)
-        # Delete run
+        # Add and delete run
+        self.ui.importButton.clicked.connect(lambda: self.ui.runsTable.clearSelection())
         self.ui.deleteRunButton.clicked.connect(self.deleteRun)
         
         
