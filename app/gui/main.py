@@ -419,6 +419,7 @@ class ImportWindow(QMainWindow):
 
     def addNewRun(self):
         self.parent.runModel.layoutAboutToBeChanged.emit()
+        self.parent.runModel.clearSelection.emit()
         if len(self.clientPath) == 0 or len(self.labPath) == 0:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose or fill in both Client file and Lab file path.")
             return
