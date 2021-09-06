@@ -783,6 +783,7 @@ class TableModel(QAbstractTableModel):
             logger.debug("Add data...")
             logger.debug(newData)
 
+            self._data = self._data.convert_dtypes()
             self._data = self._data.append(newData, ignore_index=True)
             logger.debug(self._data)
         else:
