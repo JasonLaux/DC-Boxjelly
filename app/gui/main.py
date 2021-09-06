@@ -584,7 +584,8 @@ class AnalyseWindow(QMainWindow):
             hoverSize=12,
             hoverPen=pg.mkPen('r', width=2),
             hoverBrush=pg.mkBrush('g'),
-            name="Run " + str(runId)
+            name="Run " + str(runId),
+            tip='x: {x:.3g}\ny: {y:.3g}'.format
         )
         scatter_item.addPoints(
             x=np.array(x),
