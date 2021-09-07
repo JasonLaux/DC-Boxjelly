@@ -495,6 +495,7 @@ class ConstantsWindow(QMainWindow):
 class AnalyseWindow(QMainWindow):
     def __init__(self, parent = None):
         super(AnalyseWindow, self).__init__(parent)
+        self.parent = parent
         
         # load analyse page ui
         # window = loadUI(".\\app\\gui\\analyse_page.ui", self)
@@ -561,6 +562,8 @@ class AnalyseWindow(QMainWindow):
         
     def analyze(self):
         # TODO: insert analyze functions here
+        self.parent.runModel.layoutAboutToBeChanged.emit()
+        self.parent.ui.runsTable.clearSelection()
         logger.debug(self.runs)
         self.setWindowModality(Qt.ApplicationModal)
         self.show()
