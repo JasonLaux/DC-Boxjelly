@@ -138,7 +138,7 @@ def extraction(path):
     Measurements_num = 0
     df_total = None
 
-    with open(path, newline='') as f:
+    with open(path, newline='', encoding="ISO-8859-1") as f:
         for line in f:
             if 'DATA' in line:
                 break
