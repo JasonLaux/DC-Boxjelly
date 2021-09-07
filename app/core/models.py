@@ -484,7 +484,7 @@ class MexRawFile:
         if not Path(source).is_file():
             raise ValueError(f'Source path {source} is not a file')
 
-        with source.open() as f:
+        with source.open(encoding='ISO-8859-1') as f:
             lines = f.readlines()
 
         if lines[0].strip() == RAW_META_SECTION_NAME:
@@ -493,7 +493,7 @@ class MexRawFile:
             assert len(beg) == 1
             lines = lines[beg[0]:]
 
-        with self._path.open('w') as f:
+        with self._path.open('w', encoding='ISO-8859-1') as f:
             f.writelines(lines)
 
         self._update_edit_time()
