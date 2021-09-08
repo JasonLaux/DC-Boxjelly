@@ -321,7 +321,8 @@ class MainWindow(QMainWindow):
         # Pop up warning when not choosing any of the runs
         try:
             if self._selectedRows:
-                self._selectedRuns = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
+
+                self._selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
                 runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], self._selectedRuns))
                 self.analysisWindow.setRuns(runs) 
                 self.analysisWindow.analyze()
@@ -509,7 +510,7 @@ class AnalyseWindow(QMainWindow):
         self.runs = []
         self.tabTables = []
         self.lastClicked = []
-        self.color = ['b', 'k', 'c', 'm', 'y']
+        self.color = ['b', 'c', 'r', 'm', 'k', 'y']
 
         ## Table and Graph insertion
         # self.ui.resultGraph
@@ -530,7 +531,7 @@ class AnalyseWindow(QMainWindow):
         self.plot_item.setLabel('left', "Calibration Factor (mGy/nc)")
         self.plot_item.addLegend(offset=(-30, 30))
         self.plot_item.showGrid(y=True)
-        logger.debug(self.ui.tabWidget.count())
+        # logger.debug(self.ui.tabWidget.count())
     
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
@@ -591,7 +592,8 @@ class AnalyseWindow(QMainWindow):
             hoverPen=pg.mkPen('r', width=2),
             hoverBrush=pg.mkBrush('g'),
             name="Run " + str(runId),
-            tip='x: {x:.3g}\ny: {y:.3g}'.format
+            tip='This is a test'.format
+            # tip='x: {x:.3g}\ny: {y:.3g}'.format
         )
         scatter_item.addPoints(
             x=np.array(x),
