@@ -325,7 +325,7 @@ class MainWindow(QMainWindow):
             else:
                 QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
         except Exception as e:
-            logging.error("Can't resolve raw data file!", exc_info=e)
+            logger.error("Can't resolve raw data file!", exc_info=e)
             QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
         
     
