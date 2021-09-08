@@ -560,7 +560,7 @@ class AnalyseWindow(QMainWindow):
             self.tabTable.setItemDelegate(AlignDelegate()) # text alignment
 
             # Draw graph
-            self.plot_item.addItem(self.plot(result.X, result.Y, color=self.color[run.id % len(self.color) - 1], runId=run.id))
+            self.plot_item.addItem(self.plot(result.X['E_eff'].tolist(), result.Y, color=self.color[run.id % len(self.color) - 1], runId=run.id))
 
         
     def analyze(self):
