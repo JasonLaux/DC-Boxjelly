@@ -128,6 +128,7 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.runsTable.setItemDelegate(AlignDelegate())
+        self.ui.analyseButton.clicked.connect(lambda: self.ui.runsTable.clearSelection())
 
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
@@ -224,7 +225,7 @@ class MainWindow(QMainWindow):
                 del Job[self._selectedCalNum][self._selectedEquipID]
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
-            self._selectedRows = []
+            self.ui.equipmentsTable.clearSelection()
         # when not choosing any of the equipment, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
@@ -264,7 +265,6 @@ class MainWindow(QMainWindow):
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
-
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
