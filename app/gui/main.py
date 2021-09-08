@@ -78,6 +78,10 @@ class MainWindow(QMainWindow):
 
         # Delete client
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
+
+        # Add equipment
+        self.ui.addEquipmentButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
+
         # Delete equipment
         self.ui.deleteEquipmentButton.clicked.connect(self.deleteEquipment)
         # Add and delete run
@@ -781,12 +785,8 @@ class TableModel(QAbstractTableModel):
 
     def addData(self, newData):
         if newData.empty is False:
-            logger.debug("Add data...")
-            logger.debug(newData)
-
             self._data = self._data.convert_dtypes()
             self._data = self._data.append(newData, ignore_index=True)
-            logger.debug(self._data)
         else:
             pass
 
