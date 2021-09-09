@@ -78,6 +78,10 @@ class MainWindow(QMainWindow):
 
         # Delete client
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
+
+        # Add equipment
+        self.ui.addEquipmentButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
+
         # Delete equipment
         self.ui.deleteEquipmentButton.clicked.connect(self.deleteEquipment)
         # Add and delete run
@@ -128,6 +132,7 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.runsTable.setItemDelegate(AlignDelegate())
+        self.ui.analyseButton.clicked.connect(lambda: self.ui.runsTable.clearSelection())
 
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
@@ -224,7 +229,7 @@ class MainWindow(QMainWindow):
                 del Job[self._selectedCalNum][self._selectedEquipID]
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
-            self._selectedRows = []
+            self.ui.equipmentsTable.clearSelection()
         # when not choosing any of the equipment, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
@@ -264,7 +269,6 @@ class MainWindow(QMainWindow):
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
-
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
@@ -317,15 +321,16 @@ class MainWindow(QMainWindow):
         # Pop up warning when not choosing any of the runs
         try:
             if self._selectedRows:
-                self._selectedRuns = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
+
+                self._selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
                 runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], self._selectedRuns))
                 self.analysisWindow.setRuns(runs) 
                 self.analysisWindow.analyze()
                 self._selectedRows = []
             else:
                 QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
-        except:
-            logging.error("Can't resolve raw data file!")
+        except Exception as e:
+            logger.error("Can't resolve raw data file!", exc_info=e)
             QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
         
     
@@ -505,7 +510,7 @@ class AnalyseWindow(QMainWindow):
         self.runs = []
         self.tabTables = []
         self.lastClicked = []
-        self.color = ['b', 'k', 'c', 'm', 'y']
+        self.color = ['b', 'c', 'r', 'm', 'k', 'y']
 
         ## Table and Graph insertion
         # self.ui.resultGraph
@@ -526,7 +531,7 @@ class AnalyseWindow(QMainWindow):
         self.plot_item.setLabel('left', "Calibration Factor (mGy/nc)")
         self.plot_item.addLegend(offset=(-30, 30))
         self.plot_item.showGrid(y=True)
-        logger.debug(self.ui.tabWidget.count())
+        # logger.debug(self.ui.tabWidget.count())
     
     # Return the index of selected rows in an array
     def selection_changed(self, tableName):
@@ -556,7 +561,7 @@ class AnalyseWindow(QMainWindow):
             self.tabTable.setItemDelegate(AlignDelegate()) # text alignment
 
             # Draw graph
-            self.plot_item.addItem(self.plot(result.X, result.Y, color=self.color[run.id % len(self.color) - 1], runId=run.id))
+            self.plot_item.addItem(self.plot(result.X['E_eff'].tolist(), result.Y, color=self.color[run.id % len(self.color) - 1], runId=run.id))
 
         
     def analyze(self):
@@ -587,7 +592,8 @@ class AnalyseWindow(QMainWindow):
             hoverPen=pg.mkPen('r', width=2),
             hoverBrush=pg.mkBrush('g'),
             name="Run " + str(runId),
-            tip='x: {x:.3g}\ny: {y:.3g}'.format
+            tip='This is a test'.format
+            # tip='x: {x:.3g}\ny: {y:.3g}'.format
         )
         scatter_item.addPoints(
             x=np.array(x),
@@ -781,12 +787,8 @@ class TableModel(QAbstractTableModel):
 
     def addData(self, newData):
         if newData.empty is False:
-            logger.debug("Add data...")
-            logger.debug(newData)
-
             self._data = self._data.convert_dtypes()
             self._data = self._data.append(newData, ignore_index=True)
-            logger.debug(self._data)
         else:
             pass
 

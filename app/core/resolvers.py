@@ -127,7 +127,7 @@ def calculator(client, lab):
     result.highlight = [(x, y) for x, y in zip(*np.where(abs(result.df_leakage.values) > 0.1))]
 
     # saving the graph required data
-    result.X = df_energy['E_eff'].tolist()
+    result.X = df_energy['E_eff'].to_frame('E_eff')
     result.Y = NK['NK'].tolist()
 
     return result
