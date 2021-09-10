@@ -692,6 +692,10 @@ class AddClientWindow(QMainWindow):
         self.clientAddress1 = ""
         self.clientAddress2 = ""
         self.calNumber = ""
+        self.ui.calNumLine.clear()
+        self.ui.clientNameLine.clear()
+        self.ui.clientAddress1Line.clear()
+        self.ui.clientAddress2Line.clear()
         # TODO: Display another window to confirm information
 
 
@@ -746,6 +750,8 @@ class AddEquipmentWindow(QMainWindow):
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
+            self.ui.modelLine.clear()
+            self.ui.serialLine.clear()
             event.accept()  
         else:
             event.ignore() 
