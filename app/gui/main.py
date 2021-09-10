@@ -731,7 +731,11 @@ class AddEquipmentWindow(QMainWindow):
         if len(self.model)==0 or len(self.serial)==0:
             QtWidgets.QMessageBox.about(self, "Warning", "Please fill in Make/Model and Serial!")
             return
-        equip = self.job.add_equipment(model = self.model, serial = self.serial)
+        try:
+            equip = self.job.add_equipment(model = self.model, serial = self.serial)
+        except ValueError:
+            QtWidgets.QMessageBox.about(self, "Warning", "Equipment already existed in the Job!")
+            return
         self.id = equip.id
         self.parent.equipmentModel.addData(self.getNewEquipInfo())
         self.parent.equipmentModel.layoutChanged.emit()
