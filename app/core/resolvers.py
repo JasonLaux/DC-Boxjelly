@@ -12,25 +12,40 @@ import sys
 
 warnings.filterwarnings('ignore')
 
-# the object to store data
+
 class Processed_data():
+    """
+    the object to store data which read from the raw data
+    """
     def __init__(self):
         self.df_before_mean = None
         self.df_mean = None
         self.df_after_mean = None
 
 
-# Using object to save result in order to avoid too much returned elements
 class result_data():
+    """
+    Using object to save result in order to avoid too much returned elements
+    """
     def __init__(self):
         self.df_NK = None
         self.df_leakage = None
         self.highlight = []
         self.X = []
-        self.Y = []
 
 
 def calculator(client, lab):
+    """
+    This function will calculate one run of NK (calibration coefficient) and the leakage current values. Besides,
+    the coordinate of the leakage value which need to be highlighted is needed so that the front-end will be easy to
+    highlight the cell.
+
+    :param client: the client raw data path
+    :param lab   : the lab raw data path
+    :return      : return a object of the result which includes NK dataframe, leakage value dataframe, the coordinate of
+                   the leakage value which need to be highlighted (abs(value) > 0.2), the effective energy
+                   dataframe (X), and the list of NK (Y). X and Y is used to plot on chart.
+    """
     # extract data
     client_data, duplicate_num = extraction(client)
     lab_data, _ = extraction(lab)
@@ -128,12 +143,18 @@ def calculator(client, lab):
 
     # saving the graph required data
     result.X = df_energy['E_eff'].to_frame('E_eff')
-    result.Y = NK['NK'].tolist()
 
     return result
 
 
 def extraction(path):
+    """
+    This function use to extract the measurement data from the file.
+
+    :param : path: the path of file
+    :return: return the measurement data which is extracted from the file. Besides, return the number of
+             beams quality which measure two times in order to use in the calculation part
+    """
     Backgrounds_num = 0
     Measurements_num = 0
     df_total = None
