@@ -43,8 +43,8 @@ def calculator(client, lab):
     :param client: the client raw data path
     :param lab   : the lab raw data path
     :return      : return a object of the result which includes NK dataframe, leakage value dataframe, the coordinate of
-                   the leakage value which need to be highlighted (abs(value) > 0.2), the effective energy
-                   dataframe (X), and the list of NK (Y). X and Y is used to plot on chart.
+                   the leakage value which need to be highlighted (abs(value) > 0.2), and the effective energy
+                   dataframe (X). X is used to plot on chart.
     """
     # extract data
     client_data, duplicate_num = extraction(client)
