@@ -642,6 +642,10 @@ class AddClientWindow(QMainWindow):
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
+            self.ui.calNumLine.clear()
+            self.ui.clientNameLine.clear()
+            self.ui.clientAddress1Line.clear()
+            self.ui.clientAddress2Line.clear()
             event.accept()  
         else:
             event.ignore() 
@@ -663,17 +667,22 @@ class AddClientWindow(QMainWindow):
         self.clientAddress2 = self.ui.clientAddress2Line.text()
 
         # Check duplicated ID
-        IDs = getHomeTableData()['CAL Number'].values.tolist()
-        if self.calNumber in IDs:
-            QtWidgets.QMessageBox.about(self, "Warning", "CAL number already existed in file system!")
-            return
+        # IDs = getHomeTableData()['CAL Number'].values.tolist()
+        # if self.calNumber in IDs:
+        #     QtWidgets.QMessageBox.about(self, "Warning", "CAL number already existed in file system!")
+        #     return
 
         # Check calNumber and clientName are not empty
         if len(self.calNumber)==0 or len(self.clientName)==0:
             QtWidgets.QMessageBox.about(self, "Warning", "Please fill in CAL Number and Client Name!")
             return
 
-        Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2)
+        try:
+            Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2)
+        except ValueError:
+            QtWidgets.QMessageBox.about(self, "Warning", "CAL number already existed in file system!")
+            return
+
         self.parent.clientModel.addData(self.getNewClientInfo())
         self.parent.clientModel.layoutChanged.emit()
         
@@ -683,10 +692,6 @@ class AddClientWindow(QMainWindow):
         self.clientAddress1 = ""
         self.clientAddress2 = ""
         self.calNumber = ""
-        self.ui.calNumLine.clear()
-        self.ui.clientNameLine.clear()
-        self.ui.clientAddress1Line.clear()
-        self.ui.clientAddress2Line.clear()
         # TODO: Display another window to confirm information
 
 
