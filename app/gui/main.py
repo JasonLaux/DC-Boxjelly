@@ -90,13 +90,6 @@ class MainWindow(QMainWindow):
         
         
         #Dynamic search
-
-        # calNumber = ["Cal Number1", "Cal Number2", "Cal Number3"] 
-        # clientName = ["Adams", "Peter", "James"]
-        # dataList = []
-        # for i in range(len(calNumber)):
-        #     dataList.append(['',calNumber[i],clientName[i]])
-
         self.ui.homeTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")       
         self.clientModel = TableModel(data=getHomeTableData())
 
@@ -151,18 +144,24 @@ class MainWindow(QMainWindow):
             self.clientModel.removeRows(position=row_idx)
 
 
-    # choose one client and goes into client info page
     def chooseClient(self):
+        """
+        Choose one client and goes into client info page.
+        When not choosing any of the client, pop up a warning window
+        """
         if self._selectedRows:
             self.ui.updateClientButton.setEnabled(False)
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
             self.ui.homeTable.clearSelection()
-        # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
 
-    # delete chosen client on the Home Page by clicking 'delete client' button
+
     def deleteClient(self):
+        """
+        Delete chosen client on the Home Page by clicking 'delete client' button.
+        When not choosing any of the client, pop up a warning window
+        """
         if self._selectedRows:
             self.clientModel.layoutAboutToBeChanged.emit()
             self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
@@ -177,12 +176,14 @@ class MainWindow(QMainWindow):
 
             if self.clientModel.isTableEmpty:
                 self._selectedRows = []
-        # when not choosing any of the client, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
     
-    # Update client info on the Client Info Page by clicking 'update' button
+
     def updateClientInfo(self):
+        """
+        Update client info on the Client Info Page by clicking 'update' button.
+        """
         self.clientModel.layoutAboutToBeChanged.emit()
         self.ui.updateClientButton.setEnabled(False)
 
@@ -202,9 +203,11 @@ class MainWindow(QMainWindow):
         self.clientModel.initialiseTable(data=getHomeTableData())
         self.clientModel.layoutChanged.emit()
 
-
-    # choose one equipment and goes into Equipment info page
     def chooseEquipment(self):
+        """
+        Choose one equipment and goes into Equipment info page.
+        When not choosing any of the equipments, pop up a warning window.
+        """
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage)
             self._selectedRows = []
@@ -215,11 +218,14 @@ class MainWindow(QMainWindow):
             self.ui.label_eqSN.setText(Job[self._selectedCalNum][self._selectedEquipID].serial)
             self.ui.label_eqMN.setText(Job[self._selectedCalNum][self._selectedEquipID].model)
             self.ui.equipmentsTable.clearSelection()
-        # when not choosing any of the equipments, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
-    # delete chosen equipment on the Client Info Page by clicking 'delete equipment' button
+
     def deleteEquipment(self):
+        """
+        Delete chosen equipment on the Client Info Page by clicking 'delete equipment' button.
+        When not choosing any of the equipment, pop up a warning window.
+        """
         if self._selectedRows:
             self.equipmentModel.layoutAboutToBeChanged.emit()
             self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
@@ -230,12 +236,14 @@ class MainWindow(QMainWindow):
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.equipmentModel.layoutChanged.emit()
             self.ui.equipmentsTable.clearSelection()
-        # when not choosing any of the equipment, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
-
-    # delete chosen run on the Client Info Page by clicking 'delete run' button
+ 
     def deleteRun(self):
+        """
+        Delete chosen run on the Client Info Page by clicking 'delete run' button.
+        When not choosing any of the equipment, pop up a warning window.
+        """
         if self._selectedRows:
             self.runModel.layoutAboutToBeChanged.emit()
             self._selectedRun = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
@@ -247,13 +255,13 @@ class MainWindow(QMainWindow):
                 self.runModel.layoutChanged.emit()
             
             self.ui.runsTable.clearSelection()
-
-        # when not choosing any of the equipment, pop up a warning window
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a run to delete.")
-
-    # Return the index of selected rows in an array
+ 
     def selection_changed(self, tableName):
+        """
+        Return the index of selected rows in an array.
+        """
         try:
             # TODO Order is based on the selection. Need to sort first?
             modelIndex = getattr(self, tableName).selectionModel().selectedRows() # QModelIndexList
@@ -281,10 +289,10 @@ class MainWindow(QMainWindow):
         except AttributeError:
             raise AttributeError("Attribute does not exist! Table name may be altered!")
             
-
-    # define open window functions
     def openConstantsWindow(self):
-        # open constant file instead of open constant window
+        """
+        Open constant file instead of open constant window.
+        """
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
             base_path = sys._MEIPASS
@@ -318,7 +326,9 @@ class MainWindow(QMainWindow):
         self.importWindow.equip = Job[self._selectedCalNum][self._selectedEquipID]
     
     def openAnalysisWindow(self):
-        # Pop up warning when not choosing any of the runs
+        """
+        Open analysis window. Pop up warning when not choosing any of the runs.
+        """
         try:
             if self._selectedRows:
 
@@ -533,8 +543,10 @@ class AnalyseWindow(QMainWindow):
         self.plot_item.showGrid(y=True)
         # logger.debug(self.ui.tabWidget.count())
     
-    # Return the index of selected rows in an array
     def selection_changed(self, tableName):
+        """
+        Return the index of selected rows in an array.
+        """
         try:
             # Single selection mode
             idx = getattr(self, tableName).selectionModel().selectedIndexes()[0]
