@@ -23,10 +23,11 @@ def loadUI(str, window):
         sys.exit(-1)
     return loadedWindow
 
-'''
-Return client info data as Dataframe
-'''
+
 def getHomeTableData():
+    '''
+    Return client info data as Dataframe
+    '''
     # data = {
     #     'status': [False, False, False],
     #     'CAL Number': ['CAL 001', 'CAL 002', 'CAL 003'],
@@ -47,10 +48,10 @@ def getHomeTableData():
     df = pd.DataFrame(data)
     return df
 
-'''
-Return equipments data as Dataframe
-'''
 def getEquipmentsTableData(job: Job):
+    '''
+    Return equipments data as Dataframe
+    '''
     #job = Job[jobID]
     data = {
         'Make/Model': [],
@@ -64,10 +65,10 @@ def getEquipmentsTableData(job: Job):
     df = pd.DataFrame(data)
     return df
 
-'''
-Return runs data as Dataframe
-'''
 def getRunsTableData(equip: Equipment):
+    '''
+    Return runs data as Dataframe
+    '''
     #equip = Job[jobID][equipID]
     data = {
         'ID': [],
