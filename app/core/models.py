@@ -29,7 +29,7 @@ class _JobMetaClass(type):
 
     def __getitem__(cls, id) -> 'Job':
         """
-        Get a job by id
+        Get a job by id, it is case insensitive on windows
         @id: The id of the job
 
         If the job does not exist, it raises a KeyError
@@ -55,7 +55,9 @@ class _JobMetaClass(type):
 
     def __contains__(self, id) -> bool:
         """
-        Return whether a job exists by id
+        Return whether a job exists by id.
+
+        The id is case insensitive on windows.
         """
         folder = JOB_FOLDER / str(id)
         return folder.is_dir()
@@ -66,6 +68,9 @@ class _JobMetaClass(type):
 
         If the job with given id exists, it raises an AssertionError
         """
+        if id in Job:
+            raise ValueError(f'The Job with id={id} has already existed')
+
         obj = cls(id)
         assert not obj._ensure_folder_with_meta(), 'The job folder should not exist'
         assign_properties(obj, kwargs)
@@ -196,6 +201,8 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
     def add_equipment(self, model, serial) -> 'Equipment':
         """
         Add an equipment with the given model and serial
+
+        If equipment exists, raise ValueError
         """
         return Equipment(self, model=model, serial=serial)
 

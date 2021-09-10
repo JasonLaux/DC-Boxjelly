@@ -56,6 +56,9 @@ class TestJob(ModelTestBase):
         # test not existing key
         self.assertRaises(KeyError, lambda: models.Job['7'])
 
+        # test create existed job
+        self.assertRaises(ValueError, lambda: models.Job.make('2'))
+
     def test_set_meta_data(self):
         j = models.Job.make('1')
 
