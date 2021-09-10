@@ -13,7 +13,7 @@ from pathlib import Path
 import logging
 import numpy as np
 
-from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData
+from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
 from app.core.models import Job, Equipment
 from app.core.resolvers import calculator, result_data
 from app.gui import resources
@@ -436,9 +436,9 @@ class ImportWindow(QMainWindow):
         run.raw_client.upload_from(Path(self.clientPath))
         run.raw_lab.upload_from(Path(self.labPath))
         data = {
-            'ID': int(run.id),
-            'Added Time': run.added_at,
-            'Edited Time': run.edited_at,
+            'ID': run.id,
+            'Added Time': converTimeFormat(run.added_at),
+            'Edited Time': converTimeFormat(run.edited_at),
         }
         self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
         self.parent.runModel.layoutChanged.emit()
@@ -561,7 +561,7 @@ class AnalyseWindow(QMainWindow):
             self.tabTable.setItemDelegate(AlignDelegate()) # text alignment
 
             # Draw graph
-            self.plot_item.addItem(self.plot(result.X['E_eff'].tolist(), result.Y, color=self.color[run.id % len(self.color) - 1], runId=run.id))
+            self.plot_item.addItem(self.plot(result.X['E_eff'].tolist(), result.df_NK['NK'].tolist(), color=self.color[run.id % len(self.color) - 1], runId=run.id))
 
         
     def analyze(self):
@@ -592,8 +592,8 @@ class AnalyseWindow(QMainWindow):
             hoverPen=pg.mkPen('r', width=2),
             hoverBrush=pg.mkBrush('g'),
             name="Run " + str(runId),
-            tip='This is a test'.format
-            # tip='x: {x:.3g}\ny: {y:.3g}'.format
+            # tip='This is a test'.format
+            tip='x: {x:.3g}\ny: {y:.3g}'.format
         )
         scatter_item.addPoints(
             x=np.array(x),
@@ -782,8 +782,6 @@ class TableModel(QAbstractTableModel):
         if role == Qt.BackgroundRole:
             if self._bg and (index.row(), index.column()) in self._bgCellIdx:
                 return QtGui.QColor('yellow')
-
-
 
     def rowCount(self, index=None):
         return self._data.shape[0]

@@ -1,3 +1,4 @@
+from datetime import datetime
 from PyQt5.QtCore import QFile, QIODevice
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.uic import loadUi
@@ -75,8 +76,8 @@ def getRunsTableData(equip: Equipment):
     }
     for run in equip.mex:
         data['ID'].append(run.id),
-        data['Added Time'].append(run.added_at),
-        data['Edited Time'].append(run.edited_at),
+        data['Added Time'].append(converTimeFormat(run.added_at)),
+        data['Edited Time'].append(converTimeFormat(run.edited_at)),
     df = pd.DataFrame(data)
     return df
 
@@ -91,3 +92,10 @@ def getResultData():
         "Run2/Average": [0.933, 0.933],
     }
     return pd.DataFrame(data)
+
+def converTimeFormat(time: str):
+    if time:
+        dateTime = datetime.fromisoformat(time)
+        return dateTime.strftime('%d-%m-%Y %H:%M:%S')
+    else:
+        return None
