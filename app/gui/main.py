@@ -301,7 +301,7 @@ class MainWindow(QMainWindow):
             base_path = sys._MEIPASS
         except Exception:
             base_path = os.path.abspath(".")
-        constantFilePath = os.path.join(base_path, 'app\\core\\constant.xlsx')
+        constantFilePath = os.path.join(base_path, 'constant.xlsx')
 
         try:
             os.startfile(constantFilePath)

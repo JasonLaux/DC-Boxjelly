@@ -85,7 +85,7 @@ def calculator(client, lab):
     except Exception:
         base_path = os.path.abspath(".")
     # dir_path = os.path.dirname(os.path.realpath(__file__))
-    constant = os.path.join(base_path, 'app\\core\\constant.xlsx')
+    constant = os.path.join(base_path, 'constant.xlsx')
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_beams = pd.read_excel(constant, sheet_name='Beams')
 
