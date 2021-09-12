@@ -534,7 +534,7 @@ class AnalyseWindow(QMainWindow):
         self.ui.resultTable.setModel(self.resultModel)
         self.ui.resultTable.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         # self.ui.resultTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('resultTable'))
-        self.ui.resultTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.resultTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.ui.resultTable.setItemDelegate(AlignDelegate()) # text alignment
         # Graph
         self.ui.resultGraph.setBackground(background=None)
