@@ -213,3 +213,39 @@ def extraction(path):
     # return number of duplicate_beam since kk need to know how many beams measure two times
     return data, len(duplicate_beam)
 
+def summary(name_list, result_list):
+    """
+    This function is used to summary all runs of calibration coefficient.
+    This function can deal with if the runs do not have same beam quality
+    TODO: If all run's beam quality are the same. df_energy and df_result can be merged directly
+
+    :param name_list  : a list of all names of runs. ex: ['run1', 'run2']
+    :param result_list: a list of all NK of runs
+    :param df_energy  : a dataframe of the effective energy
+    :return           : return a dataframe of the summary
+    """
+    # get the first dataframe in order to merge with others
+    df_result = result_list[0].df_NK
+
+    # merge all results' dataframes into one dataframe
+    for i in range(1, len(result_list)):
+        df_result = pd.merge(df_result, result_list[i].df_NK, left_index=True, right_index=True, how='outer')
+
+    # give the column name and average the all rows
+    df_result.columns = name_list
+    df_result['Average'] = round(df_result.mean(axis=1), 2)
+
+    # all results' values divided by the average value
+    for name in name_list:
+        df_result[name+'/Average'] = round(df_result[name] / df_result['Average'], 3)
+
+    # concate the energy
+    df_energy = result_list[0].X
+    for i in range(1, len(result_list)):
+        df_energy = pd.concat([df_energy, result_list[i].X], axis=0)
+
+    # remove the duplicate index
+    df_energy = df_energy[~df_energy.index.duplicated()]
+
+    # merge the effective energy with summary
+    return pd.merge(df_energy, df_result, left_index=True, right_index=True, how='outer')
