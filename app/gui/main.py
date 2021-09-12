@@ -15,7 +15,7 @@ import numpy as np
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
 from app.core.models import Job, Equipment
-from app.core.resolvers import calculator, result_data
+from app.core.resolvers import calculator, result_data, summary
 from app.gui import resources
 
 logger = logging.getLogger(__name__)
@@ -530,9 +530,10 @@ class AnalyseWindow(QMainWindow):
         # self.ui.resultTable
         # Result Table
         self.ui.resultTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")       
-        self.resultModel = TableModel(data=getResultData())
+        self.resultModel = TableModel(pd.DataFrame())
         self.ui.resultTable.setModel(self.resultModel)
-        self.ui.resultTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('resultTable'))
+        self.ui.resultTable.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        # self.ui.resultTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('resultTable'))
         self.ui.resultTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.resultTable.setItemDelegate(AlignDelegate()) # text alignment
         # Graph
@@ -542,28 +543,33 @@ class AnalyseWindow(QMainWindow):
         self.plot_item.setLabel('left', "Calibration Factor (mGy/nc)")
         self.plot_item.addLegend(offset=(-30, 30))
         self.plot_item.showGrid(y=True)
+        self.plot_item.setMenuEnabled(False)
         # logger.debug(self.ui.tabWidget.count())
     
-    def selection_changed(self, tableName):
-        """
-        Return the index of selected rows in an array.
-        """
-        try:
-            # Single selection mode
-            idx = getattr(self, tableName).selectionModel().selectedIndexes()[0]
-            logger.debug(idx.row(), idx.column())
-            # self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedIndexes()]
-        except AttributeError:
-            logger.error("Attribute does not exist! Table name may be altered!")
-            raise AttributeError("Attribute does not exist! Table name may be altered!")
-        logger.debug(self._selectedRows)
+    # def selection_changed(self, tableName):
+    #     """
+    #     Return the index of selected rows in an array.
+    #     """
+    #     try:
+    #         # Single selection mode
+    #         idx = getattr(self, tableName).selectionModel().selectedIndexes()[0]
+    #         logger.debug(idx.row(), idx.column())
+    #         # self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedIndexes()]
+    #     except AttributeError:
+    #         logger.error("Attribute does not exist! Table name may be altered!")
+    #         raise AttributeError("Attribute does not exist! Table name may be altered!")
+    #     logger.debug(self._selectedRows)
 
     def setRuns(self, runs):
         self.runs = runs
+        result_list = []
+        name_list = []
+        self.resultModel.layoutAboutToBeChanged.emit()
         for run in runs:
             # get Leakage Current Data of each run
             # get data from resolver
             result = calculator(run.raw_client.path, run.raw_lab.path)
+            result_list.append(result)
             self.tabTables.append(result.df_leakage)
             self.leakageCurrentModel = TableModel(result.df_leakage, set_bg=True, bg_index=result.highlight)
             self.tabTable = QTableView()
@@ -571,10 +577,15 @@ class AnalyseWindow(QMainWindow):
             self.tabTable.setModel(self.leakageCurrentModel)
             self.tabTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
             self.ui.tabWidget.addTab(self.tabTable, "Run "+str(run.id))
+            name_list.append("Run "+str(run.id))
             self.tabTable.setItemDelegate(AlignDelegate()) # text alignment
 
             # Draw graph
             self.plot_item.addItem(self.plot(result.X['E_eff'].tolist(), result.df_NK['NK'].tolist(), color=self.color[run.id % len(self.color) - 1], runId=run.id))
+
+        self.resultModel.initialiseTable(data=summary(name_list, result_list))
+        self.resultModel.layoutChanged.emit()
+
 
         
     def analyze(self):
