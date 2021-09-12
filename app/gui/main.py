@@ -246,11 +246,13 @@ class MainWindow(QMainWindow):
         """
         if self._selectedRows:
             self.runModel.layoutAboutToBeChanged.emit()
-            self._selectedRun = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
-            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this run?', QtWidgets.QMessageBox.Yes,
+            selectedRun = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
+            # logger.debug(selectedRun)
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete selected run or runs?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
-                del Job[self._selectedCalNum][self._selectedEquipID].mex[self._selectedRun]
+                for runId in selectedRun:
+                    del Job[self._selectedCalNum][self._selectedEquipID].mex[runId]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.runModel.layoutChanged.emit()
             
@@ -333,8 +335,8 @@ class MainWindow(QMainWindow):
         try:
             if self._selectedRows:
 
-                self._selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
-                runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], self._selectedRuns))
+                selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
+                runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
                 self.analysisWindow.setRuns(runs) 
                 self.analysisWindow.analyze()
                 self._selectedRows = []
