@@ -278,6 +278,7 @@ class MainWindow(QMainWindow):
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
+                self.ui.equipmentsTable.setColumnHidden(2, True)
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self.runModel.layoutAboutToBeChanged.emit()
