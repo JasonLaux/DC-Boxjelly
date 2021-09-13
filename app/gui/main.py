@@ -392,11 +392,11 @@ class ImportWindow(QMainWindow):
         self.ui.labFilePathLine.textChanged.connect(self.sync_labLineEdit)
 
         # link buttons to actions
-        self.importClientFilebutton.pressed.connect(self.chooseRawClient)
-        self.importLabFileButton.pressed.connect(self.chooseRawLab)
-        self.importSubmitButton.pressed.connect(self.addNewRun)
-        self.clientOpenFile.pressed.connect(self.openClientFile)
-        self.labOpenFile.pressed.connect(self.openLabFile)
+        self.importClientFilebutton.clicked.connect(self.chooseRawClient)
+        self.importLabFileButton.clicked.connect(self.chooseRawLab)
+        self.importSubmitButton.clicked.connect(self.addNewRun)
+        self.clientOpenFile.clicked.connect(self.openClientFile)
+        self.labOpenFile.clicked.connect(self.openLabFile)
 
     def sync_clientLineEdit(self):
         self.clientPath = self.ui.clientFilePathLine.text()
@@ -662,7 +662,7 @@ class AddClientWindow(QMainWindow):
         self.clientAddress2 = ""
         self.calNumber = ""
 
-        self.clientSubmitButton.pressed.connect(self.addNewClient)
+        self.clientSubmitButton.clicked.connect(self.addNewClient)
         
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -739,7 +739,7 @@ class AddEquipmentWindow(QMainWindow):
         self.serial = ""
         self.id = ""
         self.job = None
-        self.equipmentSubmitButton.pressed.connect(self.addNewEquip)
+        self.equipmentSubmitButton.clicked.connect(self.addNewEquip)
     
     def getNewEquipInfo(self):
         newEquip = {
