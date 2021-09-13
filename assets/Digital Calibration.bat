@@ -1,1 +1,1 @@
-start "Digital Calibration\Digital Calibration.exe"
+start "" "Digital Calibration\Digital Calibration.exe"
