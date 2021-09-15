@@ -43,8 +43,8 @@ def calculator(client, lab):
     :param client: the client raw data path
     :param lab   : the lab raw data path
     :return      : return a object of the result which includes NK dataframe, leakage value dataframe, the coordinate of
-                   the leakage value which need to be highlighted (abs(value) > 0.2), and the effective energy
-                   dataframe (X). X is used to plot on chart.
+                   the leakage value which need to be highlighted (abs(value) > 0.2), the effective energy
+                   dataframe (X), and the list of NK (Y). X and Y is used to plot on chart.
     """
     # extract data
     client_data, duplicate_num = extraction(client)
@@ -85,7 +85,7 @@ def calculator(client, lab):
     except Exception:
         base_path = os.path.abspath(".")
     # dir_path = os.path.dirname(os.path.realpath(__file__))
-    constant = os.path.join(base_path, 'constant.xlsx')
+    constant = os.path.join(base_path, r'E:\Unimelb\2021 S2\Software Project\test\constant\constant.xlsx')
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_beams = pd.read_excel(constant, sheet_name='Beams')
 
@@ -213,6 +213,7 @@ def extraction(path):
     # return number of duplicate_beam since kk need to know how many beams measure two times
     return data, len(duplicate_beam)
 
+
 def summary(name_list, result_list):
     """
     This function is used to summary all runs of calibration coefficient.
@@ -237,7 +238,11 @@ def summary(name_list, result_list):
 
     # all results' values divided by the average value
     for name in name_list:
-        df_result[name+'/Average'] = round(df_result[name] / df_result['Average'], 3)
+        df_result[name+'/Average'] = round(df_result[name] / df_result['Average'], 3).map('{:,.3f}'.format)
+        df_result[name] = df_result[name].map('{:,.2f}'.format)
+
+    # let the format be consisted in the GUI
+    df_result['Average'] = df_result['Average'].map('{:,.2f}'.format)
 
     # concate the energy
     df_energy = result_list[0].X
@@ -246,6 +251,7 @@ def summary(name_list, result_list):
 
     # remove the duplicate index
     df_energy = df_energy[~df_energy.index.duplicated()]
+    df_energy = df_energy.applymap('{:,.2f}'.format)
 
     # merge the effective energy with summary
     return pd.merge(df_energy, df_result, left_index=True, right_index=True, how='outer')
