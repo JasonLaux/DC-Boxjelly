@@ -695,6 +695,15 @@ background-color: white;
                 </item>
                 <item>
                  <widget class="QPushButton" name="importFilesButton">
+                  <property name="font">
+                   <font>
+                    <family>Comic Sans MS</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton{
 background-color: rgb(211, 213, 213);
