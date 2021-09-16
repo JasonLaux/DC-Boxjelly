@@ -104,6 +104,24 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_29">
             <item>
+             <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <family>Verdana</family>
+                <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(255, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>*</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="serialLabel">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -161,6 +179,24 @@ border: 1px solid black;
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_30">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="font">
+               <font>
+                <family>Verdana</family>
+                <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(255, 0, 0);</string>
+              </property>
+              <property name="text">
+               <string>*</string>
+              </property>
+             </widget>
+            </item>
             <item>
              <widget class="QLabel" name="makeModelLabel">
               <property name="sizePolicy">
