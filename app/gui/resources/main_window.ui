@@ -694,6 +694,35 @@ background-color: white;
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="importFilesButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton{
+background-color: rgb(211, 213, 213);
+color:black;
+border-style:outset;
+border-width:2px;
+border-radius:10px;
+border-color: black;
+font:bold 16px;
+padding: 6;
+}
+
+QPushButton:hover{
+background-color: rgb(83, 82, 82);
+color: white;
+}
+
+QPushButton:pressed{
+background-color: white;
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string>Import Files</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="deleteClientButton">
                   <property name="font">
                    <font>
@@ -883,6 +912,21 @@ background-color: white;
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QLabel" name="label">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>12</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Operator</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item>
@@ -941,6 +985,16 @@ border: 1px solid black;
                      <property name="styleSheet">
                       <string notr="true">background-color: rgb(255, 255, 255);
 border: 1px solid black;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="operatorlineEdit">
+                     <property name="font">
+                      <font>
+                       <family>Verdana</family>
+                       <pointsize>12</pointsize>
+                      </font>
                      </property>
                     </widget>
                    </item>
