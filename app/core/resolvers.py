@@ -46,6 +46,7 @@ class result_data():
         self.df_leakage = None
         self.highlight = []
         self.X = []
+        self.df_otherConstant = None
 
 class HeaderError(RuntimeError):
     def __init__(self, arg):
@@ -127,8 +128,11 @@ def calculator(client, lab):
     df_beams_duplicate['Filter'] = [Filter + '*' for Filter in df_beams_duplicate.Filter.tolist()]
     df_beams_duplicate.sort_values('Filter', inplace=True)
 
+    # concate the processed beams
+    df_processBeams = pd.concat([df_beams, df_beams_duplicate], axis=0).set_index('Filter')
+
     # concat together so that KK will have the same order as client_data.df_mean
-    df_KK = pd.concat([df_beams, df_beams_duplicate], axis=0).set_index('Filter')['Product'].to_frame('NK')
+    df_KK = df_processBeams['Product'].to_frame('NK')
 
     # Calculating NK
     NK = R2 * WE * df_KK * ((273.15 + TS2) / (273.15 + TM2)) * (0.995766667 + 0.000045 * H2) / (
@@ -145,7 +149,7 @@ def calculator(client, lab):
                                  index=["Monitor 1", "Chamber (client)", "Monitor 2", "Standard (MEFAC)"])
 
     # extract the effective energy for plotting the graph
-    df_energy = pd.concat([df_beams, df_beams_duplicate], axis=0).set_index('Filter')['E_eff'].to_frame()
+    df_energy = df_processBeams['E_eff'].to_frame()
 
     # create an object to save result
     result = result_data()
@@ -157,10 +161,13 @@ def calculator(client, lab):
     result.df_leakage = round(df_leakage, 2) + 0  # +0 to remove -0.0
 
     # get the coordinate which the cell need to be highlighted
-    result.highlight = [(x, y) for x, y in zip(*np.where(abs(result.df_leakage.values) > 0.1))]
+    result.highlight = [(x, y) for x, y in zip(*np.where(abs(result.df_leakage.values) > 0.2))]
 
     # saving the graph required data
     result.X = df_energy['E_eff'].to_frame('E_eff')
+
+    # save other constant to result
+    result.df_otherConstant = df_processBeams.drop(columns=['Product', 'E_eff']).fillna('')
 
     return result
 
