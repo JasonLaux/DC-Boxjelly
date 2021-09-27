@@ -507,8 +507,9 @@ class HomeImportWindow(QMainWindow):
         # window = loadUI(".\\app\\gui\\import_page.ui", self)
         #window = loadUI("./app/gui/import_page.ui", self)
         window = loadUI(':/ui/import_page.ui', self)
-
         self.ui = window
+        self.confirmWindow = ConfirmWindow(self)
+        self.data = Header_data()
         self.clientPath = self.ui.clientFilePathLine.text()
         self.labPath = self.ui.labFilePathLine.text()
         self.ui.clientFilePathLine.textChanged.connect(self.sync_clientLineEdit)
@@ -517,9 +518,11 @@ class HomeImportWindow(QMainWindow):
         # link buttons to actions
         self.importClientFilebutton.clicked.connect(self.chooseRawClient)
         self.importLabFileButton.clicked.connect(self.chooseRawLab)
-        self.importSubmitButton.clicked.connect(self.addNewRun)
+        self.importSubmitButton.clicked.connect(self.submit)
         self.clientOpenFile.clicked.connect(self.openClientFile)
         self.labOpenFile.clicked.connect(self.openLabFile)
+        self.confirmWindow.confirmButton.clicked.connect(self.addNewRun)
+        self.confirmWindow.quitButton.clicked.connect(self.confirmWindow.close)
 
     def sync_clientLineEdit(self):
         self.clientPath = self.ui.clientFilePathLine.text()
@@ -558,38 +561,47 @@ class HomeImportWindow(QMainWindow):
         )[0]
         logger.debug("Lab raw file: %s", self.labPath)
         self.ui.labFilePathLine.setText(self.labPath)
+    
+    def submit(self):
+        if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
+            return
+        try: 
+            self.data = extractionHeader(self.clientPath, self.labPath)
+        except HeaderError as e:
+            QtWidgets.QMessageBox.about(self, "Warning", "".join(list(e.args)))
+            return
 
+        self.confirmWindow.calNumLine.setText(self.data.CAL_num)
+        self.confirmWindow.clientNameLine.setText(self.data.Client_name)
+        self.confirmWindow.clientAddress1Line.setText(self.data.address_1)
+        self.confirmWindow.clientAddress2Line.setText(self.data.address_2)
+        self.confirmWindow.chamberLine.setText(self.data.model+" "+self.data.serial)
+        self.confirmWindow.operatorLine.setText(self.data.operator)
+        self.confirmWindow.setFixedSize(800, 560)
+        self.confirmWindow.setWindowModality(Qt.ApplicationModal)
+        self.confirmWindow.show()
+        
     def addNewRun(self):
         self.parent.clientModel.layoutAboutToBeChanged.emit()
         self.parent.equipmentModel.layoutAboutToBeChanged.emit()
         self.parent.runModel.layoutAboutToBeChanged.emit()
 
-        if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
-            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
-            return
-
-        data = Header_data()
-        try: 
-            data = extractionHeader(self.clientPath, self.labPath)
-        except HeaderError as e:
-            QtWidgets.QMessageBox.about(self, "Warning", "".join(list(e.args)))
-            return
-
         jobsID = []
         for job in Job:
             jobsID.append(job.id)
-        if not data.CAL_num in jobsID:
-            job = Job.make(data.CAL_num, client_name = data.Client_name, client_address_1 = data.address_1, client_address_2 = data.address_2, operator = data.operator)
+        if not self.data.CAL_num in jobsID:
+            job = Job.make(self.data.CAL_num, client_name = self.data.Client_name, client_address_1 = self.data.address_1, client_address_2 = self.data.address_2, operator = self.data.operator)
             newClient = {
-                'CAL Number': data.CAL_num,
-                'Client Name': data.Client_name,
+                'CAL Number': self.data.CAL_num,
+                'Client Name': self.data.Client_name,
             }
             self.parent.clientModel.addData(pd.DataFrame(newClient, index=[0]) )
             self.parent.clientModel.layoutChanged.emit()
-            equip = job.add_equipment(model = data.model, serial = data.serial)
+            equip = job.add_equipment(model = self.data.model, serial = self.data.serial)
             newEquip = {
-                'Make/Model': data.model,
-                'Serial Num': data.serial,
+                'Make/Model': self.data.model,
+                'Serial Num': self.data.serial,
                 'ID': equip.id,
             }
             self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
@@ -605,16 +617,16 @@ class HomeImportWindow(QMainWindow):
             self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
             self.parent.runModel.layoutChanged.emit()
         else:
-            job = Job[data.CAL_num]
+            job = Job[self.data.CAL_num]
             equipsID = []
             for equip in job:
                 equipsID.append(equip.id)
-            equipId = data.model+'_'+data.serial
+            equipId = self.data.model+'_'+self.data.serial
             if not equipId in equipsID:
-                equip = job.add_equipment(model = data.model, serial = data.serial)
+                equip = job.add_equipment(model = self.data.model, serial = self.data.serial)
                 newEquip = {
-                    'Make/Model': data.model,
-                    'Serial Num': data.serial,
+                    'Make/Model': self.data.model,
+                    'Serial Num': self.data.serial,
                     'ID': equip.id,
                 }
                 self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
@@ -630,7 +642,7 @@ class HomeImportWindow(QMainWindow):
                 self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
                 self.parent.runModel.layoutChanged.emit()
             else:
-                equip = Job[data.CAL_num][equipId]
+                equip = Job[self.data.CAL_num][equipId]
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
                 run.raw_lab.upload_from(Path(self.labPath))
@@ -646,6 +658,7 @@ class HomeImportWindow(QMainWindow):
         
         # Finish add new run and quit
         self.hide()
+        self.confirmWindow.close()
         self.clientPath = ""
         self.labPath = ""
         self.ui.clientFilePathLine.clear()
@@ -672,6 +685,14 @@ class HomeImportWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
+
+
+class ConfirmWindow(QMainWindow):
+    def __init__(self, parent = None):
+        super(ConfirmWindow, self).__init__(parent)
+        
+        # load constants page ui
+        self.ui = loadUI(':/ui/run_info.ui', self)
 
 
 class ConstantsWindow(QMainWindow):

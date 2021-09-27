@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>952</width>
+    <width>815</width>
     <height>562</height>
    </rect>
   </property>
@@ -152,29 +152,20 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="calNumLine">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="calNumLine">
               <property name="font">
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);
-border: 1px solid black;
-</string>
+               <string notr="true">color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(255, 0, 0, 255), stop:0.0965909 rgba(0, 0, 0, 255), stop:1 rgba(0, 0, 0, 255));</string>
+              </property>
+              <property name="text">
+               <string>test</string>
               </property>
              </widget>
             </item>
@@ -210,29 +201,20 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="clientNameLine">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="clientNameLine">
               <property name="font">
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);
-border: 1px solid black;
-</string>
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>test</string>
               </property>
              </widget>
             </item>
@@ -268,29 +250,17 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="clientAddress1Line">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="clientAddress1Line">
               <property name="font">
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);
-border: 1px solid black;
-</string>
+              <property name="text">
+               <string>test</string>
               </property>
              </widget>
             </item>
@@ -326,29 +296,17 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="clientAddress2Line">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="clientAddress2Line">
               <property name="font">
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);
-border: 1px solid black;
-</string>
+              <property name="text">
+               <string>test</string>
               </property>
              </widget>
             </item>
@@ -384,29 +342,17 @@ border: 1px solid black;
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="chamberLine">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="chamberLine">
               <property name="font">
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);
-border: 1px solid black;
-</string>
+              <property name="text">
+               <string>test</string>
               </property>
              </widget>
             </item>
@@ -437,34 +383,22 @@ border: 1px solid black;
                </font>
               </property>
               <property name="text">
-               <string>Operator</string>
+               <string>Operator:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="operatorLine">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="operatorLine">
               <property name="font">
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
                </font>
               </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);
-border: 1px solid black;
-</string>
+              <property name="text">
+               <string>test</string>
               </property>
              </widget>
             </item>
