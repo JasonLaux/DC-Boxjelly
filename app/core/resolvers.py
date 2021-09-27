@@ -9,8 +9,22 @@ import warnings
 import numpy as np
 import os
 import sys
+import re
 
 warnings.filterwarnings('ignore')
+
+class Header_data():
+    """
+    the object to store run info data which read from the head of the raw data
+    """
+    def __init__(self):
+        self.CAL_num = ""
+        self.Client_name = ""
+        self.address_1 = ""
+        self.address_2 = ""
+        self.operator = ""
+        self.serial = ""
+        self.model = ""
 
 
 class Processed_data():
@@ -32,6 +46,10 @@ class result_data():
         self.df_leakage = None
         self.highlight = []
         self.X = []
+
+class HeaderError(RuntimeError):
+    def __init__(self, arg):
+        self.args = arg
 
 
 def calculator(client, lab):
@@ -255,3 +273,78 @@ def summary(name_list, result_list):
 
     # merge the effective energy with summary
     return pd.merge(df_energy, df_result, left_index=True, right_index=True, how='outer')
+
+
+def extractionHeader(client_path: str, lab_path: str):
+    """
+    This function is used to extract the run info data from the file.
+    """
+    # check run num in file name 
+    client_file_name = client_path.split('//')[-1]
+    lab_file_name = lab_path.split('//')[-1]
+    searchObj = re.search( r'Run[0-9]*', client_file_name, re.I)
+    run = searchObj.group()
+    if not re.search( run, lab_file_name, re.I):
+        raise HeaderError("Not the same run")
+
+    # read data from header
+    data = Header_data()
+
+    with open(client_path, newline='', encoding="ISO-8859-1") as f:
+        for line in f:
+            if 'DATA' in line:
+                break
+            elif 'CAL Number' in line:
+                data.CAL_num = line.split(',')[2]
+            elif 'Client name' in line:
+                data.Client_name = line.split(',')[2]
+            elif 'Address 1' in line:
+                data.address_1 = line.split(',')[2]
+            elif 'Address 2' in line:
+                data.address_2 = line.split(',')[2]
+            elif 'Operator' in line:
+                data.operator = line.split(',')[2]
+            elif 'Chamber' in line:
+                data.serial = line.split(',')[2][-4:]
+                data.model = line.split(',')[2][:-4].strip()
+    
+    # data integrity check
+    if data.CAL_num == "":
+        raise HeaderError("Header does not contains CAL num")
+    elif data.serial == "" or data.model == "":
+        raise HeaderError("Header does not contains model/serial")
+    elif not re.match(r"\d{4}", data.serial):
+        raise HeaderError("Invalid equip serial")
+    checkHeader(lab_path, data)
+    
+    return data
+
+
+def checkHeader(lab_path, client_data: Header_data):
+    """
+    This function is used to check if the run info from the lab file is aligned with info from client file.
+    """
+    lab_data = Header_data()
+
+    with open(lab_path, newline='', encoding="ISO-8859-1") as f:
+        for line in f:
+            if 'DATA' in line:
+                break
+            elif 'CAL Number' in line:
+                lab_data.CAL_num = line.split(',')[2]
+            elif 'Client name' in line:
+                lab_data.Client_name = line.split(',')[2]
+            elif 'Address 1' in line:
+                lab_data.address_1 = line.split(',')[2]
+            elif 'Address 2' in line:
+                lab_data.address_2 = line.split(',')[2]
+            elif 'Operator' in line:
+                lab_data.operator = line.split(',')[2]
+            elif 'Chamber' in line:
+                lab_data.model = line.split(',')[2]
+    
+    # data integrity check
+    if lab_data.CAL_num != client_data.CAL_num:
+        raise HeaderError("CAL num from Client file and Lab file not the same")
+    elif lab_data.model != "MEFAC ":
+        raise HeaderError("Lab file is not MEFAC run")
