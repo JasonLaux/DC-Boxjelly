@@ -564,6 +564,10 @@ class HomeImportWindow(QMainWindow):
         self.parent.equipmentModel.layoutAboutToBeChanged.emit()
         self.parent.runModel.layoutAboutToBeChanged.emit()
 
+        if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
+            return
+
         data = Header_data()
         try: 
             data = extractionHeader(self.clientPath, self.labPath)
@@ -584,8 +588,8 @@ class HomeImportWindow(QMainWindow):
             self.parent.clientModel.layoutChanged.emit()
             equip = job.add_equipment(model = data.model, serial = data.serial)
             newEquip = {
-                'Make/Model': self.model,
-                'Serial Num': self.serial,
+                'Make/Model': data.model,
+                'Serial Num': data.serial,
                 'ID': equip.id,
             }
             self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
@@ -609,8 +613,8 @@ class HomeImportWindow(QMainWindow):
             if not equipId in equipsID:
                 equip = job.add_equipment(model = data.model, serial = data.serial)
                 newEquip = {
-                    'Make/Model': self.model,
-                    'Serial Num': self.serial,
+                    'Make/Model': data.model,
+                    'Serial Num': data.serial,
                     'ID': equip.id,
                 }
                 self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
@@ -637,6 +641,8 @@ class HomeImportWindow(QMainWindow):
                 }
                 self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
                 self.parent.runModel.layoutChanged.emit()
+        
+        QtWidgets.QMessageBox.about(self, "Notification", "File imported successfully!")
         
         # Finish add new run and quit
         self.hide()
