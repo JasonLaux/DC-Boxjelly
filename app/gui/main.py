@@ -15,7 +15,7 @@ import numpy as np
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
 from app.core.models import Job, Equipment
-from app.core.resolvers import calculator, result_data, summary
+from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data
 from app.gui import resources
 
 logger = logging.getLogger(__name__)
@@ -50,6 +50,7 @@ class MainWindow(QMainWindow):
         self.addClientWindow = AddClientWindow(self)
         self.constantsWindow = ConstantsWindow(self)
         self.importWindow = ImportWindow(self)
+        self.homeImportWindow = HomeImportWindow(self)
         self.analysisWindow = AnalyseWindow(self)
         self.addEquipmentWindow = AddEquipmentWindow(self)
 
@@ -332,6 +333,11 @@ class MainWindow(QMainWindow):
         self.importWindow.setWindowModality(Qt.ApplicationModal)
         self.importWindow.show()
         self.importWindow.equip = Job[self._selectedCalNum][self._selectedEquipID]
+
+    def openHomeImportWindow(self):
+        self.homeImportWindow.setFixedSize(850, 320)
+        self.homeImportWindow.setWindowModality(Qt.ApplicationModal)
+        self.homeImportWindow.show()
     
     def openAnalysisWindow(self):
         """
@@ -487,6 +493,176 @@ class ImportWindow(QMainWindow):
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
+            event.accept()  
+        else:
+            event.ignore() 
+
+
+class HomeImportWindow(QMainWindow):
+    def __init__(self, parent = None):
+        super(HomeImportWindow, self).__init__(parent)
+        self.parent = parent
+        
+        # load import page ui
+        # window = loadUI(".\\app\\gui\\import_page.ui", self)
+        #window = loadUI("./app/gui/import_page.ui", self)
+        window = loadUI(':/ui/import_page.ui', self)
+
+        self.ui = window
+        self.clientPath = self.ui.clientFilePathLine.text()
+        self.labPath = self.ui.labFilePathLine.text()
+        self.ui.clientFilePathLine.textChanged.connect(self.sync_clientLineEdit)
+        self.ui.labFilePathLine.textChanged.connect(self.sync_labLineEdit)
+
+        # link buttons to actions
+        self.importClientFilebutton.clicked.connect(self.chooseRawClient)
+        self.importLabFileButton.clicked.connect(self.chooseRawLab)
+        self.importSubmitButton.clicked.connect(self.addNewRun)
+        self.clientOpenFile.clicked.connect(self.openClientFile)
+        self.labOpenFile.clicked.connect(self.openLabFile)
+
+    def sync_clientLineEdit(self):
+        self.clientPath = self.ui.clientFilePathLine.text()
+    
+    def sync_labLineEdit(self):
+        self.labPath = self.ui.labFilePathLine.text()
+    
+    def getNewRunInfo(self):
+        newClient = {
+            'ID': [],
+            'Added Time': [],
+            'Edited Time': []
+        }
+        return pd.DataFrame(newClient, index=[0]) 
+    
+    def chooseRawClient(self):
+        file_filter = 'Raw Data File (*.csv)'
+        self.clientPath = QFileDialog.getOpenFileName(
+            parent = self,
+            caption = 'Please Select Client Raw File',
+            directory = os.getcwd(),
+            filter = file_filter,
+            initialFilter = 'Raw Data File (*.csv)'
+        )[0]
+        logger.debug("Client raw file: %s", self.clientPath)
+        self.ui.clientFilePathLine.setText(self.clientPath)
+    
+    def chooseRawLab(self):
+        file_filter = 'Raw Data File (*.csv)'
+        self.labPath = QFileDialog.getOpenFileName(
+            parent = self,
+            caption = 'Please Select Lab Raw File',
+            directory = os.getcwd(),
+            filter = file_filter,
+            initialFilter = 'Raw Data File (*.csv)'
+        )[0]
+        logger.debug("Lab raw file: %s", self.labPath)
+        self.ui.labFilePathLine.setText(self.labPath)
+
+    def addNewRun(self):
+        self.parent.clientModel.layoutAboutToBeChanged.emit()
+        self.parent.equipmentModel.layoutAboutToBeChanged.emit()
+        self.parent.runModel.layoutAboutToBeChanged.emit()
+
+        data = Header_data()
+        try: 
+            data = extractionHeader(self.clientPath, self.labPath)
+        except HeaderError as e:
+            QtWidgets.QMessageBox.about(self, "Warning", "".join(list(e.args)))
+            return
+
+        jobsID = []
+        for job in Job:
+            jobsID.append(job.id)
+        if not data.CAL_num in jobsID:
+            job = Job.make(data.CAL_num, client_name = data.Client_name, client_address_1 = data.address_1, client_address_2 = data.address_2, operator = data.operator)
+            newClient = {
+                'CAL Number': data.CAL_num,
+                'Client Name': data.Client_name,
+            }
+            self.parent.clientModel.addData(pd.DataFrame(newClient, index=[0]) )
+            self.parent.clientModel.layoutChanged.emit()
+            equip = job.add_equipment(model = data.model, serial = data.serial)
+            newEquip = {
+                'Make/Model': self.model,
+                'Serial Num': self.serial,
+                'ID': equip.id,
+            }
+            self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+            self.parent.equipmentModel.layoutChanged.emit()
+            run = equip.mex.add()
+            run.raw_client.upload_from(Path(self.clientPath))
+            run.raw_lab.upload_from(Path(self.labPath))
+            data = {
+                    'ID': run.id,
+                    'Added Time': converTimeFormat(run.added_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
+            }
+            self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+            self.parent.runModel.layoutChanged.emit()
+        else:
+            job = Job[data.CAL_num]
+            equipsID = []
+            for equip in job:
+                equipsID.append(equip.id)
+            equipId = data.model+'_'+data.serial
+            if not equipId in equipsID:
+                equip = job.add_equipment(model = data.model, serial = data.serial)
+                newEquip = {
+                    'Make/Model': self.model,
+                    'Serial Num': self.serial,
+                    'ID': equip.id,
+                }
+                self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+                self.parent.equipmentModel.layoutChanged.emit()
+                run = equip.mex.add()
+                run.raw_client.upload_from(Path(self.clientPath))
+                run.raw_lab.upload_from(Path(self.labPath))
+                data = {
+                    'ID': run.id,
+                    'Added Time': converTimeFormat(run.added_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
+                }
+                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                self.parent.runModel.layoutChanged.emit()
+            else:
+                equip = Job[data.CAL_num][equipId]
+                run = equip.mex.add()
+                run.raw_client.upload_from(Path(self.clientPath))
+                run.raw_lab.upload_from(Path(self.labPath))
+                data = {
+                    'ID': run.id,
+                    'Added Time': converTimeFormat(run.added_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
+                }
+                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                self.parent.runModel.layoutChanged.emit()
+        
+        # Finish add new run and quit
+        self.hide()
+        self.clientPath = ""
+        self.labPath = ""
+        self.ui.clientFilePathLine.clear()
+        self.ui.labFilePathLine.clear()
+    
+    def openClientFile(self):
+        try:
+            os.startfile(self.clientPath)
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
+    
+    def openLabFile(self):
+        try:
+            os.startfile(self.labPath)
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
+
+    def closeEvent(self, event):  
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            self.ui.clientFilePathLine.clear()
+            self.ui.labFilePathLine.clear()
             event.accept()  
         else:
             event.ignore() 

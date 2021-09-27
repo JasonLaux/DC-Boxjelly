@@ -1698,8 +1698,8 @@ background-color: white;
    <slot>openAddClientWindow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>141</x>
-     <y>199</y>
+     <x>355</x>
+     <y>264</y>
     </hint>
     <hint type="destinationlabel">
      <x>-113</x>
@@ -1714,8 +1714,8 @@ background-color: white;
    <slot>openAddEquipmentWindow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>322</x>
-     <y>298</y>
+     <x>101</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
      <x>-76</x>
@@ -1730,8 +1730,8 @@ background-color: white;
    <slot>openImportWindow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>110</x>
-     <y>247</y>
+     <x>101</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
      <x>-129</x>
@@ -1746,12 +1746,28 @@ background-color: white;
    <slot>openAnalysisWindow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>330</x>
-     <y>259</y>
+     <x>101</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
      <x>-35</x>
      <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>importFilesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>mainWindow</receiver>
+   <slot>openHomeImportWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>530</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>865</x>
+     <y>293</y>
     </hint>
    </hints>
   </connection>
@@ -1762,5 +1778,6 @@ background-color: white;
   <slot>openAnalysisWindow()</slot>
   <slot>openAddEquipmentWindow()</slot>
   <slot>openImportWindow()</slot>
+  <slot>openHomeImportWindow()</slot>
  </slots>
 </ui>
