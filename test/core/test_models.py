@@ -5,6 +5,7 @@ import shutil
 import importlib
 import time_machine
 import pytz
+import filecmp
 
 from app.core import definition, models
 
@@ -12,7 +13,9 @@ from app.core import definition, models
 class ModelTestBase(unittest.TestCase):
     def setUp(self) -> None:
         shutil.rmtree(definition.DATA_FOLDER)
-        importlib.reload(definition)  # creatate necessary folders
+        # creatate necessary folders
+        importlib.reload(definition)
+        importlib.reload(models)
         (definition.DATA_FOLDER / '.gitkeep').touch()
 
     def assertMetaContent(self, path, value: list):
@@ -191,6 +194,74 @@ class TestMexRun(ModelTestBase):
         r.raw_client.export_to(Path('data/test_exported.csv'))
         self.assertFileEqual(
             Path('data/test_exported.csv'), EXPORTED_SNAPSHOT)
+
+
+class TestConstantFile(ModelTestBase):
+
+    @time_machine.travel(datetime.datetime(2021, 1, 1, 12, 0, 0,
+                                           tzinfo=pytz.timezone('Australia/Melbourne')))
+    def test_CRUD(self):
+        # assert no constants
+        self.assertEqual(len(models.ConstantFile), 0)
+
+        # read non-existing constant
+        self.assertRaises(KeyError, lambda: models.ConstantFile[1])
+
+        # create new constant and assert
+        constant = models.ConstantFile.make()
+        self.assertEqual(constant.id, 1)
+        self.assertTrue(constant.path.samefile(
+            'data/constants/1/constant.xlsx'))
+        self.assertTrue(filecmp.cmp(
+            constant.path, definition.TEMPLATE_CONSTANT_FILE))
+        self.assertEqual(constant.added_at, '2021-01-01T13:20:00+11:00')
+        self.assertIsNone(constant.note)
+
+        # assert query
+        self.assertEqual(len(models.ConstantFile), 1)
+        self.assertTrue(1 in models.ConstantFile)
+        self.assertEqual(models.ConstantFile[1].id, 1)
+        for a in models.ConstantFile:
+            self.assertEqual(a.id, 1)
+
+        # assert delete
+        del models.ConstantFile[1]
+        # delete not existing object
+
+        def rm():
+            del models.ConstantFile[1]
+        self.assertRaises(KeyError, rm)
+
+    def test_default(self):
+        # no default at start
+        self.assertIsNone(models.constant_file_config.default_id)
+        self.assertIsNone(models.constant_file_config.default)
+
+        # set a default constent file
+        f = models.ConstantFile.make()
+        models.constant_file_config.default_id = f.id
+
+        self.assertMetaContent('data/constants/meta.ini', [
+            '[DEFAULT]',
+            'default = 1',
+        ])
+
+        # get default constant
+        default = models.constant_file_config.default
+        self.assertIsNotNone(default)
+        self.assertEqual(default.id, 1)  # type: ignore
+
+        # delete the file
+        f.delete()
+        self.assertIsNone(models.constant_file_config.default)
+        self.assertMetaContent('data/constants/meta.ini', [
+        ])
+
+        # set a wrong default id
+        models.constant_file_config.default_id = '42'
+        # but it still reads None
+        self.assertIsNone(models.constant_file_config.default)
+
 
 
 if __name__ == '__main__':

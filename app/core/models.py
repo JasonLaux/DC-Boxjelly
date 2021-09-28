@@ -15,7 +15,7 @@ import os
 import errno
 
 from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
-from .definition import RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME
+from .definition import CONSTANT_FILE_NAME, CONSTANT_FOLDER, RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME, TEMPLATE_CONSTANT_FILE
 from .utils import count_iter_items, datetime_to_iso, ensure_folder, iter_subfolders
 
 
@@ -556,3 +556,188 @@ class MexRawFile:
 
 def _meta_dict_to_csv_line(obj):
     return ['{k},{v}\n'.format(k=k, v=v if v else '') for k, v in obj.meta.items()]
+
+
+class _ConstantFileMetaClass(type):
+    def __iter__(self) -> Iterator['ConstantFile']:
+        """
+        Return an iterator of ConstantFile object in the constants folder
+        """
+        for file in iter_subfolders(CONSTANT_FOLDER):
+            yield ConstantFile(int(file.name))
+
+    def __getitem__(self, id: int) -> 'ConstantFile':
+        """
+        Get a constant file object by id, it is an integer.
+        @id: The id of the constant file object
+
+        If the constant file does not exist, it raises a KeyError
+        """
+        if not (CONSTANT_FOLDER / str(id)).is_dir():
+            raise KeyError(f'Constant file with id={id} does not exist')
+        return ConstantFile(id)
+
+    def __delitem__(self, id: int):
+        """
+        Delete a constant file by its id.
+
+        If the constant file with id does not exist, it raises KeyError
+        """
+        self[id].delete()
+
+    def __len__(self):
+        """
+        Get the number of all constant files
+        """
+        return count_iter_items(iter_subfolders(CONSTANT_FOLDER))
+
+    def __contains__(self, id: int) -> bool:
+        """
+        Return whether a constant file exists by id.
+
+        The id is an integer.
+        """
+        folder = CONSTANT_FOLDER / str(id)
+        return folder.is_dir()
+
+    def make(self) -> 'ConstantFile':
+        """
+        Create a new constant file from the template constant.
+
+        The new object have a new id that is bigger than the biggest existed
+        constant file id.
+        """
+        return ConstantFile()
+
+
+class ConstantFile(WithMetaMixin, metaclass=_ConstantFileMetaClass):
+    """
+    Represent a constant file.
+
+    It is a xlsx file that can be directly edited by MS Excel.
+
+    Just like Job, use following code to interact with ConstantFile:
+    ```
+    # Get constant file object by id
+    c = ConstantFile[1]
+
+    # read or write meta data
+    print(c.note)
+    c.note = 'The MEX constant files to be used in 2020-2030'
+    del c.note
+    print(c.added_at)
+
+    # get file path
+    c.path # => a Path object to the xlsx file
+
+    # delete the file
+    c.delete()
+    ```
+
+    Use following code to do CRUDs:
+    ```
+    # list constant files
+    list(ConstantFile)
+
+    # Add new constant file
+    ConstantFile.make()
+
+    # iterate
+    for f in ConstantFile:
+        print(f)
+
+    # check existence
+    42 in ConstantFile
+
+    # delete
+    del ConstantFile[42]
+
+    # length
+    len(ConstantFile)
+    ```
+
+    There are also configs for constant files, see _ConstantFileConfig below.
+    """
+
+    def __init__(self, id: Optional[int] = None) -> None:
+        """
+        The private constructor of ConstantFile.
+
+        **This is not meant to be used outside of `core.models`!**
+        - If you want to create a new constant file, use `ConstantFile.make`
+        - If you want to get an existing constant file, use `ConstantFile[_id_]`
+        """
+        if not id:
+            id = max(int(run.name) for run in iter_subfolders(CONSTANT_FOLDER)) + 1 \
+                if len(list(iter_subfolders(CONSTANT_FOLDER))) > 0 else 1
+        else:
+            assert (CONSTANT_FOLDER / str(id)
+                    ).is_dir(), 'Constant folder should exists'
+
+        self._id = int(id)
+        self._folder = CONSTANT_FOLDER / str(id)
+
+        if not self._ensure_folder_with_meta({
+            'added_at': datetime_to_iso(datetime.now()),
+        }):
+            shutil.copy(TEMPLATE_CONSTANT_FILE, self.path)
+
+    def __repr__(self) -> str:
+        return f'ConstantFile({self._id})'
+    __str__ = __repr__
+
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @property
+    def path(self) -> Path:
+        """
+        Get the path to the constant file
+        """
+        return self._folder / CONSTANT_FILE_NAME
+
+    added_at = meta_property(
+        'added_at', 'The datetime when this constant file is created', readonly=True)
+    note = meta_property('title', 'Note of the constant file')
+
+    def delete(self):
+        """
+        Remove the model, this process cannot be undone.
+
+        After calling this method, invoking other methods are invalid.
+        """
+        shutil.rmtree(self._folder)
+        if str(self._id) == constant_file_config.default_id:
+            del constant_file_config.default_id
+
+
+class _ConstantFileConfig(WithMetaMixin):
+    """
+    The config for constent files.
+    Please use `constent_file_config` directly.
+    """
+
+    _folder = CONSTANT_FOLDER
+
+    default_id = meta_property(
+        'default', 'The id of the default constant file',
+        setter=str)
+
+    @property
+    def default(self) -> Optional['ConstantFile']:
+        """
+        The default constant file object.
+
+        If there are not default constant file, it returns None.
+
+        If the default_id in meta.ini does not exist in the folder, it
+        returns None.
+        """
+        if self.default_id and self.default_id in ConstantFile:
+            return ConstantFile[self.default_id]
+        else:
+            return None
+
+
+constant_file_config = _ConstantFileConfig()

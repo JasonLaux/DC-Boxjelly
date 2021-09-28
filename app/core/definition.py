@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 from .utils import ensure_folder
 
@@ -55,3 +56,21 @@ RAW_MEASUREMENT_SECTION_NAME = '[COMET X-RAY MEASUREMENT]'
 The name of the data section in raw file
 '''
 RAW_DATA_SECTION_NAME = '[DATA]'
+
+# constrains
+
+'''
+The location of the template constant file.
+
+When a new constant file is added, this file is copied to the location.
+'''
+TEMPLATE_CONSTANT_FILE = Path(__file__).parent / 'template_constant.xlsx'
+
+'''
+The folder that contains constant files
+'''
+CONSTANT_FOLDER = DATA_FOLDER / 'constants'
+if not ensure_folder(CONSTANT_FOLDER):
+    (CONSTANT_FOLDER / META_FILE_NAME).touch()
+
+CONSTANT_FILE_NAME = 'constant.xlsx'
