@@ -286,72 +286,68 @@ def extractionHeader(client_path: str, lab_path: str):
     """
     This function is used to extract the run info data from the file.
     """
-    # check run num in file name 
-    client_file_name = client_path.split('//')[-1]
-    lab_file_name = lab_path.split('//')[-1]
-    searchObj = re.search( r'Run[0-9]*', client_file_name, re.I)
-    run = searchObj.group()
-    if not re.search( run, lab_file_name, re.I):
-        raise HeaderError("Not the same run")
+    # check run num in file name (Disabled)
 
+    # client_file_name = client_path.split('//')[-1]
+    # lab_file_name = lab_path.split('//')[-1]
+    # searchObj = re.search( r'Run[0-9]*', client_file_name, re.I)
+    # run = searchObj.group()
+    # if not re.search( run, lab_file_name, re.I):
+    #     raise HeaderError("Not the same run")
+    
+    client_data = Header_data()
+    lab_data = Header_data()
+    
     # read data from header
-    data = Header_data()
-
     with open(client_path, newline='', encoding="ISO-8859-1") as f:
         for line in f:
             if 'DATA' in line:
                 break
             elif 'CAL Number' in line:
-                data.CAL_num = line.split(',')[2]
+                client_data.CAL_num = line.split(',')[2].strip()
             elif 'Client name' in line:
-                data.Client_name = line.split(',')[2]
+                client_data.Client_name = line.split(',')[2].strip()
             elif 'Address 1' in line:
-                data.address_1 = line.split(',')[2]
+                client_data.address_1 = line.split(',')[2].strip()
             elif 'Address 2' in line:
-                data.address_2 = line.split(',')[2]
+                client_data.address_2 = line.split(',')[2].strip()
             elif 'Operator' in line:
-                data.operator = line.split(',')[2]
+                client_data.operator = line.split(',')[2].strip()
             elif 'Chamber' in line:
-                data.serial = line.split(',')[2][-4:]
-                data.model = line.split(',')[2][:-4].strip()
+                client_data.serial = line.split(',')[2].strip()[-4:]
+                client_data.model = line.split(',')[2].strip()[:-4]
     
-    # data integrity check
-    if data.CAL_num == "":
-        raise HeaderError("Header does not contains CAL num")
-    elif data.serial == "" or data.model == "":
-        raise HeaderError("Header does not contains model/serial")
-    elif not re.match(r"\d{4}", data.serial):
-        raise HeaderError("Invalid equip serial")
-    checkHeader(lab_path, data)
-    
-    return data
-
-
-def checkHeader(lab_path, client_data: Header_data):
-    """
-    This function is used to check if the run info from the lab file is aligned with info from client file.
-    """
-    lab_data = Header_data()
-
     with open(lab_path, newline='', encoding="ISO-8859-1") as f:
         for line in f:
             if 'DATA' in line:
                 break
             elif 'CAL Number' in line:
-                lab_data.CAL_num = line.split(',')[2]
+                lab_data.CAL_num = line.split(',')[2].strip()
             elif 'Client name' in line:
-                lab_data.Client_name = line.split(',')[2]
+                lab_data.Client_name = line.split(',')[2].strip()
             elif 'Address 1' in line:
-                lab_data.address_1 = line.split(',')[2]
+                lab_data.address_1 = line.split(',')[2].strip()
             elif 'Address 2' in line:
-                lab_data.address_2 = line.split(',')[2]
+                lab_data.address_2 = line.split(',')[2].strip()
             elif 'Operator' in line:
-                lab_data.operator = line.split(',')[2]
+                lab_data.operator = line.split(',')[2].strip()
             elif 'Chamber' in line:
-                lab_data.model = line.split(',')[2]
+                lab_data.model = line.split(',')[2].strip()
     
     # data integrity check
-    if lab_data.CAL_num != client_data.CAL_num:
-        raise HeaderError("CAL num from Client file and Lab file not the same")
-    elif lab_data.model != "MEFAC ":
-        raise HeaderError("Lab file is not MEFAC run")
+    if client_data.model + client_data.serial == "MEFAC":
+        raise HeaderError("Client file is a MEFAC run, please check!")
+    elif lab_data.model != "MEFAC":
+        raise HeaderError("Lab file is not MEFAC run, please check!")
+    elif client_data.CAL_num == "":
+        raise HeaderError("Client file does not contains CAL num, please check!")
+    elif lab_data.CAL_num == "":
+        raise HeaderError("Lab file does not contains CAL num, please check!")
+    elif client_data.serial == "" or client_data.model == "":
+        raise HeaderError("Client file does not contains model/serial, please check!")
+    elif not re.match(r"\d{4}", client_data.serial):
+        raise HeaderError("Invalid chamber in client file, please check!")
+    elif lab_data.CAL_num != client_data.CAL_num:
+        raise HeaderError("CAL num from Client file and Lab file not the same, please check!")
+    
+    return client_data
