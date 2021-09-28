@@ -563,15 +563,25 @@ class HomeImportWindow(QMainWindow):
         self.ui.labFilePathLine.setText(self.labPath)
     
     def submit(self):
+        # file path check
+        if self.clientPath.strip() == "":
+            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in client file path.")
+            return
+        if self.labPath.strip() == "":
+            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in lab file path.")
+            return
         if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
             return
+        
+        # resolve header data from file
         try: 
             self.data = extractionHeader(self.clientPath, self.labPath)
         except HeaderError as e:
             QtWidgets.QMessageBox.about(self, "Warning", "".join(list(e.args)))
             return
 
+        # pop up confirm page
         self.confirmWindow.calNumLine.setText(self.data.CAL_num)
         self.confirmWindow.clientNameLine.setText(self.data.Client_name)
         self.confirmWindow.clientAddress1Line.setText(self.data.address_1)
@@ -583,6 +593,7 @@ class HomeImportWindow(QMainWindow):
         self.confirmWindow.show()
         
     def addNewRun(self):
+        # prepare update tables
         self.parent.clientModel.layoutAboutToBeChanged.emit()
         self.parent.equipmentModel.layoutAboutToBeChanged.emit()
         self.parent.runModel.layoutAboutToBeChanged.emit()
@@ -591,6 +602,7 @@ class HomeImportWindow(QMainWindow):
         for job in Job:
             jobsID.append(job.id)
         if not self.data.CAL_num in jobsID:
+            # if job not exsited, create job, equip and add one run
             job = Job.make(self.data.CAL_num, client_name = self.data.Client_name, client_address_1 = self.data.address_1, client_address_2 = self.data.address_2, operator = self.data.operator)
             newClient = {
                 'CAL Number': self.data.CAL_num,
@@ -623,6 +635,7 @@ class HomeImportWindow(QMainWindow):
                 equipsID.append(equip.id)
             equipId = self.data.model+'_'+self.data.serial
             if not equipId in equipsID:
+                # if equip not existed, create equip then add run  
                 equip = job.add_equipment(model = self.data.model, serial = self.data.serial)
                 newEquip = {
                     'Make/Model': self.data.model,
@@ -642,6 +655,7 @@ class HomeImportWindow(QMainWindow):
                 self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
                 self.parent.runModel.layoutChanged.emit()
             else:
+                # if both job and equip existed, add run to it
                 equip = Job[self.data.CAL_num][equipId]
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
@@ -654,6 +668,7 @@ class HomeImportWindow(QMainWindow):
                 self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
                 self.parent.runModel.layoutChanged.emit()
         
+        # pop up message when import successfully
         QtWidgets.QMessageBox.about(self, "Notification", "File imported successfully!")
         
         # Finish add new run and quit
