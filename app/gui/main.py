@@ -103,6 +103,8 @@ class MainWindow(QMainWindow):
         self.ui.searchBar.textEdited.connect(self.ui.homeTable.clearSelection)
 
         self.ui.homeTable.setModel(self.proxy_model)
+        self.ui.homeTable.setSortingEnabled(True)
+        self.ui.homeTable.sortByColumn(0, Qt.AscendingOrder)
         self.ui.homeTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) #column stretch to window size
         self.ui.homeTable.setItemDelegate(AlignDelegate()) # text alignment
 
@@ -111,7 +113,12 @@ class MainWindow(QMainWindow):
         # Equipment Table
         self.ui.equipmentsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")
         self.equipmentModel = TableModel(data=pd.DataFrame([]))
-        self.ui.equipmentsTable.setModel(self.equipmentModel)
+
+        self.equip_sortermodel = QSortFilterProxyModel()
+        self.equip_sortermodel.setSourceModel(self.equipmentModel)
+        self.ui.equipmentsTable.setModel(self.equip_sortermodel)
+        self.ui.equipmentsTable.setSortingEnabled(True)
+        self.ui.equipmentsTable.sortByColumn(0, Qt.AscendingOrder)
         self.ui.equipmentsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.equipmentsTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
@@ -122,7 +129,11 @@ class MainWindow(QMainWindow):
         # Run Table
         self.ui.runsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")        
         self.runModel = TableModel(data=pd.DataFrame([]))
-        self.ui.runsTable.setModel(self.runModel)
+        self.run_sortermodel = QSortFilterProxyModel()
+        self.run_sortermodel.setSourceModel(self.runModel)        
+        self.ui.runsTable.setModel(self.run_sortermodel)
+        self.ui.runsTable.setSortingEnabled(True)
+        self.ui.runsTable.sortByColumn(0, Qt.AscendingOrder)
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
