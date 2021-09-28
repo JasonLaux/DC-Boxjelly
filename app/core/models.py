@@ -110,8 +110,8 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
     job = Job[5]
 
     # iterate through each equipments
-    
-    
+    for equipment in job:
+        print(equipment)
 
     # get an equipment by its id
     job['AAA_123']
@@ -217,7 +217,6 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
             'client_name': self.client_name,
             'client_address_1': self.client_address_1,
             'client_address_2': self.client_address_2,
-            'operator': self.operator,
         }
 
 
