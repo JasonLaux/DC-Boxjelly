@@ -296,30 +296,105 @@ def summary(name_list, result_list):
         return df_summary.drop(columns='Tube voltage')
 
 
-def pdf_table(df_summary, df_otherConstant):
+def pdf_visualization(path, df_summary, df_otherConstant):
     """
-    Merge all the constants and NK together. Besides, the data will be placed by voltage and order by effective energy
+    Merge all the constants and NK together. Besides, the data will be placed by voltage and order by effective energy.
+    Finally, it will produce the tables and the pictures based on the dataframe
+
+    :param path: string - the path where we store the excel and graph
     :param df_summary: Dataframe - the summary of the selected runs
     :param df_otherConstant: Dataframe - the other constants of the beam quality. Since all run will have same beams,
                              only one df_otherConstant needs to be passed
-    :return: Dataframe - will return a dataframe which consist all the constants and NK
     """
+    # using dataframe.merge rather than pd.merge is because the index order will be preserved
     df_merge = df_summary['E_eff'].to_frame('Nominal effective energy [1]').reset_index()
-    df_merge = df_merge.merge(df_otherConstant.reset_index(), how='outer')
+    df_merge = df_merge.merge(df_otherConstant.reset_index(), how='outer')  # merge energy with other constants
 
+    # merge energy + other constants with NK
     df_merge = df_merge.merge(df_summary['Average'].to_frame('NK [2]').reset_index(), how='outer').set_index("Filter")
 
     # get the voltage for every beam
     df_merge['Tube voltage'] = [re.findall(r'\d+', beam)[0] for beam in df_merge.index]
     df_merge['Tube voltage'] = pd.to_numeric(df_merge['Tube voltage'])
 
+    # Order the column as needs
     df_merge.index.name = 'Beam code'
     df_merge = df_merge.iloc[:, [7, 1, 2, 3, 4, 0, 5, 6]]
 
     # hard code U % value
     df_merge['U %'] = 1.4
+    df_merge = df_merge.apply(pd.to_numeric).fillna('')
+    ################################################### Draw kVp ####################################################
+    plot1 = plt.figure(1)
+    for voltage in df_merge['Tube voltage'].unique():
+        df_temp = df_merge[df_merge['Tube voltage'] == voltage]  # extract one voltage
+        plt.plot(df_temp['Tube voltage'], df_temp['NK [2]'], marker='D', label=str(voltage) + ' kVp')
 
-    return df_merge.apply(pd.to_numeric).fillna('')
+    plt.xlabel("kVp", fontweight='bold')
+    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
+    plt.grid(axis='y', linestyle='--')
+    plt.legend(ncol=2)
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
+
+    plot1.savefig(path + r'\kVp.png')
+    ################################################### Draw kVp ####################################################
+    ################################################## Draw HVL Al ##################################################
+    plot2 = plt.figure(2)
+    for voltage in df_merge['Tube voltage'].unique():
+        df_temp = df_merge[df_merge['Tube voltage'] == voltage]  # extract one voltage
+        df_temp = df_temp[~(df_temp['HVL(mm Al)'] == '')]  # remove the HVL value which is ''
+        if len(df_temp) == 0:
+            continue
+        plt.plot(np.round(df_temp['HVL(mm Al)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp')
+
+    plt.xlabel(r'HVL (mm Al)', fontweight='bold')
+    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
+    plt.grid(axis='y', linestyle='--')
+    plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
+    plt.legend(ncol=2)
+
+    plot2.savefig(path + r'\HVL_Al.png')
+    ################################################## Draw HVL Al ##################################################
+    ################################################## Draw HVL Cu ##################################################
+    plot3 = plt.figure(3)
+    for voltage in df_merge['Tube voltage'].unique():
+        df_temp = df_merge[df_merge['Tube voltage'] == voltage]  # extract one voltage
+        df_temp = df_temp[~(df_temp['HVL(mm Cu)'] == '')]  # remove the HVL value which is ''
+        if len(df_temp) == 0:
+            continue
+        plt.plot(np.round(df_temp['HVL(mm Cu)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp')
+
+    plt.xlabel(r'HVL (mm Cu)', fontweight='bold')
+    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
+    plt.grid(axis='y', linestyle='--')
+    plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
+    plt.legend(ncol=2)
+
+    plot3.savefig(path + r'\HVL_Cu.png')
+    ################################################## Draw HVL Cu ##################################################
+    ################################################## Save to excel ###################################################
+    subset_beams = ['NXA50', 'NXA70', 'NXB100', 'NXC120', 'NXD140', 'NXE150', 'NXF200', 'NXG250', 'NXH280', 'NXH300',
+                    'NXH300*']
+
+    df_merge = df_merge.apply(pd.to_numeric, errors='ignore')  # change '' to nan so that na_action can work
+    df_merge['Added filter(mm Al)'] = df_merge['Added filter(mm Al)'].map('{:,.1f}'.format, na_action='ignore')
+    df_merge['Added filter(mm Cu)'] = df_merge['Added filter(mm Cu)'].map('{:,.1f}'.format, na_action='ignore')
+    df_merge['HVL(mm Al)'] = df_merge['HVL(mm Al)'].map('{:,.2f}'.format, na_action='ignore')
+    df_merge['HVL(mm Cu)'] = df_merge['HVL(mm Cu)'].map('{:,.2f}'.format, na_action='ignore')
+    df_merge['Nominal air kerma rate'] = df_merge['Nominal air kerma rate'].map('{:,.1f}'.format, na_action='ignore')
+
+    df_subset = df_merge[df_merge.index.isin(subset_beams)]
+    df_merge = df_merge.style.set_properties(**{'text-align': 'center'})
+    df_subset = df_subset.style.set_properties(**{'text-align': 'center'})
+
+    table_path = path + r'\pdf_table.xlsx'
+    writer = pd.ExcelWriter(table_path, engine='xlsxwriter')
+    df_subset.to_excel(writer, sheet_name='subset')
+    df_merge.to_excel(writer, sheet_name='total')
+    writer.save()
+    ################################################## Save to excel ###################################################
 
 def extractionHeader(client_path: str, lab_path: str):
     """
