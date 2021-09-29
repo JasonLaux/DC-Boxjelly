@@ -6,6 +6,7 @@ import sys
 import re
 from app.core.resolvers import summary, pdf_table, calculator
 from matplotlib import pyplot as plt
+from matplotlib.ticker import StrMethodFormatter
 # python -m app.pdf.main
 
 if __name__ == '__main__':
@@ -42,8 +43,11 @@ if __name__ == '__main__':
         # print("y_del: ", y)
         plt.plot(x, y, '.-', label = str(vot) + " kVp")
     plt.xlabel(r'HVL (mm Al)', fontweight='bold')
-    plt.ylabel(r'$\bfN_k$(mGy/nc)', fontweight='bold')
+    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
     plt.grid(axis='y', linestyle='--')
+    plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
+
     # plt.xticks(np.arange(5, 15, 1.0))
     plt.legend(ncol=2)
 
@@ -64,8 +68,10 @@ if __name__ == '__main__':
         plt.plot(x, y, '.-', label = str(vot) + " kVp")
         
     plt.xlabel(r'HVL (mm Cu)', fontweight='bold')
-    plt.ylabel(r'$\bfN_k$(mGy/nc)', fontweight='bold')
+    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
     plt.grid(axis='y', linestyle='--')
+    plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
 
     # plt.xticks(np.arange(5, 15, 1.0))
     plt.legend(ncol=2)
