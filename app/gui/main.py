@@ -138,6 +138,8 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.runsTable.setItemDelegate(AlignDelegate())
+        self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
+        self.ui.runsTable.customContextMenuRequested.connect(self.showContextMenu)
         self.ui.analyseButton.clicked.connect(lambda: self.ui.runsTable.clearSelection())
 
 
@@ -147,6 +149,7 @@ class MainWindow(QMainWindow):
         self.ui.homeTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('homeTable'))
         self._selectedRows = []
         self._selectedCalNum = ""
+        self._selectedRuns = []
     
     def deleteRows(self, tableName):
         # Reverse sort rows indexes
@@ -218,6 +221,7 @@ class MainWindow(QMainWindow):
         self.clientModel.initialiseTable(data=getHomeTableData())
         self.clientModel.layoutChanged.emit()
 
+
     def chooseEquipment(self):
         """
         Choose one equipment and goes into Equipment info page.
@@ -236,6 +240,7 @@ class MainWindow(QMainWindow):
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose an Equipment!")
 
+
     def deleteEquipment(self):
         """
         Delete chosen equipment on the Client Info Page by clicking 'delete equipment' button.
@@ -253,7 +258,8 @@ class MainWindow(QMainWindow):
             self.ui.equipmentsTable.clearSelection()
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
- 
+    
+
     def deleteRun(self):
         """
         Delete chosen run on the Client Info Page by clicking 'delete run' button.
@@ -274,7 +280,8 @@ class MainWindow(QMainWindow):
             self.ui.runsTable.clearSelection()
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a run to delete.")
- 
+    
+
     def selection_changed(self, tableName):
         """
         Return the index of selected rows in an array.
@@ -308,7 +315,8 @@ class MainWindow(QMainWindow):
 
         except AttributeError:
             raise AttributeError("Attribute does not exist! Table name may be altered!")
-            
+
+
     def openConstantsWindow(self):
         """
         Open constant file instead of open constant window.
@@ -327,17 +335,20 @@ class MainWindow(QMainWindow):
         
 
         #self.constantsWindow.show()
-    
+
+
     def openAddClientWindow(self):
         self.addClientWindow.setFixedSize(850, 320)
         self.addClientWindow.setWindowModality(Qt.ApplicationModal)
         self.addClientWindow.show()
-    
+
+
     def openAddEquipmentWindow(self):
         self.addEquipmentWindow.setFixedSize(850, 320)
         self.addEquipmentWindow.setWindowModality(Qt.ApplicationModal)
         self.addEquipmentWindow.show()
         self.addEquipmentWindow.job = Job[self._selectedCalNum]
+
 
     def openImportWindow(self):
         self.importWindow.setFixedSize(850, 320)
@@ -345,11 +356,13 @@ class MainWindow(QMainWindow):
         self.importWindow.show()
         self.importWindow.equip = Job[self._selectedCalNum][self._selectedEquipID]
 
+
     def openHomeImportWindow(self):
         self.homeImportWindow.setFixedSize(850, 320)
         self.homeImportWindow.setWindowModality(Qt.ApplicationModal)
         self.homeImportWindow.show()
     
+
     def openAnalysisWindow(self):
         """
         Open analysis window. Pop up warning when not choosing any of the runs.
@@ -359,6 +372,7 @@ class MainWindow(QMainWindow):
 
                 selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
                 runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
+                self._selectedRuns = runs
                 self.analysisWindow.setRuns(runs) 
                 self.analysisWindow.analyze()
                 self._selectedRows = []
@@ -377,7 +391,25 @@ class MainWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
- 
+    
+    
+    def showContextMenu(self):  
+        self.ui.runsTable.contextMenu = QtWidgets.QMenu(self)
+        self.ui.runsTable.contextMenu.setStyleSheet("""
+            QMenu:selected {background-color: #ddf; color: #000;}
+            """
+            )
+        action = self.ui.runsTable.contextMenu.addAction('Reveal in File Explorer')
+        self.ui.runsTable.contextMenu.popup(QtGui.QCursor.pos())  # Menu position based on cursor
+        action.triggered.connect(self.actionHandler)
+        self.ui.runsTable.contextMenu.show()
+
+    def actionHandler(self):
+        logger.debug("Open menu")
+        selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
+        runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
+        os.startfile(os.path.dirname(runs[0].raw_client.path))
+
 class ClientFilter(QSortFilterProxyModel):
     def __init__(self, parent):
         super(ClientFilter,self).__init__(parent)
