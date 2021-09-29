@@ -243,7 +243,6 @@ def summary(name_list, result_list):
     """
     This function is used to summary all runs of calibration coefficient.
     This function can deal with if the runs do not have same beam quality
-    TODO: If all run's beam quality are the same. df_energy and df_result can be merged directly
 
     :param name_list  : a list of all names of runs. ex: ['run1', 'run2']
     :param result_list: a list of all NK of runs
@@ -276,7 +275,25 @@ def summary(name_list, result_list):
         # merge the effective energy with summary
         df_summary = pd.merge(df_energy, df_result, left_index=True, right_index=True, how='outer')
 
-        return df_summary
+        # sort by voltage
+        df_summary['Tube voltage'] = [re.findall(r'\d+', beam)[0] for beam in df_summary.index]
+        df_summary['Tube voltage'] = pd.to_numeric(df_summary['Tube voltage'])
+
+        # find how many beams have measure two times
+        duplicate_num = len([beam for beam in df_summary.index if '*' in beam])
+
+        df_first = df_summary[:-duplicate_num].sort_values(by='Tube voltage')
+        df_second = df_summary[-duplicate_num:].sort_values(by='Tube voltage')
+
+        df_first_sort = None
+        for voltage in df_first['Tube voltage'].unique():
+            df_temp = df_first[df_first['Tube voltage'] == voltage]  # extract one voltage
+            df_temp.sort_values(by='E_eff', inplace=True)  # sort by energy
+            df_first_sort = pd.concat([df_first_sort, df_temp], axis=0)  # concate with other voltage
+
+        df_summary = pd.concat([df_first_sort, df_second], axis=0)
+
+        return df_summary.drop(columns='Tube voltage')
 
 
 def pdf_table(df_summary, df_otherConstant):
@@ -287,38 +304,17 @@ def pdf_table(df_summary, df_otherConstant):
                              only one df_otherConstant needs to be passed
     :return: Dataframe - will return a dataframe which consist all the constants and NK
     """
-    # find how many beams have measure two times
-    duplicate_num = len([beam for beam in df_summary.index if '*' in beam])
+    df_merge = df_summary['E_eff'].to_frame('Nominal effective energy [1]').reset_index()
+    df_merge = df_merge.merge(df_otherConstant.reset_index(), how='outer')
 
-    df_merge = pd.merge(df_otherConstant, df_summary['E_eff'].to_frame('Nominal effective energy [1]'), left_index=True,
-                        right_index=True, how='outer')
+    df_merge = df_merge.merge(df_summary['Average'].to_frame('NK [2]').reset_index(), how='outer').set_index("Filter")
 
-    df_merge = pd.merge(df_merge, df_summary['Average'].to_frame('NK [2]'), left_index=True, right_index=True,
-                        how='outer')
-
-    # get the voltage for every beam and separate it into first measurement and second measurement
+    # get the voltage for every beam
     df_merge['Tube voltage'] = [re.findall(r'\d+', beam)[0] for beam in df_merge.index]
     df_merge['Tube voltage'] = pd.to_numeric(df_merge['Tube voltage'])
-    df_merge['Nominal effective energy [1]'] = pd.to_numeric(df_merge['Nominal effective energy [1]'])
-    df_first = df_merge[:-duplicate_num]
-    df_second = df_merge[-duplicate_num:]
-
-    # sort the Tube voltage for the first measurement in order to put the beams together which have the same voltage
-    df_first.sort_values(by='Tube voltage', inplace=True)
-
-    # sort the energy for the first measurement in order to put the beams together which have the same voltage
-    df_first_sort = None
-    for voltage in df_first['Tube voltage'].unique():
-        df_temp = df_first[df_first['Tube voltage'] == voltage]  # extract one voltage
-        df_temp.sort_values(by='Nominal effective energy [1]', inplace=True)  # sort by energy
-        df_first_sort = pd.concat([df_first_sort, df_temp], axis=0)  # concate with other voltage
-
-    # sort the Tube voltage for the second measurement in order to put the beams together which have the same voltage
-    df_second.sort_values(by='Tube voltage', inplace=True)
-    df_merge = pd.concat([df_first_sort, df_second], axis=0)
 
     df_merge.index.name = 'Beam code'
-    df_merge = df_merge.iloc[:, [7, 0, 1, 2, 3, 5, 4, 6]]
+    df_merge = df_merge.iloc[:, [7, 1, 2, 3, 4, 0, 5, 6]]
 
     # hard code U % value
     df_merge['U %'] = 1.4
