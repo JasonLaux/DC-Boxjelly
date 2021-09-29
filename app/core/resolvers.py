@@ -10,6 +10,9 @@ import numpy as np
 import os
 import sys
 import re
+import matplotlib.pyplot as plt
+from matplotlib.ticker import StrMethodFormatter
+from matplotlib.pyplot import cm
 
 warnings.filterwarnings('ignore')
 
@@ -301,10 +304,10 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     Merge all the constants and NK together. Besides, the data will be placed by voltage and order by effective energy.
     Finally, it will produce the tables and the pictures based on the dataframe
 
-    :param path: string - the path where we store the excel and graph
     :param df_summary: Dataframe - the summary of the selected runs
     :param df_otherConstant: Dataframe - the other constants of the beam quality. Since all run will have same beams,
                              only one df_otherConstant needs to be passed
+    :return: Dataframe - will return a dataframe which consist all the constants and NK
     """
     # using dataframe.merge rather than pd.merge is because the index order will be preserved
     df_merge = df_summary['E_eff'].to_frame('Nominal effective energy [1]').reset_index()
@@ -325,10 +328,12 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     df_merge['U %'] = 1.4
     df_merge = df_merge.apply(pd.to_numeric).fillna('')
     ################################################### Draw kVp ####################################################
+    color = cm.rainbow(np.linspace(0, 1, len(df_merge['Tube voltage'].unique())))
+
     plot1 = plt.figure(1)
-    for voltage in df_merge['Tube voltage'].unique():
+    for voltage, c in zip(df_merge['Tube voltage'].unique(), color):
         df_temp = df_merge[df_merge['Tube voltage'] == voltage]  # extract one voltage
-        plt.plot(df_temp['Tube voltage'], df_temp['NK [2]'], marker='D', label=str(voltage) + ' kVp')
+        plt.plot(df_temp['Tube voltage'], df_temp['NK [2]'], marker='D', label=str(voltage) + ' kVp', c=c)
 
     plt.xlabel("kVp", fontweight='bold')
     plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
@@ -340,12 +345,12 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     ################################################### Draw kVp ####################################################
     ################################################## Draw HVL Al ##################################################
     plot2 = plt.figure(2)
-    for voltage in df_merge['Tube voltage'].unique():
+    for voltage, c in zip(df_merge['Tube voltage'].unique(), color):
         df_temp = df_merge[df_merge['Tube voltage'] == voltage]  # extract one voltage
         df_temp = df_temp[~(df_temp['HVL(mm Al)'] == '')]  # remove the HVL value which is ''
         if len(df_temp) == 0:
             continue
-        plt.plot(np.round(df_temp['HVL(mm Al)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp')
+        plt.plot(np.round(df_temp['HVL(mm Al)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp', c=c)
 
     plt.xlabel(r'HVL (mm Al)', fontweight='bold')
     plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
@@ -358,12 +363,12 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     ################################################## Draw HVL Al ##################################################
     ################################################## Draw HVL Cu ##################################################
     plot3 = plt.figure(3)
-    for voltage in df_merge['Tube voltage'].unique():
+    for voltage, c in zip(df_merge['Tube voltage'].unique(), color):
         df_temp = df_merge[df_merge['Tube voltage'] == voltage]  # extract one voltage
         df_temp = df_temp[~(df_temp['HVL(mm Cu)'] == '')]  # remove the HVL value which is ''
         if len(df_temp) == 0:
             continue
-        plt.plot(np.round(df_temp['HVL(mm Cu)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp')
+        plt.plot(np.round(df_temp['HVL(mm Cu)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp', c=c)
 
     plt.xlabel(r'HVL (mm Cu)', fontweight='bold')
     plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
