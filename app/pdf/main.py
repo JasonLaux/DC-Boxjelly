@@ -11,8 +11,8 @@ from matplotlib.ticker import StrMethodFormatter
 
 if __name__ == '__main__':
     results = []
-    client_path = r'C:\D_Disk\projects\DC-Boxjelly\data\jobs\CAL00001\PTW 30013_5122\MEX\1\raw\client.csv'
-    lab_path = r'C:\D_Disk\projects\DC-Boxjelly\data\jobs\CAL00001\PTW 30013_5122\MEX\1\raw\lab.csv'
+    client_path = r'E:\Unimelb\2021 S2\Software Project\test\CAL00001 Raw ClientA-Run1-Client.csv'
+    lab_path = r'E:\Unimelb\2021 S2\Software Project\test\CAL00001 Raw ClientA-Run1-Lab.csv'
     results.append(calculator(client=client_path, lab=lab_path))
     runs = ['run1']
     summary_table = summary(runs, results)
