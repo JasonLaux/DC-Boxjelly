@@ -276,18 +276,7 @@ def summary(name_list, result_list):
         # merge the effective energy with summary
         df_summary = pd.merge(df_energy, df_result, left_index=True, right_index=True, how='outer')
 
-        # sort by voltage
-        df_summary['Tube voltage'] = [re.findall(r'\d+', beam)[0] for beam in df_summary.index]
-        df_summary['Tube voltage'] = pd.to_numeric(df_summary['Tube voltage'])
-
-        # find how many beams have measure two times
-        duplicate_num = len([beam for beam in df_summary.index if '*' in beam])
-
-        df_first = df_summary[:-duplicate_num].sort_values(by='Tube voltage')
-        df_second = df_summary[-duplicate_num:].sort_values(by='Tube voltage')
-        df_summary = pd.concat([df_first, df_second], axis=0)
-
-        return df_summary.drop(columns='Tube voltage')
+        return df_summary
 
 
 def pdf_table(df_summary, df_otherConstant):
