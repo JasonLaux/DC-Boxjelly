@@ -28,12 +28,22 @@ if __name__ == '__main__':
         match_text = "\D" + str(vot) + "$"
         beam_code = [name for name in table_pdf.index.to_list() if re.search(match_text, name)]
         x = table_pdf.loc[beam_code, 'HVL(mm Al)'].to_list()
+
+        # Specify the decimal places in x. 0.2222 -> 0.22
         x = [np.round(item, 2) if item != '' else item for item in x]
+        # Store '' index and remove the corresponding beams
+        # print("x ", x)
+        idx_not_null = [idx for idx, item in enumerate(x) if item != '']
+        # print("idx_null ", idx_not_null)
         y = table_pdf.loc[beam_code, 'NK [2]'].to_list()
+        # print("y: ", y)
+        x = [item for item in x if item != '']
+        y = [item for idx, item in enumerate(y) if idx in idx_not_null]
+        # print("y_del: ", y)
         plt.plot(x, y, '.-', label = str(vot) + " kVp")
-        
     plt.xlabel(r'HVL (mm Al)', fontweight='bold')
     plt.ylabel(r'$\bfN_k$(mGy/nc)', fontweight='bold')
+    plt.grid(axis='y', linestyle='--')
     # plt.xticks(np.arange(5, 15, 1.0))
     plt.legend(ncol=2)
 
@@ -43,11 +53,20 @@ if __name__ == '__main__':
         beam_code = [name for name in table_pdf.index.to_list() if re.search(match_text, name)]
         x = table_pdf.loc[beam_code, 'HVL(mm Cu)'].to_list()
         x = [np.round(item, 2) if item != '' else item for item in x]
+        idx_not_null = [idx for idx, item in enumerate(x) if item != '']
         y = table_pdf.loc[beam_code, 'NK [2]'].to_list()
+        # print(x)
+        x = [item for item in x if item != '']
+        # print(x)
+        # print(y)
+        y = [item for idx, item in enumerate(y) if idx in idx_not_null]
+        # print(y)
         plt.plot(x, y, '.-', label = str(vot) + " kVp")
         
     plt.xlabel(r'HVL (mm Cu)', fontweight='bold')
     plt.ylabel(r'$\bfN_k$(mGy/nc)', fontweight='bold')
+    plt.grid(axis='y', linestyle='--')
+
     # plt.xticks(np.arange(5, 15, 1.0))
     plt.legend(ncol=2)
     plt.show()
