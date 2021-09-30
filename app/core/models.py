@@ -441,6 +441,9 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         'added_at', 'The datetime when this run is created', readonly=True)
     edited_at = meta_property('edited_at', 'The datetime when this run is edited (changing RAW data)',
                               setter=lambda time: datetime_to_iso(time) if type(time) is datetime else str(time))
+    measured_at = meta_property('measured_at', 'The datetime when the measurement is created (measurement date)',
+                                setter=lambda time: datetime_to_iso(time) if type(time) is datetime else str(time))
+    IC_HV = meta_property('IC_HV', 'The IC HV in mex run')
 
     @property
     def meta(self) -> Dict[str, str]:
@@ -452,6 +455,8 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
             'operator': self.operator,
             'run_added_at': self.added_at,
             'run_edited_at': self.edited_at,
+            'run_measured_at': self.measured_at,
+            'IC_HV': self.IC_HV,
         }
 
 
