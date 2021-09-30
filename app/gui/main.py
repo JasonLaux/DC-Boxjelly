@@ -38,6 +38,7 @@ except ImportError:
     pass
 
 class MainWindow(QMainWindow):
+
     def __init__(self):
         QMainWindow.__init__(self)
         
@@ -53,8 +54,7 @@ class MainWindow(QMainWindow):
         self.homeImportWindow = HomeImportWindow(self)
         self.analysisWindow = AnalyseWindow(self)
         self.addEquipmentWindow = AddEquipmentWindow(self)
-
-        
+        self.reuploadWindow = ReuploadWindow(self)
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
@@ -151,6 +151,7 @@ class MainWindow(QMainWindow):
         self._selectedCalNum = ""
         self._selectedRuns = []
     
+
     def deleteRows(self, tableName):
         # Reverse sort rows indexes
         indexes = sorted(self._selectedRows, reverse=True)
@@ -362,6 +363,12 @@ class MainWindow(QMainWindow):
         self.homeImportWindow.setWindowModality(Qt.ApplicationModal)
         self.homeImportWindow.show()
     
+    
+    def openReuploadWindow(self):
+        self.reuploadWindow.setFixedSize(850, 320)
+        self.reuploadWindow.setWindowModality(Qt.ApplicationModal)
+        self.reuploadWindow.show()
+
 
     def openAnalysisWindow(self):
         """
@@ -399,33 +406,26 @@ class MainWindow(QMainWindow):
             QMenu:selected {background-color: #ddf; color: #000;}
             """
             )
-        action = self.ui.runsTable.contextMenu.addAction('Reveal in File Explorer')
+        action_openFile = self.ui.runsTable.contextMenu.addAction('Reveal in File Explorer')
+        action_upload = self.ui.runsTable.contextMenu.addAction('Re-upload')
         self.ui.runsTable.contextMenu.popup(QtGui.QCursor.pos())  # Menu position based on cursor
-        action.triggered.connect(self.actionHandler)
+        action_openFile.triggered.connect(lambda: self.actionHandler("OpenFileFolder"))
+        action_upload.triggered.connect(lambda: self.actionHandler("Reupload"))
+
         self.ui.runsTable.contextMenu.show()
 
-    def actionHandler(self):
+    def actionHandler(self, action):
         logger.debug("Open menu")
-        selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
-        runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
-        os.startfile(os.path.dirname(runs[0].raw_client.path))
 
-class ClientFilter(QSortFilterProxyModel):
-    def __init__(self, parent):
-        super(ClientFilter,self).__init__(parent)
+        # If multiple runs are chosen, only the first run is processed
+        selectedRun = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()[0]
+        run = Job[self._selectedCalNum][self._selectedEquipID].mex[selectedRun]
 
-    def filterAcceptsRow(self, source_row, source_parent):
-        sourceModel = self.sourceModel()
-        for i in range(sourceModel._data.shape[0]): # Bad practice
-            idx = sourceModel.index(source_row, i, source_parent)
-            logger.debug(idx.row())
-            logger.debug(idx.column())
-            if not idx.isValid():
-                logger.debug("Invalid")
-                return False
-            else:
-                logger.debug("Valid")
-                return True
+        if action == "OpenFileFolder":
+            os.startfile(os.path.dirname(run.raw_client.path))
+        elif action == "Reupload":
+            self.openReuploadWindow()
+            self.reuploadWindow.setRuns(selectedRun, run)
 
 
 class ImportWindow(QMainWindow):
@@ -466,6 +466,7 @@ class ImportWindow(QMainWindow):
         }
         return pd.DataFrame(newClient, index=[0]) 
     
+
     def chooseRawClient(self):
         file_filter = 'Raw Data File (*.csv)'
         self.clientPath = QFileDialog.getOpenFileName(
@@ -478,6 +479,7 @@ class ImportWindow(QMainWindow):
         logger.debug("Client raw file: %s", self.clientPath)
         self.ui.clientFilePathLine.setText(self.clientPath)
     
+
     def chooseRawLab(self):
         file_filter = 'Raw Data File (*.csv)'
         self.labPath = QFileDialog.getOpenFileName(
@@ -489,6 +491,7 @@ class ImportWindow(QMainWindow):
         )[0]
         logger.debug("Lab raw file: %s", self.labPath)
         self.ui.labFilePathLine.setText(self.labPath)
+
 
     def addNewRun(self):
         self.parent.runModel.layoutAboutToBeChanged.emit()
@@ -539,6 +542,47 @@ class ImportWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
+
+
+class ReuploadWindow(ImportWindow):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.parent = parent
+        self.selectedRun = None
+        self.run = None
+
+    def addNewRun(self):
+        self.parent.runModel.layoutAboutToBeChanged.emit()
+        self.parent.ui.runsTable.clearSelection()
+        if len(self.clientPath) == 0 or len(self.labPath) == 0:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose or fill in both Client file and Lab file path.")
+            return
+        if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
+            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
+            return
+
+        self.run.raw_client.upload_from(Path(self.clientPath))
+        self.run.raw_lab.upload_from(Path(self.labPath))
+        
+        self.parent.runModel.initialiseTable(data=getRunsTableData(Job[self.parent._selectedCalNum][self.parent._selectedEquipID]))
+
+        self.parent.runModel.layoutChanged.emit()
+        
+        # Finish add new run and quit
+        self.hide()
+        self.equip = None
+        self.clientPath = ""
+        self.labPath = ""
+        self.ui.clientFilePathLine.clear()
+        self.ui.labFilePathLine.clear()
+    
+
+    def setRuns(self, selectedRun, run):
+        logger.debug("Selected RunID: %s", selectedRun)
+        self.selectedRun = selectedRun
+        self.run = run
+        pass
 
 
 class HomeImportWindow(QMainWindow):
@@ -1157,10 +1201,12 @@ class TableModel(QAbstractTableModel):
     #     self.endInsertRows()
     #     return True
 
+
 class AlignDelegate(QItemDelegate):
     def paint(self, painter, option, index):
         option.displayAlignment = Qt.AlignCenter
         QItemDelegate.paint(self, painter, option, index)
+
 
 def start_event_loop():
     # os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
@@ -1171,6 +1217,7 @@ def start_event_loop():
     mainWindow = MainWindow()
     mainWindow.show()
     return app.exec_()
+
 
 if __name__ == '__main__':
     ret = start_event_loop()
