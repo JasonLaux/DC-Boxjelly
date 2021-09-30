@@ -197,7 +197,6 @@ class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
         'client_address_1', 'The first line of client address')
     client_address_2 = meta_property(
         'client_address_2', 'The second line of client address')
-    operator = meta_property('operator', 'Name of operator')
 
     def add_equipment(self, model, serial) -> 'Equipment':
         """
