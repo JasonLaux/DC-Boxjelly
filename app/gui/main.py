@@ -15,7 +15,7 @@ import numpy as np
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
 from app.core.models import Job, Equipment
-from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data
+from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
 
 logger = logging.getLogger(__name__)
@@ -413,6 +413,7 @@ class MainWindow(QMainWindow):
         action_upload.triggered.connect(lambda: self.actionHandler("Reupload"))
 
         self.ui.runsTable.contextMenu.show()
+
 
     def actionHandler(self, action):
         logger.debug("Open menu")
@@ -834,6 +835,8 @@ class AnalyseWindow(QMainWindow):
         self.tabTables = []
         self.lastClicked = []
         self.color = ['b', 'c', 'r', 'm', 'k', 'y']
+        self.summay = None
+        self.constant = None
 
         ## Table and Graph insertion
         # self.ui.resultGraph
@@ -857,22 +860,11 @@ class AnalyseWindow(QMainWindow):
         self.plot_item.showGrid(y=True)
         self.plot_item.setMenuEnabled(False)
         # logger.debug(self.ui.tabWidget.count())
-    
-    # def selection_changed(self, tableName):
-    #     """
-    #     Return the index of selected rows in an array.
-    #     """
-    #     try:
-    #         # Single selection mode
-    #         idx = getattr(self, tableName).selectionModel().selectedIndexes()[0]
-    #         logger.debug(idx.row(), idx.column())
-    #         # self._selectedRows = [idx.row() for idx in getattr(self, tableName).selectionModel().selectedIndexes()]
-    #     except AttributeError:
-    #         logger.error("Attribute does not exist! Table name may be altered!")
-    #         raise AttributeError("Attribute does not exist! Table name may be altered!")
-    #     logger.debug(self._selectedRows)
+        self.ui.generatePdfButton.clicked.connect(self.generate_pdf)
+
 
     def setRuns(self, runs):
+        
         self.runs = runs
         result_list = []
         name_list = []
@@ -895,17 +887,20 @@ class AnalyseWindow(QMainWindow):
             # Draw graph
             self.plot_item.addItem(self.plot(result.X['E_eff'].tolist(), result.df_NK['NK'].tolist(), color=self.color[run.id % len(self.color) - 1], runId=run.id))
 
-        self.resultModel.initialiseTable(data=summary(name_list, result_list))
-        self.resultModel.layoutChanged.emit()
-
-
+        self.constant = result_list[0].df_otherConstant
+        self.summay = summary(name_list, result_list)
+        self.resultModel.initialiseTable(data=self.summay)
         
+        self.resultModel.layoutChanged.emit()
+        
+
     def analyze(self):
         # TODO: insert analyze functions here
         logger.debug(self.runs)
         self.setWindowModality(Qt.ApplicationModal)
         self.show()
         return
+
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
@@ -915,6 +910,7 @@ class AnalyseWindow(QMainWindow):
             event.accept()  
         else:
             event.ignore() 
+
 
     def plot(self, x, y, color, runId):
         scatter_item = pg.ScatterPlotItem(
@@ -954,7 +950,16 @@ class AnalyseWindow(QMainWindow):
     # def hovered(self, plot, points):
     #     if points:
     #         print(points[0].viewPos())
-
+    def generate_pdf(self):
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        # dir_path = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.join(base_path, 'app', 'pdf', 'test')
+        pdf_visualization(path, self.summay, self.constant)
+        
 
 class AddClientWindow(QMainWindow):
 
