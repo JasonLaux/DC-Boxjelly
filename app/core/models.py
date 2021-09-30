@@ -8,15 +8,20 @@ Data consistency is not guaranteed if a folder is access by multiple instences
 """
 
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, Optional, Tuple
-from datetime import datetime
+from typing import Dict, Iterable, Iterator, List, Optional, Tuple
+from datetime import datetime, date
 import shutil
 import os
 import errno
+import logging
+import csv
 
 from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
-from .definition import CONSTANT_FILE_NAME, CONSTANT_FOLDER, RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME, TEMPLATE_CONSTANT_FILE
+from .definition import CONSTANT_FILE_NAME, CONSTANT_FOLDER, RAW_DATA_SECTION_NAME, RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME, TEMPLATE_CONSTANT_FILE
 from .utils import count_iter_items, datetime_to_iso, ensure_folder, iter_subfolders
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class _JobMetaClass(type):
@@ -428,9 +433,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
 
     def __repr__(self) -> str:
         return f'MexRun({self._id}, parent={self._parent})'
-
-    def __str__(self):
-        return f'MexRun({self._id})'
+    __str__ = __repr__
 
     @property
     def id(self) -> int:
@@ -441,9 +444,10 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         'added_at', 'The datetime when this run is created', readonly=True)
     edited_at = meta_property('edited_at', 'The datetime when this run is edited (changing RAW data)',
                               setter=lambda time: datetime_to_iso(time) if type(time) is datetime else str(time))
-    measured_at = meta_property('measured_at', 'The datetime when the measurement is created (measurement date)',
-                                setter=lambda time: datetime_to_iso(time) if type(time) is datetime else str(time))
-    IC_HV = meta_property('IC_HV', 'The IC HV in mex run')
+    measured_at = meta_property('measured_at', 'The date when the measurement is created (measurement date).',
+                                setter=lambda date: date.isoformat() if type(date) is date else str(date))
+    IC_HV = meta_property(
+        'IC_HV', 'The IC HV in mex run. Although it is a number, the type of this property should be string')
 
     @property
     def meta(self) -> Dict[str, str]:
@@ -476,6 +480,11 @@ class MexRawFile:
         self._path = path
         self._parent = parent
 
+    def __str__(self) -> str:
+        file = self._path.name
+        return f'RawMexFile({file}, parent={self._parent})'
+    __repr__ = __str__
+
     @property
     def path(self) -> Optional[Path]:
         """
@@ -490,6 +499,9 @@ class MexRawFile:
         Save the raw data from `source` path.
 
         It just copies the file into the run/raw folder.
+
+        This method overwrites attributes in MexRun by some field in the file,
+        such as IC_HV and measured_at.
 
         If the source file does not exist, it raises ValueError
         """
@@ -509,6 +521,7 @@ class MexRawFile:
             f.writelines(lines)
 
         self._update_edit_time()
+        self._extract_raw_meta(lines)
 
     def remove(self):
         """
@@ -556,6 +569,50 @@ class MexRawFile:
 
     def _update_edit_time(self):
         self._parent.edited_at = datetime.now()
+
+    def _extract_raw_meta(self, lines: List[str]):
+        """
+        Extract some meta data from raw files into the MexRun meta data.
+
+        If it is called multiple times, the previous meta data in MexRun
+        will be overwritten.
+        """
+
+        # extract meta section
+        beg = None
+        end = None
+        logger.debug('raw file (first 20 lines):', lines[0:20])
+        for idx, line in enumerate(lines):
+            if RAW_MEASUREMENT_SECTION_NAME in line:
+                beg = idx + 1
+                continue
+            if RAW_DATA_SECTION_NAME in line:
+                end = idx
+                break
+
+        if not beg or not end:
+            logger.warning('This file does not contains %s, obj: %s',
+                           RAW_MEASUREMENT_SECTION_NAME, self)
+            return
+
+        run = self._parent
+        assert type(run) == MexRun
+
+        # extract fields
+        section = lines[beg:end]
+        for row in csv.reader(section):
+            name = row[0]
+            value = row[2]
+
+            if name == 'Date':
+                try:
+                    [d, m, y] = value.split('/')
+                    run.measured_at = date(int(y), int(m), int(d))
+                except ValueError:
+                    logger.error(
+                        'Cannot parse date, obj: %s, value: %s', self, value)
+            elif name == 'IC HV':
+                run.IC_HV = str(value)
 
 
 def _meta_dict_to_csv_line(obj):

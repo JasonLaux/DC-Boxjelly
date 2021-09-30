@@ -6,9 +6,13 @@ import importlib
 import time_machine
 import pytz
 import filecmp
+import logging
 
 from app.core import definition, models
 
+std_out_log = logging.StreamHandler()
+std_out_log.setLevel(logging.DEBUG)
+logging.basicConfig(handlers=[std_out_log, ])
 
 class ModelTestBase(unittest.TestCase):
     def setUp(self) -> None:
@@ -176,6 +180,10 @@ class TestMexRun(ModelTestBase):
         self.assertTrue(path.samefile('data/jobs/CAL0001/AAA_123/MEX/1/raw/client.csv'),
                         'test the raw file path')
         self.assertFileEqual(path, CLIENT_A_RUN1_CLIENT, 'test file content')
+
+        # test modifying meta data
+        self.assertEqual(r.IC_HV, '-250')
+        self.assertEqual(r.measured_at, '2021-02-12')
 
         # test exporting
         r.raw_client.export_to(Path('data/test_exported.csv'))
