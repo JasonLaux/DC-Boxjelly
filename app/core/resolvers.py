@@ -267,38 +267,40 @@ def summary(name_list, result_list):
 
     # all results' values divided by the average value
     for name in name_list:
-        df_result[name+'/Average'] = round(df_result[name] / df_result['Average'], 3).map('{:,.3f}'.format)
+        df_result[name + '/Average'] = round(df_result[name] / df_result['Average'], 3).map('{:,.3f}'.format)
         df_result[name] = df_result[name].map('{:,.2f}'.format)
 
-        # let the format be consisted in the GUI
-        df_result['Average'] = df_result['Average'].map('{:,.2f}'.format)
+    # let the format be consisted in the GUI
+    df_result['Average'] = df_result['Average'].map('{:,.2f}'.format)
 
-        # deal with effective energy
-        df_energy = result_list[0].X
-        df_energy = df_energy.applymap('{:,.2f}'.format)
+    # deal with effective energy
+    df_energy = result_list[0].X
 
-        # merge the effective energy with summary
-        df_summary = pd.merge(df_energy, df_result, left_index=True, right_index=True, how='outer')
+    # merge the effective energy with summary
+    df_summary = pd.merge(df_energy, df_result, left_index=True, right_index=True, how='outer')
 
-        # sort by voltage
-        df_summary['Tube voltage'] = [re.findall(r'\d+', beam)[0] for beam in df_summary.index]
-        df_summary['Tube voltage'] = pd.to_numeric(df_summary['Tube voltage'])
+    # sort by voltage
+    df_summary['Tube voltage'] = [re.findall(r'\d+', beam)[0] for beam in df_summary.index]
+    df_summary['Tube voltage'] = pd.to_numeric(df_summary['Tube voltage'])
 
-        # find how many beams have measure two times
-        duplicate_num = len([beam for beam in df_summary.index if '*' in beam])
+    # find how many beams have measure two times
+    duplicate_num = len([beam for beam in df_summary.index if '*' in beam])
 
-        df_first = df_summary[:-duplicate_num].sort_values(by='Tube voltage')
-        df_second = df_summary[-duplicate_num:].sort_values(by='Tube voltage')
+    df_first = df_summary[:-duplicate_num].sort_values(by='Tube voltage')
+    df_second = df_summary[-duplicate_num:].sort_values(by='Tube voltage')
 
-        df_first_sort = None
-        for voltage in df_first['Tube voltage'].unique():
-            df_temp = df_first[df_first['Tube voltage'] == voltage]  # extract one voltage
-            df_temp.sort_values(by='E_eff', inplace=True)  # sort by energy
-            df_first_sort = pd.concat([df_first_sort, df_temp], axis=0)  # concate with other voltage
+    df_first_sort = None
+    for voltage in df_first['Tube voltage'].unique():
+        df_temp = df_first[df_first['Tube voltage'] == voltage]  # extract one voltage
+        df_temp.sort_values(by='E_eff', inplace=True)  # sort by energy
+        df_first_sort = pd.concat([df_first_sort, df_temp], axis=0)  # concate with other voltage
 
-        df_summary = pd.concat([df_first_sort, df_second], axis=0)
+    df_first_sort['E_eff'] = df_first_sort['E_eff'].apply('{:,.2f}'.format)
+    df_second['E_eff'] = df_second['E_eff'].apply('{:,.2f}'.format)
 
-        return df_summary.drop(columns='Tube voltage')
+    df_summary = pd.concat([df_first_sort, df_second], axis=0)
+
+    return df_summary.drop(columns='Tube voltage')
 
 
 def pdf_visualization(path, df_summary, df_otherConstant):
