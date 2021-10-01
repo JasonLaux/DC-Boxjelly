@@ -1,5 +1,5 @@
 from pathlib import Path
-import os
+from stat import S_IREAD
 
 from .utils import ensure_folder
 
@@ -65,6 +65,7 @@ The location of the template constant file.
 When a new constant file is added, this file is copied to the location.
 '''
 TEMPLATE_CONSTANT_FILE = Path(__file__).parent / 'template_constant.xlsx'
+TEMPLATE_CONSTANT_FILE.chmod(S_IREAD) # make the file read only
 
 '''
 The folder that contains constant files

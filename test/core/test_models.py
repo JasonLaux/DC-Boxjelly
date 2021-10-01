@@ -269,16 +269,28 @@ class TestConstantFile(ModelTestBase):
         self.assertIsNotNone(default)
         self.assertEqual(default.id, 1)  # type: ignore
 
+        # file path
+        self.assertTrue(models.constant_file_config.get_path()
+            .samefile('data/constants/1/constant.xlsx'))
+
         # delete the file
         f.delete()
         self.assertIsNone(models.constant_file_config.default)
         self.assertMetaContent('data/constants/meta.ini', [
         ])
 
+        # file path
+        self.assertTrue(models.constant_file_config.get_path()
+            .samefile('app/core/template_constant.xlsx'))
+
         # set a wrong default id
         models.constant_file_config.default_id = '42'
         # but it still reads None
         self.assertIsNone(models.constant_file_config.default)
+
+        # file path
+        self.assertTrue(models.constant_file_config.get_path()
+            .samefile('app/core/template_constant.xlsx'))
 
 
 

@@ -15,6 +15,7 @@ import os
 import errno
 import logging
 import csv
+import stat
 
 from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
 from .definition import CONSTANT_FILE_NAME, CONSTANT_FOLDER, RAW_DATA_SECTION_NAME, RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME, TEMPLATE_CONSTANT_FILE
@@ -748,6 +749,7 @@ class ConstantFile(WithMetaMixin, metaclass=_ConstantFileMetaClass):
             'added_at': datetime_to_iso(datetime.now()),
         }):
             shutil.copy(TEMPLATE_CONSTANT_FILE, self.path)
+            self.path.chmod(stat.S_IWRITE)
 
     def __repr__(self) -> str:
         return f'ConstantFile({self._id})'
@@ -806,5 +808,17 @@ class _ConstantFileConfig(WithMetaMixin):
         else:
             return None
 
+    def get_path(self) -> Path:
+        """
+        If default constant file exists, returns its path.
+        Else, return the path of the template file.
+
+        Since the path can be the template file, please do not modify
+        its content.
+        """
+        if self.default:
+            return self.default.path
+        else:
+            return TEMPLATE_CONSTANT_FILE
 
 constant_file_config = _ConstantFileConfig()
