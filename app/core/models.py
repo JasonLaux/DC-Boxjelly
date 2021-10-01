@@ -422,7 +422,7 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
         self._lab = self._raw / MEX_RAW_LAB_FILE_NAME
 
-        self.raw_client = MexRawFile(self, self._client)
+        self.raw_client = MexRawFile(self, self._client, update_meta=True)
         self.raw_lab = MexRawFile(self, self._lab)
 
         self._ensure_folder_with_meta({
@@ -469,9 +469,11 @@ class MexRawFile:
     Representing a raw file
     """
 
-    def __init__(self, parent: MexRun, path: Path) -> None:
+    def __init__(self, parent: MexRun, path: Path, update_meta=False) -> None:
         """
         Create a raw file object.
+
+        If update_meta is True, `upload_from` will update meta data from raw data.
 
         ** This constructor is not meant to be used outside of models.py! **
         - Please access it through MexRun
@@ -479,6 +481,7 @@ class MexRawFile:
 
         self._path = path
         self._parent = parent
+        self._update_meta = update_meta
 
     def __str__(self) -> str:
         file = self._path.name
@@ -521,7 +524,8 @@ class MexRawFile:
             f.writelines(lines)
 
         self._update_edit_time()
-        self._extract_raw_meta(lines)
+        if self._update_meta:
+            self._extract_raw_meta(lines)
 
     def remove(self):
         """

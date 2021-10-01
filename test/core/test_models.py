@@ -158,6 +158,8 @@ class TestMexRun(ModelTestBase):
         TEST_DATA_FOLDER = Path(__file__).parent / '_assert' / 'Data'
         CLIENT_A_RUN1_CLIENT = TEST_DATA_FOLDER / \
             'CAL00001 Raw ClientA-Run1-Client.csv'
+        CLIENT_A_RUN1_LAB = TEST_DATA_FOLDER / \
+            'CAL00001 Raw ClientA-Run1-Lab.csv'
         EXPORTED_SNAPSHOT = Path(__file__).parent / \
             '_assert' / 'snapshots' / 'exported_raw_client.csv'
 
@@ -197,6 +199,13 @@ class TestMexRun(ModelTestBase):
             Path('data/jobs/CAL0001/AAA_123/MEX/1/raw/client.csv').exists()
         )
         self.assertIsNone(r.raw_client.path)
+
+        # test uploading lab raw data, it does not update meta data
+        r.raw_lab.upload_from(CLIENT_A_RUN1_LAB)
+        path = r.raw_lab.path
+        assert path is not None
+
+        self.assertEqual(r.IC_HV, '-250')
 
         # test import raw file with [DC_META] section
         r.raw_client.upload_from(EXPORTED_SNAPSHOT)
