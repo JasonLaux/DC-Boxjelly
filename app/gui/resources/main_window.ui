@@ -921,21 +921,6 @@ background-color: white;
                      </property>
                     </widget>
                    </item>
-                   <item>
-                    <widget class="QLabel" name="label">
-                     <property name="font">
-                      <font>
-                       <family>Verdana</family>
-                       <pointsize>12</pointsize>
-                       <weight>75</weight>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Operator</string>
-                     </property>
-                    </widget>
-                   </item>
                   </layout>
                  </item>
                  <item>
@@ -985,20 +970,6 @@ border: 1px solid black;
                    </item>
                    <item>
                     <widget class="QLineEdit" name="address2lineEdit">
-                     <property name="font">
-                      <font>
-                       <family>Verdana</family>
-                       <pointsize>12</pointsize>
-                      </font>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 255, 255);
-border: 1px solid black;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="operatorlineEdit">
                      <property name="font">
                       <font>
                        <family>Verdana</family>

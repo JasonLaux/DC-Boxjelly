@@ -65,7 +65,6 @@ class MainWindow(QMainWindow):
         self.ui.clientNamelineEdit.textChanged.connect(lambda: self.ui.updateClientButton.setEnabled(True))
         self.ui.address1lineEdit.textChanged.connect(lambda: self.ui.updateClientButton.setEnabled(True))
         self.ui.address2lineEdit.textChanged.connect(lambda: self.ui.updateClientButton.setEnabled(True))
-        self.ui.operatorlineEdit.textChanged.connect(lambda: self.ui.updateClientButton.setEnabled(True))
 
         #compare page
         self.ui.chooseEquipmentButton.clicked.connect(self.chooseEquipment)
@@ -302,7 +301,6 @@ class MainWindow(QMainWindow):
                 self.ui.clientNamelineEdit.setText(Job[self._selectedCalNum].client_name)
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
-                self.ui.operatorlineEdit.setText(Job[self._selectedCalNum].operator)
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
                 self.ui.equipmentsTable.setColumnHidden(2, True)
                 self.equipmentModel.layoutChanged.emit()
