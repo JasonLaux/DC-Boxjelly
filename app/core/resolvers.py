@@ -382,6 +382,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     plot3.savefig(path + r'\HVL_Cu.png')
     ################################################## Draw HVL Cu ##################################################
     ################################################## Save to excel ###################################################
+    first_table_num = 40
     subset_beams = ['NXA50', 'NXA70', 'NXB100', 'NXC120', 'NXD140', 'NXE150', 'NXF200', 'NXG250', 'NXH280', 'NXH300',
                     'NXH300*']
 
@@ -392,14 +393,15 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     df_merge['HVL(mm Cu)'] = df_merge['HVL(mm Cu)'].map('{:,.2f}'.format, na_action='ignore')
     df_merge['Nominal air kerma rate'] = df_merge['Nominal air kerma rate'].map('{:,.1f}'.format, na_action='ignore')
 
-    df_subset = df_merge[df_merge.index.isin(subset_beams)]
-    df_merge = df_merge.style.set_properties(**{'text-align': 'center'})
-    df_subset = df_subset.style.set_properties(**{'text-align': 'center'})
+    df_subset = df_merge[df_merge.index.isin(subset_beams)].style.set_properties(**{'text-align': 'center'})
+    df_merge1 = df_merge.iloc[:first_table_num].style.set_properties(**{'text-align': 'center'})
+    df_merge2 = df_merge.iloc[first_table_num:].style.set_properties(**{'text-align': 'center'})
 
     table_path = path + r'\pdf_table.xlsx'
     writer = pd.ExcelWriter(table_path, engine='xlsxwriter')
     df_subset.to_excel(writer, sheet_name='subset')
-    df_merge.to_excel(writer, sheet_name='total')
+    df_merge1.to_excel(writer, sheet_name='total-1')
+    df_merge2.to_excel(writer, sheet_name='total-2')
     writer.save()
     ################################################## Save to excel ###################################################
 
