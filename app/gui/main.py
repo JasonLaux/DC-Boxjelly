@@ -455,15 +455,6 @@ class ImportWindow(QMainWindow):
     def sync_labLineEdit(self):
         self.labPath = self.ui.labFilePathLine.text()
     
-    # def getNewRunInfo(self):
-    #     newClient = {
-    #         'ID': [],
-    #         'Added Time': [],
-    #         'Edited Time': []
-    #     }
-    #     return pd.DataFrame(newClient, index=[0]) 
-    
-
     def chooseRawClient(self):
         file_filter = 'Raw Data File (*.csv)'
         self.clientPath = QFileDialog.getOpenFileName(
@@ -506,7 +497,7 @@ class ImportWindow(QMainWindow):
             'ID': run.id,
             'Added Time': converTimeFormat(run.added_at),
             # 'Edited Time': converTimeFormat(run.edited_at),
-            'Mesurement Date': converTimeFormat(run.measured_at).split()[0],
+            'Measurement Date': converTimeFormat(run.measured_at).split()[0],
             'Operator': run.operator,
         }
         self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
@@ -616,14 +607,6 @@ class HomeImportWindow(QMainWindow):
     def sync_labLineEdit(self):
         self.labPath = self.ui.labFilePathLine.text()
     
-    # def getNewRunInfo(self):
-    #     newClient = {
-    #         'ID': [],
-    #         'Added Time': [],
-    #         'Edited Time': []
-    #     }
-    #     return pd.DataFrame(newClient, index=[0]) 
-    
     def chooseRawClient(self):
         file_filter = 'Raw Data File (*.csv)'
         self.clientPath = QFileDialog.getOpenFileName(
@@ -712,7 +695,7 @@ class HomeImportWindow(QMainWindow):
                     'ID': run.id,
                     'Added Time': converTimeFormat(run.added_at),
                     # 'Edited Time': converTimeFormat(run.edited_at),
-                    'Mesurement Date': converTimeFormat(run.measured_at).split()[0],
+                    'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
             }
             self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
@@ -740,7 +723,7 @@ class HomeImportWindow(QMainWindow):
                     'ID': run.id,
                     'Added Time': converTimeFormat(run.added_at),
                     # 'Edited Time': converTimeFormat(run.edited_at),
-                    'Mesurement Date': converTimeFormat(run.measured_at).split()[0],
+                    'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
                 self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
@@ -755,7 +738,7 @@ class HomeImportWindow(QMainWindow):
                     'ID': run.id,
                     'Added Time': converTimeFormat(run.added_at),
                     # 'Edited Time': converTimeFormat(run.edited_at),
-                    'Mesurement Date': converTimeFormat(run.measured_at).split()[0],
+                    'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
                 self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
