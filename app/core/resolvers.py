@@ -436,7 +436,7 @@ def extractionHeader(client_path: str, lab_path: str):
                 client_data.operator = line.split(',')[2].strip()
             elif 'Chamber' in line:
                 client_data.serial = line.split(',')[2].strip()[-4:]
-                client_data.model = line.split(',')[2].strip()[:-4]
+                client_data.model = line.split(',')[2].strip()[:-4].strip()
             elif 'Date' in line:
                 client_data.date = line.split(',')[2].strip()
                 # client_data.date = datetime.strptime(dateStr, "%m/%d/%Y").date()               
