@@ -184,6 +184,7 @@ class TestMexRun(ModelTestBase):
         # test modifying meta data
         self.assertEqual(r.IC_HV, '-250')
         self.assertEqual(r.measured_at, '2021-02-12')
+        self.assertEqual(r.operator, 'Duncan Butler')
 
         # test exporting
         r.raw_client.export_to(Path('data/test_exported.csv'))

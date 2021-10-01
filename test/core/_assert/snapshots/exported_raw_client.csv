@@ -6,7 +6,7 @@ client_address_2,
 equipment_model,AAA
 equipment_serial,123
 run_id,1
-operator,
+operator,Duncan Butler
 run_added_at,2021-01-01T13:20:00+11:00
 run_edited_at,2021-01-01T13:20:00+11:00
 run_measured_at,2021-02-12

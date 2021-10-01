@@ -613,6 +613,8 @@ class MexRawFile:
                         'Cannot parse date, obj: %s, value: %s', self, value)
             elif name == 'IC HV':
                 run.IC_HV = str(value)
+            elif name == 'Operator':
+                run.operator = value
 
 
 def _meta_dict_to_csv_line(obj):
