@@ -4,6 +4,7 @@ This file contains the code to do the calculation.
 Each resolver receives a model and outputs the calculated result, which can
 be a model or just a matrix.
 """
+from datetime import date, datetime
 import pandas as pd
 import warnings
 import numpy as np
@@ -28,6 +29,7 @@ class Header_data():
         self.operator = ""
         self.serial = ""
         self.model = ""
+        self.date = ""
 
 
 class Processed_data():
@@ -435,6 +437,9 @@ def extractionHeader(client_path: str, lab_path: str):
             elif 'Chamber' in line:
                 client_data.serial = line.split(',')[2].strip()[-4:]
                 client_data.model = line.split(',')[2].strip()[:-4]
+            elif 'Date' in line:
+                client_data.date = line.split(',')[2].strip()
+                # client_data.date = datetime.strptime(dateStr, "%m/%d/%Y").date()               
     
     with open(lab_path, newline='', encoding="ISO-8859-1") as f:
         for line in f:

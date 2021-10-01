@@ -674,6 +674,7 @@ class HomeImportWindow(QMainWindow):
         self.confirmWindow.clientAddress2Line.setText(self.data.address_2)
         self.confirmWindow.chamberLine.setText(self.data.model+" "+self.data.serial)
         self.confirmWindow.operatorLine.setText(self.data.operator)
+        self.confirmWindow.measurementLine.setText(self.data.date)
         self.confirmWindow.setFixedSize(800, 560)
         self.confirmWindow.setWindowModality(Qt.ApplicationModal)
         self.confirmWindow.show()
@@ -689,7 +690,7 @@ class HomeImportWindow(QMainWindow):
             jobsID.append(job.id)
         if not self.data.CAL_num in jobsID:
             # if job not exsited, create job, equip and add one run
-            job = Job.make(self.data.CAL_num, client_name = self.data.Client_name, client_address_1 = self.data.address_1, client_address_2 = self.data.address_2, operator = self.data.operator)
+            job = Job.make(self.data.CAL_num, client_name = self.data.Client_name, client_address_1 = self.data.address_1, client_address_2 = self.data.address_2)
             newClient = {
                 'CAL Number': self.data.CAL_num,
                 'Client Name': self.data.Client_name,
@@ -710,7 +711,7 @@ class HomeImportWindow(QMainWindow):
             data = {
                     'ID': run.id,
                     'Added Time': converTimeFormat(run.added_at),
-                    'Edited Time': converTimeFormat(run.edited_at),
+                    # 'Edited Time': converTimeFormat(run.edited_at),
             }
             self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
             self.parent.runModel.layoutChanged.emit()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>815</width>
-    <height>562</height>
+    <width>804</width>
+    <height>538</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -131,7 +131,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>250</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -183,7 +183,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>250</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -232,7 +232,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>250</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -278,7 +278,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>250</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -324,7 +324,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>250</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -370,7 +370,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>250</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -416,7 +416,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>250</width>
                 <height>16777215</height>
                </size>
               </property>
