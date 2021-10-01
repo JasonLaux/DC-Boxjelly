@@ -206,13 +206,11 @@ class MainWindow(QMainWindow):
         newClientName = self.ui.clientNamelineEdit.text()
         newFstAddress = self.ui.address1lineEdit.text()
         newSndAddress = self.ui.address2lineEdit.text()
-        newOperator = self.ui.operatorlineEdit.text()
 
         try: 
             Job[self._selectedCalNum].client_name = newClientName
             Job[self._selectedCalNum].client_address_1 = newFstAddress
             Job[self._selectedCalNum].client_address_2 = newSndAddress
-            Job[self._selectedCalNum].operator = newOperator
             QtWidgets.QMessageBox.about(self, ' ', "Successfully updated user information.")
         except AttributeError:
             raise error("Job ID is not found!")
@@ -983,7 +981,6 @@ class AddClientWindow(QMainWindow):
         self.clientAddress1 = ""
         self.clientAddress2 = ""
         self.calNumber = ""
-        self.operator = ""
 
         self.clientSubmitButton.clicked.connect(self.addNewClient)
         
@@ -995,7 +992,6 @@ class AddClientWindow(QMainWindow):
             self.ui.clientNameLine.clear()
             self.ui.clientAddress1Line.clear()
             self.ui.clientAddress2Line.clear()
-            self.ui.operatorLine.clear()
             event.accept()  
         else:
             event.ignore() 
@@ -1015,7 +1011,6 @@ class AddClientWindow(QMainWindow):
         self.clientName = self.ui.clientNameLine.text()
         self.clientAddress1 = self.ui.clientAddress1Line.text()
         self.clientAddress2 = self.ui.clientAddress2Line.text()
-        self.operator = self.ui.operatorLine.text()
 
         # Check duplicated ID
         # IDs = getHomeTableData()['CAL Number'].values.tolist()
@@ -1029,7 +1024,7 @@ class AddClientWindow(QMainWindow):
             return
 
         try:
-            Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2, operator = self.operator)
+            Job.make(self.calNumber, client_name = self.clientName, client_address_1 = self.clientAddress1, client_address_2 = self.clientAddress2)
         except ValueError:
             QtWidgets.QMessageBox.about(self, "Warning", "CAL number already existed in file system!")
             return
@@ -1042,13 +1037,11 @@ class AddClientWindow(QMainWindow):
         self.clientName = ""
         self.clientAddress1 = ""
         self.clientAddress2 = ""
-        self.operator = ""
         self.calNumber = ""
         self.ui.calNumLine.clear()
         self.ui.clientNameLine.clear()
         self.ui.clientAddress1Line.clear()
         self.ui.clientAddress2Line.clear()
-        self.ui.operatorLine.clear()
         # TODO: Display another window to confirm information
 
 
