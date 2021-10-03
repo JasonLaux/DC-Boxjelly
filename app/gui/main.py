@@ -1,6 +1,7 @@
 from os import error, name
 from typing import Counter
 from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
 import sys
@@ -17,6 +18,9 @@ from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getR
 from app.core.models import Job, Equipment
 from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
+from app.pdf.main import get_pdf
+from datetime import datetime
+from copy import deepcopy
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -379,6 +383,7 @@ class MainWindow(QMainWindow):
                 self.analysisWindow.setRuns(runs) 
                 self.analysisWindow.analyze()
                 self._selectedRows = []
+                self.analysisWindow.gather_info()
             else:
                 QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
         except Exception as e:
@@ -825,7 +830,7 @@ class AnalyseWindow(QMainWindow):
         self.color = ['b', 'c', 'r', 'm', 'k', 'y']
         self.summay = None
         self.constant = None
-
+        self.parent = parent
         ## Table and Graph insertion
         # self.ui.resultGraph
         # self.ui.run1Table
@@ -939,6 +944,8 @@ class AnalyseWindow(QMainWindow):
     #     if points:
     #         print(points[0].viewPos())
     def generate_pdf(self):
+        # QtWidgets.QMessageBox.about(self, "Generating PDF...")
+
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
             base_path = sys._MEIPASS
@@ -947,7 +954,57 @@ class AnalyseWindow(QMainWindow):
         # dir_path = os.path.dirname(os.path.realpath(__file__))
         path = os.path.join(base_path, 'app', 'pdf', 'test')
         pdf_visualization(path, self.summay, self.constant)
+        info_dict = self.gather_info()
+        get_pdf(**info_dict)
+        # QtWidgets.QMessageBox.about(self, "Finish!")
+
+    # def showDialog():
+    #     msgBox = QtWidgets.QMessageBox()
+    #     msgBox.setIcon(QtWidgets.QMessageBox.Information)
+    #     msgBox.setText("Message box pop up window")
+    #     msgBox.setWindowTitle("QMessageBox Example")
+    #     msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+    #     msgBox.buttonClicked.connect(msgButtonClick)
+
+    #     returnValue = msgBox.exec()
+    #     if returnValue == QMessageBox.Ok:
+    #         print('OK clicked')
         
+
+
+    def gather_info(self):
+
+        date_list = []
+
+        equipmentID = self.parent._selectedEquipID
+        cal_num = self.parent._selectedCalNum
+        client_name = Job[cal_num].client_name
+        first_address = Job[cal_num].client_address_1
+        second_address = Job[cal_num].client_address_2
+        serial = Job[cal_num][equipmentID].serial
+        model = Job[cal_num][equipmentID].model
+
+        # Only first operator is considered
+        operator = self.runs[0].operator
+        for run in self.runs:
+            date_list.append(datetime.fromisoformat(run.measured_at))
+        earliest_date = min(date_list).strftime("%d %b %Y")
+        latest_date = max(date_list).strftime("%d %b %Y")
+
+        period = earliest_date + " to " + latest_date
+        report_date = datetime.today().strftime("%d %b %Y")
+
+        return deepcopy({"cal_num": cal_num,
+                "client_name": client_name,
+                "address1": first_address,
+                "address2": second_address,
+                "model": model,
+                "serial": serial,
+                "operator": operator,
+                "period": period,
+                "report_date": report_date
+                })
+
 
 class AddClientWindow(QMainWindow):
 
