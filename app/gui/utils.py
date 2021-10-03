@@ -72,14 +72,14 @@ def getRunsTableData(equip: Equipment):
     #equip = Job[jobID][equipID]
     data = {
         'ID': [],
-        'Added Time': [],
+        # 'Added Time': [],
         # 'Edited Time': [],
         'Measurement Date': [],
         'Operator': [],
     }
     for run in equip.mex:
         data['ID'].append(run.id),
-        data['Added Time'].append(converTimeFormat(run.added_at)),
+        # data['Added Time'].append(converTimeFormat(run.added_at)),
         # data['Edited Time'].append(converTimeFormat(run.edited_at)),
         data['Measurement Date'].append(converTimeFormat(run.measured_at).split()[0]),
         data['Operator'].append(run.operator),
