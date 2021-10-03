@@ -15,6 +15,7 @@ openpyxl = "*"
 jinja2 = "*"
 xlsxwriter = "==3.0.1"
 xlwings = "*"
+comtypes = "*"
 
 [dev-packages]
 autopep8 = "*"
