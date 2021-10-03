@@ -518,16 +518,18 @@ class ImportWindow(QMainWindow):
         # TODO: Display another window to confirm information
     
     def openClientFile(self):
-        try:
-            os.startfile(self.clientPath)
-        except FileNotFoundError:
-            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
+        if self.clientPath != "":
+            try:
+                os.startfile(self.clientPath)
+            except FileNotFoundError:
+                QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
     
     def openLabFile(self):
-        try:
-            os.startfile(self.labPath)
-        except FileNotFoundError:
-            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
+        if self.labPath != "":
+            try:
+                os.startfile(self.labPath)
+            except FileNotFoundError:
+                QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
 
 
     def closeEvent(self, event):  
@@ -761,16 +763,18 @@ class HomeImportWindow(QMainWindow):
         self.ui.labFilePathLine.clear()
     
     def openClientFile(self):
-        try:
-            os.startfile(self.clientPath)
-        except FileNotFoundError:
-            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
+        if self.clientPath != "":
+            try:
+                os.startfile(self.clientPath)
+            except FileNotFoundError:
+                QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
     
     def openLabFile(self):
-        try:
-            os.startfile(self.labPath)
-        except FileNotFoundError:
-            QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
+        if self.clientPath != "":
+            try:
+                os.startfile(self.labPath)
+            except FileNotFoundError:
+                QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
 
     def closeEvent(self, event):  
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
