@@ -383,7 +383,6 @@ class MainWindow(QMainWindow):
                 self.analysisWindow.setRuns(runs) 
                 self.analysisWindow.analyze()
                 self._selectedRows = []
-                self.analysisWindow.gather_info()
             else:
                 QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
         except Exception as e:
@@ -991,6 +990,7 @@ class AnalyseWindow(QMainWindow):
     def gather_info(self):
 
         date_list = []
+        ic_hv = []
 
         equipmentID = self.parent._selectedEquipID
         cal_num = self.parent._selectedCalNum
@@ -1004,11 +1004,20 @@ class AnalyseWindow(QMainWindow):
         operator = self.runs[0].operator
         for run in self.runs:
             date_list.append(datetime.fromisoformat(run.measured_at))
+            ic_hv.append(run.IC_HV)
+
         earliest_date = min(date_list).strftime("%d %b %Y")
         latest_date = max(date_list).strftime("%d %b %Y")
 
         period = earliest_date + " to " + latest_date
         report_date = datetime.today().strftime("%d %b %Y")
+
+        ichv = ic_hv[0]
+
+        if int(ichv) < 0:
+            flag = "(" + ichv + ")" + " on the guard electrode " + "Positive " + "(Central Electrode Negative)"
+        else:
+            flag = "(" + ichv + ")" + "on the guard electrode " + "Negative " + "(Central Electrode Negative)"
 
         return deepcopy({"cal_num": cal_num,
                 "client_name": client_name,
@@ -1018,7 +1027,9 @@ class AnalyseWindow(QMainWindow):
                 "serial": serial,
                 "operator": operator,
                 "period": period,
-                "report_date": report_date
+                "report_date": report_date,
+                "ic_hv": ichv,
+                "polarity": flag
                 })
 
 
