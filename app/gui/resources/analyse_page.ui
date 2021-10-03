@@ -19,6 +19,19 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
      <spacer name="horizontalSpacer_5">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -161,6 +174,22 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QPushButton" name="generatePdfButton">
           <property name="styleSheet">
            <string notr="true">QPushButton{
@@ -195,44 +224,15 @@ background-color: white;
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
+           <enum>QSizePolicy::Preferred</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>60</width>
+            <width>400</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="generateDccButton">
-          <property name="styleSheet">
-           <string notr="true">QPushButton{
-background-color: rgb(211, 213, 213);
-color:black;
-border-style:outset;
-border-width:2px;
-border-radius:10px;
-border-color: black;
-font:bold 20px;
-padding: 6;
-}
-
-QPushButton:hover{
-background-color: rgb(83, 82, 82);
-color: white;
-}
-
-QPushButton:pressed{
-background-color: white;
-}
-</string>
-          </property>
-          <property name="text">
-           <string>Generate DCC</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
