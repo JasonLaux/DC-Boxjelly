@@ -518,6 +518,9 @@ class ImportWindow(QMainWindow):
         # TODO: Display another window to confirm information
     
     def openClientFile(self):
+        if not os.path.isfile(self.clientPath):
+            QtWidgets.QMessageBox.about(self, "Warning", "Client file not found, Please check your file path.")
+            return
         if self.clientPath != "":
             try:
                 os.startfile(self.clientPath)
@@ -525,6 +528,9 @@ class ImportWindow(QMainWindow):
                 QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
     
     def openLabFile(self):
+        if not os.path.isfile(self.labPath):
+            QtWidgets.QMessageBox.about(self, "Warning", "Lab file not found, Please check your file path.")
+            return
         if self.labPath != "":
             try:
                 os.startfile(self.labPath)
@@ -763,6 +769,9 @@ class HomeImportWindow(QMainWindow):
         self.ui.labFilePathLine.clear()
     
     def openClientFile(self):
+        if not os.path.isfile(self.clientPath):
+            QtWidgets.QMessageBox.about(self, "Warning", "Client file not found, Please check your file path.")
+            return
         if self.clientPath != "":
             try:
                 os.startfile(self.clientPath)
@@ -770,6 +779,9 @@ class HomeImportWindow(QMainWindow):
                 QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
     
     def openLabFile(self):
+        if not os.path.isfile(self.labPath):
+            QtWidgets.QMessageBox.about(self, "Warning", "Lab file not found, Please check your file path.")
+            return
         if self.clientPath != "":
             try:
                 os.startfile(self.labPath)
