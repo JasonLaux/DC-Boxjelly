@@ -845,18 +845,26 @@ class ConstantsWindow(QMainWindow):
         self.ui.constantsTable.setColumnHidden(2, True)
         self._selectedConstantsID = ""
         # link buttons to function
-        self.openButton.clicked.connect(self.openConstantsFile)
+        self.openButton.clicked.connect(self.openDefaultConstantsFile)
         self.defaultButton.clicked.connect(self.setDefault)
         self.createButton.clicked.connect(self.create)
         self.deleteButton.clicked.connect(self.delete)
+        # link table raw to double click
+        self.ui.constantsTable.doubleClicked.connect(self.openConstantsFile)
         # initiallize table
         self.constantModel.layoutAboutToBeChanged.emit()
         self.constantModel.initialiseTable(data=getConstantsTableData())
         self.constantModel.layoutChanged.emit()
         
-    def openConstantsFile(self):
+    def openDefaultConstantsFile(self):
         try:
             os.startfile(constant_file_config.get_path())
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
+
+    def openConstantsFile(self):
+        try:
+            os.startfile(ConstantFile[self._selectedConstantsID].path)
         except FileNotFoundError:
             QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
 
@@ -888,8 +896,7 @@ class ConstantsWindow(QMainWindow):
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             # delete chosen constants
-            c = ConstantFile[self._selectedConstantsID]
-            c.delete()
+            ConstantFile[self._selectedConstantsID].delete()
             # refresh table
             self.constantModel.layoutAboutToBeChanged.emit()
             self.constantModel.initialiseTable(data=getConstantsTableData())
