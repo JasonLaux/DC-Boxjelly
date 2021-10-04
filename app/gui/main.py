@@ -2,8 +2,8 @@ from os import error, name
 from typing import Counter
 from PyQt5 import QtWidgets, QtGui
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog
-from PyQt5.QtCore import Qt, QSortFilterProxyModel, QAbstractTableModel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog, QDialog, QProgressBar, QPushButton
+from PyQt5.QtCore import QObject, QRunnable, QThreadPool, Qt, QSortFilterProxyModel, QAbstractTableModel, QThread, pyqtSignal, pyqtSlot
 import sys
 from numpy import clongdouble, empty
 from pandas.io.pytables import Selection, SeriesFixed
@@ -13,14 +13,16 @@ import os
 from pathlib import Path
 import logging
 import numpy as np
+import time
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
 from app.core.models import Job, Equipment
 from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
-from app.pdf.main import get_pdf
+from app.core.pdf import get_pdf
 from datetime import datetime
 from copy import deepcopy
+from shutil import copyfile
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -967,25 +969,25 @@ class AnalyseWindow(QMainWindow):
         except Exception:
             base_path = os.path.abspath(".")
         # dir_path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.join(base_path, 'app', 'pdf', 'test')
+        path = os.path.join(base_path, 'data', 'temp')
         pdf_visualization(path, self.summay, self.constant)
         info_dict = self.gather_info()
-        get_pdf(**info_dict)
+        
+        pool = QThreadPool.globalInstance()
+
+        workerSignals = ProgressWorkerSignals()
+        worker = PdfWorker(info_dict, workerSignals)
+        ticker = ProgressBarCounter(workerSignals)   
+        progressBar = ProgressBar(self, workerSignals)
+
+        pool.start(worker)
+        pool.start(ticker)
+
         # QtWidgets.QMessageBox.about(self, "Finish!")
 
-    # def showDialog():
-    #     msgBox = QtWidgets.QMessageBox()
-    #     msgBox.setIcon(QtWidgets.QMessageBox.Information)
-    #     msgBox.setText("Message box pop up window")
-    #     msgBox.setWindowTitle("QMessageBox Example")
-    #     msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
-    #     msgBox.buttonClicked.connect(msgButtonClick)
+        workerSignals.finished.connect(self.export_pdf)
 
-    #     returnValue = msgBox.exec()
-    #     if returnValue == QMessageBox.Ok:
-    #         print('OK clicked')
         
-
 
     def gather_info(self):
 
@@ -1031,6 +1033,30 @@ class AnalyseWindow(QMainWindow):
                 "ic_hv": ichv,
                 "polarity": flag
                 })
+
+
+    def export_pdf(self):
+
+
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        # dir_path = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(base_path, 'data', 'temp', 'ClientReport.pdf')
+
+        file_name, _ = QFileDialog.getSaveFileName(self, 'Save PDF Report', base_path, "PDF file (*.pdf)")
+
+        try:
+            _ = open(file_path)
+        except:
+            logger.debug("PDF is not generated correctly!")
+
+        if file_name:
+            copyfile(file_path, file_name)
+           
+
 
 
 class AddClientWindow(QMainWindow):
@@ -1279,6 +1305,76 @@ class AlignDelegate(QItemDelegate):
         option.displayAlignment = Qt.AlignCenter
         QItemDelegate.paint(self, painter, option, index)
 
+
+class ProgressWorkerSignals(QObject):
+    progress = pyqtSignal(int)
+    finished = pyqtSignal()
+
+class ProgressBarCounter(QRunnable):
+    """
+    Runs a counter thread.
+    """
+
+    def __init__(self, signals: ProgressWorkerSignals):
+        super().__init__()
+        self._signals = signals
+        self._stop = False
+        signals.finished.connect(self.stop)
+
+    def run(self):
+        count = 0
+        while count < 100 and not self._stop:
+            count +=10
+            time.sleep(1)
+            self._signals.progress.emit(count)
+
+    def stop(self):
+        self._stop = True
+
+class PdfWorker(QRunnable):
+    """
+    A thread to handle pdf generation
+    """
+
+    def __init__(self, info_dict, signals: ProgressWorkerSignals) -> None:
+        super().__init__()
+        self._info_dict = info_dict
+        self._signals = signals
+
+    def run(self):
+        get_pdf(**self._info_dict)
+        self._signals.finished.emit()
+
+class ProgressBar(QDialog):
+    """
+    Simple dialog that consists of a Progress Bar.
+    """
+    def __init__(self, parent, signals: ProgressWorkerSignals):
+        super().__init__(parent)
+
+        self.setWindowTitle('Generating PDF...')
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(0, 0, 300, 25)
+        self.progress.setMaximum(100)
+        # self.button = QPushButton('Finish', self)
+        # self.button.move(0, 30)
+        # self.button.clicked.connect(self.onFinishButtonClick)
+        # self.button.setVisible(False)
+        signals.finished.connect(self.onProgressFinish)
+        signals.progress.connect(self.onProgressChanged)
+        self.setWindowModality(Qt.ApplicationModal)
+        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
+        # self.setWindowFlag(QtCore.Qt.WindowTitleHint, False)
+        # self.setWindowFlag(QtCore.Qt.WindowSystemMenuHint, False)
+        self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+
+        self.show()
+
+    def onProgressChanged(self, value):
+        self.progress.setValue(value)
+    
+    def onProgressFinish(self):
+        self.accept()
 
 def start_event_loop():
     # os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
