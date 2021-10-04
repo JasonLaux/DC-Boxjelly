@@ -883,19 +883,23 @@ class ConstantsWindow(QMainWindow):
         if self._selectedConstantsID == "":
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
             return
-        # delete chosen constants
-        c = ConstantFile[self._selectedConstantsID]
-        c.delete()
-        # refresh table
-        self.constantModel.layoutAboutToBeChanged.emit()
-        self.constantModel.initialiseTable(data=getConstantsTableData())
-        self.constantModel.layoutChanged.emit()
-        self.ui.constantsTable.clearSelection()
-        # refresh display
-        if constant_file_config.default_id:
-            self.ui.idLabel.setText(constant_file_config.default_id)
-        else:
-            self.ui.idLabel.setText("DEFAULT")
+        #pop up confirm window
+        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this constants file?', QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            # delete chosen constants
+            c = ConstantFile[self._selectedConstantsID]
+            c.delete()
+            # refresh table
+            self.constantModel.layoutAboutToBeChanged.emit()
+            self.constantModel.initialiseTable(data=getConstantsTableData())
+            self.constantModel.layoutChanged.emit()
+            self.ui.constantsTable.clearSelection()
+            # refresh display
+            if constant_file_config.default_id:
+                self.ui.idLabel.setText(constant_file_config.default_id)
+            else:
+                self.ui.idLabel.setText("DEFAULT")
 
     def selection_changed(self):
         """
