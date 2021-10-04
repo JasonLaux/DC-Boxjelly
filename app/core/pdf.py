@@ -5,6 +5,7 @@ import xlwings as xw
 import sys
 import pandas as pd
 import numpy as np
+import pythoncom
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -12,6 +13,8 @@ figure_width = 450
 figure_height = 264
 
 def get_pdf(path, **kwgs):
+    pythoncom.CoInitialize()
+
     try:
         base_path = sys._MEIPASS
     except Exception:
@@ -128,3 +131,4 @@ def get_pdf(path, **kwgs):
     doc.ExportAsFixedFormat(0, outfile, 1, 0)
     doc.Close()
     app.Quit()
+    
