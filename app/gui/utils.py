@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 import os
 import logging
-from app.core.models import Job, Equipment
+from app.core.models import Job, Equipment, ConstantFile
 
 logger = logging.getLogger(__name__)
 
@@ -104,3 +104,20 @@ def converTimeFormat(time: str):
         return dateTime.strftime('%d-%m-%Y %H:%M:%S')
     else:
         return None
+
+def getConstantsTableData():
+    '''
+    Return contants data as Dataframe
+    '''
+    data = {
+        'ID': [],
+        'Create time': [],
+        # 'Note': [],
+    }
+    for constantsFile in ConstantFile:
+        data['ID'].append(constantsFile.id)
+        data['Create time'].append(converTimeFormat(constantsFile.added_at))
+        # data['Note'].append(constantsFile.note)
+    
+    df = pd.DataFrame(data)
+    return df
