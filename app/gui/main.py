@@ -14,8 +14,8 @@ from pathlib import Path
 import logging
 import numpy as np
 
-from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
-from app.core.models import Job, Equipment
+from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat, getConstantsTableData
+from app.core.models import Job, Equipment, ConstantFile, constant_file_config
 from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
 from app.pdf.main import get_pdf
@@ -322,20 +322,8 @@ class MainWindow(QMainWindow):
         """
         Open constant file instead of open constant window.
         """
-        try:
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            base_path = sys._MEIPASS
-        except Exception:
-            base_path = os.path.abspath(".")
-        constantFilePath = os.path.join(base_path, 'constant.xlsx')
-
-        try:
-            os.startfile(constantFilePath)
-        except FileNotFoundError:
-            QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
-        
-
-        #self.constantsWindow.show()
+        self.addClientWindow.setFixedSize(750, 500)
+        self.constantsWindow.show()
 
 
     def openAddClientWindow(self):
@@ -809,24 +797,93 @@ class ConfirmWindow(QMainWindow):
 class ConstantsWindow(QMainWindow):
     def __init__(self, parent = None):
         super(ConstantsWindow, self).__init__(parent)
-        
+        self.parent = parent 
         # load constants page ui
-        # window = loadUI(".\\app\\gui\\constants_page.ui", self)
-        #window = loadUI("./app/gui/constants_page.ui", self)
-        window = loadUI(':/ui/constants_page.ui', self)
-
-        self.ui = window
-
-        ## Table insertion
-        # self.ui.constantsTable
-
-    def closeEvent(self, event):  
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            event.accept()  
+        self.ui = loadUI(':/ui/constants_page.ui', self)
+        # initialize label
+        if constant_file_config.default_id:
+            self.ui.idLabel.setText(constant_file_config.default_id)
         else:
-            event.ignore() 
+            self.ui.idLabel.setText("DEFAULT")
+        # Table insertion
+        self.ui.constantsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")
+        self.constantModel = TableModel(data=pd.DataFrame([]))
+        self.constant_sortermodel = QSortFilterProxyModel()
+        self.constant_sortermodel.setSourceModel(self.constantModel)
+        self.ui.constantsTable.setModel(self.constant_sortermodel)
+        self.ui.constantsTable.setSortingEnabled(True)
+        self.ui.constantsTable.sortByColumn(0, Qt.AscendingOrder)
+        self.ui.constantsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.ui.constantsTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.ui.constantsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed())
+        self.ui.constantsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.constantsTable.setItemDelegate(AlignDelegate())
+        self.ui.constantsTable.setColumnHidden(2, True)
+        self._selectedConstantsID = ""
+        # link buttons to function
+        self.openButton.clicked.connect(self.openConstantsFile)
+        self.defaultButton.clicked.connect(self.setDefault)
+        self.createButton.clicked.connect(self.create)
+        self.deleteButton.clicked.connect(self.delete)
+        # initiallize table
+        self.constantModel.layoutAboutToBeChanged.emit()
+        self.constantModel.initialiseTable(data=getConstantsTableData())
+        self.constantModel.layoutChanged.emit()
+        
+    def openConstantsFile(self):
+        try:
+            os.startfile(constant_file_config.get_path())
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
+
+    def setDefault(self):
+        # check if chose one row
+        if self._selectedConstantsID == "":
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
+            return
+        # set default constants file
+        constant_file_config.default_id = ConstantFile[self._selectedConstantsID].id
+        # refresh display
+        self.ui.idLabel.setText(constant_file_config.default_id)
+
+    def create(self):
+        # create constants
+        ConstantFile.make()
+        # refresh table
+        self.constantModel.layoutAboutToBeChanged.emit()
+        self.constantModel.initialiseTable(data=getConstantsTableData())
+        self.constantModel.layoutChanged.emit()
+    
+    def delete(self):
+        # check if chose one row
+        if self._selectedConstantsID == "":
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
+            return
+        # delete chosen constants
+        c = ConstantFile[self._selectedConstantsID]
+        c.delete()
+        # refresh table
+        self.constantModel.layoutAboutToBeChanged.emit()
+        self.constantModel.initialiseTable(data=getConstantsTableData())
+        self.constantModel.layoutChanged.emit()
+        self.ui.constantsTable.clearSelection()
+        # refresh display
+        if constant_file_config.default_id:
+            self.ui.idLabel.setText(constant_file_config.default_id)
+        else:
+            self.ui.idLabel.setText("DEFAULT")
+
+    def selection_changed(self):
+        """
+        Return the index of selected rows in an array.
+        """
+        modelIndex =self.ui.constantsTable.selectionModel().selectedRows() # QModelIndexList
+        self._selectedRows = [idx.row() for idx in modelIndex]
+        logger.debug(self._selectedRows)
+        if len(self._selectedRows) > 0:
+            self._selectedConstantsID = self.constantModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+        elif len(self._selectedRows) == 0:
+            self._selectedConstantsID = ""
 
 
 class AnalyseWindow(QMainWindow):

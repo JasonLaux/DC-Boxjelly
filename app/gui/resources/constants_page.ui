@@ -139,13 +139,10 @@ background-color: white;
      </spacer>
     </item>
     <item>
-     <widget class="QTableWidget" name="constantsTable">
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
+     <widget class="QTableView" name="constantsTable">
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
      </widget>
     </item>
     <item>
