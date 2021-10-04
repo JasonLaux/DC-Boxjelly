@@ -14,6 +14,7 @@ from pathlib import Path
 import logging
 import numpy as np
 import time
+import tempfile
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
 from app.core.models import Job, Equipment
@@ -969,14 +970,15 @@ class AnalyseWindow(QMainWindow):
         except Exception:
             base_path = os.path.abspath(".")
         # dir_path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.join(base_path, 'data', 'temp')
-        pdf_visualization(path, self.summay, self.constant)
+        path = os.path.join(base_path, 'data')
+        temp_folder = tempfile.mkdtemp(dir=path)
+        pdf_visualization(temp_folder, self.summay, self.constant)
         info_dict = self.gather_info()
         
         pool = QThreadPool.globalInstance()
 
         workerSignals = ProgressWorkerSignals()
-        worker = PdfWorker(info_dict, workerSignals)
+        worker = PdfWorker(temp_folder, info_dict, workerSignals)
         ticker = ProgressBarCounter(workerSignals)   
         progressBar = ProgressBar(self, workerSignals)
 
@@ -985,7 +987,7 @@ class AnalyseWindow(QMainWindow):
 
         # QtWidgets.QMessageBox.about(self, "Finish!")
 
-        workerSignals.finished.connect(self.export_pdf)
+        workerSignals.finished.connect(lambda: self.export_pdf(temp_folder))
 
         
 
@@ -1035,7 +1037,7 @@ class AnalyseWindow(QMainWindow):
                 })
 
 
-    def export_pdf(self):
+    def export_pdf(self, path):
 
 
         try:
@@ -1044,7 +1046,7 @@ class AnalyseWindow(QMainWindow):
         except Exception:
             base_path = os.path.abspath(".")
         # dir_path = os.path.dirname(os.path.realpath(__file__))
-        file_path = os.path.join(base_path, 'data', 'temp', 'ClientReport.pdf')
+        file_path = os.path.join(path, 'ClientReport.pdf')
 
         file_name, _ = QFileDialog.getSaveFileName(self, 'Save PDF Report', base_path, "PDF file (*.pdf)")
 
@@ -1336,13 +1338,14 @@ class PdfWorker(QRunnable):
     A thread to handle pdf generation
     """
 
-    def __init__(self, info_dict, signals: ProgressWorkerSignals) -> None:
+    def __init__(self, path, info_dict, signals: ProgressWorkerSignals) -> None:
         super().__init__()
         self._info_dict = info_dict
         self._signals = signals
+        self._path = path
 
     def run(self):
-        get_pdf(**self._info_dict)
+        get_pdf(self._path, **self._info_dict)
         self._signals.finished.emit()
 
 class ProgressBar(QDialog):

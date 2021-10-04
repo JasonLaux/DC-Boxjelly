@@ -11,17 +11,17 @@ logger.setLevel(logging.DEBUG)
 figure_width = 450
 figure_height = 264
 
-def get_pdf(**kwgs):
+def get_pdf(path, **kwgs):
     try:
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
-    templateFilePath = os.path.join(base_path, 'data', 'temp', 'testing.xlsx')
+    templateFilePath = os.path.join(base_path, 'app', 'core', 'testing.xlsx')
 
-    tablePath = os.path.join(base_path, 'data', 'temp', 'pdf_table.xlsx')
-    hvl_al_fig = os.path.join(base_path, 'data', 'temp', 'HVL_Al.png')
-    hvl_cu_fig = os.path.join(base_path, 'data', 'temp', 'HVL_Cu.png')
-    kvp_fig = os.path.join(base_path, 'data', 'temp', 'kVp.png')
+    tablePath = os.path.join(path, 'pdf_table.xlsx')
+    hvl_al_fig = os.path.join(path, 'HVL_Al.png')
+    hvl_cu_fig = os.path.join(path, 'HVL_Cu.png')
+    kvp_fig = os.path.join(path, 'kVp.png')
 
     try:
         subtable_df = pd.read_excel(tablePath, sheet_name='subset')
@@ -122,7 +122,7 @@ def get_pdf(**kwgs):
     app.Visible = False
 
     infile = os.path.join(templateFilePath)
-    outfile = os.path.join(base_path, 'data', 'temp', 'ClientReport.pdf')
+    outfile = os.path.join(path, 'ClientReport.pdf')
 
     doc = app.Workbooks.Open(infile)
     doc.ExportAsFixedFormat(0, outfile, 1, 0)
