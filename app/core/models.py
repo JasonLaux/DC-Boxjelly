@@ -423,8 +423,8 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
         self._lab = self._raw / MEX_RAW_LAB_FILE_NAME
 
-        self.raw_client = MexRawFile(self, self._client, update_meta=True)
-        self.raw_lab = MexRawFile(self, self._lab)
+        self.raw_client = MexRawFile(self, self._client, update_meta=True, type='client')
+        self.raw_lab = MexRawFile(self, self._lab, type='lab')
 
         self._ensure_folder_with_meta({
             'added_at': datetime_to_iso(datetime.now()),
@@ -470,11 +470,17 @@ class MexRawFile:
     Representing a raw file
     """
 
-    def __init__(self, parent: MexRun, path: Path, update_meta=False) -> None:
+    def __init__(self, 
+        parent: MexRun, path: Path, 
+        update_meta=False,
+        type: str = '') -> None:
         """
         Create a raw file object.
 
         If update_meta is True, `upload_from` will update meta data from raw data.
+
+        `type` is only used in `export_file_name`. Currently it can be `client`, `file`
+        or empty.
 
         ** This constructor is not meant to be used outside of models.py! **
         - Please access it through MexRun
@@ -483,6 +489,7 @@ class MexRawFile:
         self._path = path
         self._parent = parent
         self._update_meta = update_meta
+        self._type = type
 
     def __str__(self) -> str:
         file = self._path.name
@@ -535,6 +542,9 @@ class MexRawFile:
         If the file does not exist, it does nothing. An OSError may be
         raised if errors such as no permission is encountered.
         """
+        if not self.exists:
+            return
+
         try:
             os.remove(self._path)
         except OSError as e:
@@ -542,6 +552,22 @@ class MexRawFile:
                 raise
 
         self._update_edit_time()
+
+    @property
+    def export_file_name(self):
+        """
+        return the preferred file name for exporting the file.
+        """
+
+        run = self._parent
+        equip = run._parent._parent
+        job = equip._parent
+
+        return f'{job.id},MexRaw,{equip.id},Run{run.id},{self._type}.csv'
+
+    @property
+    def exists(self):
+        return self._path.exists()
 
     def export_to(self, path: Path):
         """
@@ -551,7 +577,7 @@ class MexRawFile:
         """
         assert path.parent.is_dir()
 
-        if not self._path.exists():
+        if not self.exists:
             raise FileNotFoundError('The raw file does not exist!')
 
         with self._path.open() as f:

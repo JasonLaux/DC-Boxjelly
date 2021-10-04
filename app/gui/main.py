@@ -17,7 +17,7 @@ import time
 import tempfile
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat
-from app.core.models import Job, Equipment
+from app.core.models import Job, Equipment, MexRawFile
 from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
 from app.core.pdf import get_pdf
@@ -409,12 +409,17 @@ class MainWindow(QMainWindow):
             QMenu:selected {background-color: #ddf; color: #000;}
             """
             )
-        action_openFile = self.ui.runsTable.contextMenu.addAction('Reveal in File Explorer')
-        action_upload = self.ui.runsTable.contextMenu.addAction('Re-upload')
-        self.ui.runsTable.contextMenu.popup(QtGui.QCursor.pos())  # Menu position based on cursor
-        action_openFile.triggered.connect(lambda: self.actionHandler("OpenFileFolder"))
-        action_upload.triggered.connect(lambda: self.actionHandler("Reupload"))
 
+        def add_action(name, handler):
+            action = self.ui.runsTable.contextMenu.addAction(name)
+            action.triggered.connect(lambda: self.actionHandler(handler))
+            
+        add_action('Reveal in File Explorer', "OpenFileFolder")
+        add_action('Re-upload', "Reupload")
+        add_action('Export raw client to..', 'export_client')
+        add_action('Export raw lab to..', 'export_lab')
+
+        self.ui.runsTable.contextMenu.popup(QtGui.QCursor.pos())  # Menu position based on cursor
         self.ui.runsTable.contextMenu.show()
 
 
@@ -430,6 +435,22 @@ class MainWindow(QMainWindow):
         elif action == "Reupload":
             self.openReuploadWindow()
             self.reuploadWindow.setRuns(selectedRun, run)
+        elif action == 'export_lab':
+            self.export_raw_file(run.raw_lab, 'lab')
+        elif action == 'export_client':
+            self.export_raw_file(run.raw_client, 'client')
+
+    def export_raw_file(self, raw: MexRawFile, type: str):
+
+        if not raw.exists:
+            QtWidgets.QErrorMessage().showMessage(f'The {type} file does not exist!')
+            return
+
+        path, _ = QFileDialog.getSaveFileName(self, f'Save {type} file to',
+            raw.export_file_name, 'CSV Files (*.csv)')
+
+        if path:
+            raw.export_to(Path(path))
 
 
 class ImportWindow(QMainWindow):
