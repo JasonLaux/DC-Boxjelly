@@ -345,7 +345,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     plt.legend(ncol=2)
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
 
-    plot1.savefig(path + r'\kVp.png')
+    plot1.savefig(path + r'\kVp.png', bbox_inches='tight')
     ################################################### Draw kVp ####################################################
     ################################################## Draw HVL Al ##################################################
     plot2 = plt.figure(2)
@@ -363,7 +363,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
     plt.legend(ncol=2)
 
-    plot2.savefig(path + r'\HVL_Al.png')
+    plot2.savefig(path + r'\HVL_Al.png', bbox_inches='tight')
     ################################################## Draw HVL Al ##################################################
     ################################################## Draw HVL Cu ##################################################
     plot3 = plt.figure(3)
@@ -381,7 +381,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
     plt.legend(ncol=2)
 
-    plot3.savefig(path + r'\HVL_Cu.png')
+    plot3.savefig(path + r'\HVL_Cu.png', bbox_inches='tight')
     ################################################## Draw HVL Cu ##################################################
     ################################################## Save to excel ###################################################
     first_table_num = 40
