@@ -146,7 +146,6 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.setItemDelegate(AlignDelegate())
         self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.runsTable.customContextMenuRequested.connect(self.showContextMenu)
-        self.ui.analyseButton.clicked.connect(lambda: self.ui.runsTable.clearSelection())
 
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
@@ -263,7 +262,7 @@ class MainWindow(QMainWindow):
             self.ui.equipmentsTable.clearSelection()
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
-    
+            
 
     def deleteRun(self):
         """
@@ -317,7 +316,16 @@ class MainWindow(QMainWindow):
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.ui.runsTable.setColumnHidden(2, True)
                 self.runModel.layoutChanged.emit()
-            # elif tableName == "runsTable" and self._selectedRows != []:
+            elif tableName == "runsTable" and self._selectedRows != []:
+        
+                source_selectedIndex = [self.run_sortermodel.mapToSource(modelIndex[0]).row()]
+                logger.debug(source_selectedIndex)
+                selectedRuns = self.runModel._data.loc[sorted(source_selectedIndex), 'ID'].to_list()
+                runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
+                self._selectedRuns = runs
+                logger.debug(self._selectedRuns)
+                
+                
 
         except AttributeError:
             raise AttributeError("Attribute does not exist! Table name may be altered!")
@@ -365,22 +373,22 @@ class MainWindow(QMainWindow):
 
     def openAnalysisWindow(self):
         """
-        Open analysis window. Pop up warning when not choosing any of the runs.
+        Choose runs and goes into the analysis page.
+        When not choosing any of runs, pop up a warning window
         """
-        try:
-            if self._selectedRows:
+        if self._selectedRows:
+            try:
+                self.analysisWindow.setRuns(self._selectedRuns) 
+                self.analysisWindow.setWindowModality(Qt.ApplicationModal)
+                self.analysisWindow.show()
+                self.ui.runsTable.clearSelection()
+            except Exception as e:
+                logger.error("Can't resolve raw data file!", exc_info=e)
+                QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
+        else:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
 
-                selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
-                runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
-                self._selectedRuns = runs
-                self.analysisWindow.setRuns(runs) 
-                self.analysisWindow.analyze()
-                self._selectedRows = []
-            else:
-                QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
-        except Exception as e:
-            logger.error("Can't resolve raw data file!", exc_info=e)
-            QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
+        
         
     def showContextMenu(self):  
         self.ui.runsTable.contextMenu = QtWidgets.QMenu(self)
@@ -1009,13 +1017,7 @@ class AnalyseWindow(QMainWindow):
         self.resultModel.initialiseTable(data=self.summay)
         
         self.resultModel.layoutChanged.emit()
-        
-    def analyze(self):
-        # TODO: insert analyze functions here
-        logger.debug(self.runs)
-        self.setWindowModality(Qt.ApplicationModal)
-        self.show()
-        return
+    
 
     def plot(self, x, y, color, runId):
         scatter_item = pg.ScatterPlotItem(
