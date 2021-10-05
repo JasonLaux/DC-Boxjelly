@@ -112,12 +112,15 @@ def getConstantsTableData():
     data = {
         'ID': [],
         'Create time': [],
-        # 'Note': [],
+        'Description': [],
     }
     for constantsFile in ConstantFile:
         data['ID'].append(constantsFile.id)
         data['Create time'].append(converTimeFormat(constantsFile.added_at))
-        # data['Note'].append(constantsFile.note)
+        if constantsFile.note == None:
+            data['Description'].append("")
+        else:
+            data['Description'].append(constantsFile.note)
     
     df = pd.DataFrame(data)
     return df
