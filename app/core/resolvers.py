@@ -434,8 +434,8 @@ def extractionHeader(client_path: str, lab_path: str):
             elif 'Operator' in line:
                 client_data.operator = line.split(',')[2].strip()
             elif 'Chamber' in line:
-                client_data.serial = line.split(',')[2].strip()[-4:]
-                client_data.model = line.split(',')[2].strip()[:-4].strip()
+                client_data.serial = line.split(',')[2].strip().split()[-1]
+                client_data.model = " ".join(line.split(',')[2].strip().split()[:-1])
             elif 'Date' in line:
                 client_data.date = line.split(',')[2].strip()
                 # client_data.date = datetime.strptime(dateStr, "%m/%d/%Y").date()               
@@ -468,8 +468,8 @@ def extractionHeader(client_path: str, lab_path: str):
         raise HeaderError("Lab file does not contains CAL num, please check!")
     elif client_data.serial == "" or client_data.model == "":
         raise HeaderError("Client file does not contains model/serial, please check!")
-    elif not re.match(r"\d{4}", client_data.serial):
-        raise HeaderError("Invalid chamber in client file, please check!")
+    # elif not re.match(r"\d{4}", client_data.serial):
+    #     raise HeaderError("Invalid chamber in client file, please check!")
     elif lab_data.CAL_num != client_data.CAL_num:
         raise HeaderError("CAL num from Client file and Lab file not the same, please check!")
     
