@@ -311,7 +311,9 @@ class MainWindow(QMainWindow):
                 self.equipmentModel.layoutChanged.emit()
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self.runModel.layoutAboutToBeChanged.emit()
-                self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+                source_selectedIndex = [self.equip_sortermodel.mapToSource(modelIndex[0]).row()]
+                logger.debug(source_selectedIndex)
+                self._selectedEquipID = self.equipmentModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.ui.runsTable.setColumnHidden(2, True)
                 self.runModel.layoutChanged.emit()
