@@ -268,7 +268,7 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
             assert model, 'model should be provided'
             assert serial, 'serial should be provided'
 
-            self._id = f'{model}_{serial}'
+            self._id = f'{model} {serial}'
             self._folder = parent._folder / self._id
 
             if self._folder.exists():
