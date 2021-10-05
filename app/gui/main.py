@@ -896,7 +896,11 @@ class ConstantsWindow(QMainWindow):
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             # delete chosen constants
-            ConstantFile[self._selectedConstantsID].delete()
+            try:
+                ConstantFile[self._selectedConstantsID].delete()
+            except PermissionError:
+                QtWidgets.QMessageBox.about(self, "Warning", "Please close the constants file first.")
+                return
             # refresh table
             self.constantModel.layoutAboutToBeChanged.emit()
             self.constantModel.initialiseTable(data=getConstantsTableData())
