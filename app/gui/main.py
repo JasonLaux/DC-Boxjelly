@@ -828,7 +828,7 @@ class ConstantsWindow(QMainWindow):
             self.ui.idLabel.setText("DEFAULT")
         # Table insertion
         self.ui.constantsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")
-        self.constantModel = TableModel(data=pd.DataFrame([]))
+        self.constantModel = TableModel(data=pd.DataFrame([]), editable=True)
         self.constant_sortermodel = QSortFilterProxyModel()
         self.constant_sortermodel.setSourceModel(self.constantModel)
         self.ui.constantsTable.setModel(self.constant_sortermodel)
@@ -1143,9 +1143,10 @@ class AnalyseWindow(QMainWindow):
         if file_name:
             copyfile(file_path, file_name)
     
-    def closeEvent(self, event):  
-        self.__init__(self.parent)
-        event.accept()           
+
+    # def closeEvent(self, event):  
+    #     self.__init__(self.parent)
+    #     event.accept()           
 
 
 class AddClientWindow(QMainWindow):
@@ -1297,7 +1298,7 @@ class AddEquipmentWindow(QMainWindow):
 
 class TableModel(QAbstractTableModel):
 
-    def __init__(self, data, set_bg = False, bg_index=None):
+    def __init__(self, data, set_bg = False, bg_index=None, editable=False):
         super(TableModel, self).__init__()
         self._data = data
         # May be required to change logic
@@ -1305,9 +1306,10 @@ class TableModel(QAbstractTableModel):
         #     self._display = data.drop(labels=['Address'], axis=1)
         self._bg = set_bg
         self._bgCellIdx = bg_index
+        self._editable = editable
     
     def data(self, index, role):
-        if role == Qt.DisplayRole:
+        if role == Qt.DisplayRole or role == Qt.EditRole:
             # Address is at the end of columns
             # if index.column() != self.columnNum - 1:
             value = self._data.iloc[index.row(), index.column()]
@@ -1347,9 +1349,11 @@ class TableModel(QAbstractTableModel):
         else:
             pass
     
-    def setData(self, index, value):
-        self._data.iloc[index.row(), index.column()] = value
-        return True
+    def setData(self, index, value, role):
+        if role == Qt.EditRole and self._editable:
+            self._data[index.row()][index.column()] = value
+            return True
+        return False
 
     def initialiseTable(self, data):
     
@@ -1369,6 +1373,11 @@ class TableModel(QAbstractTableModel):
 
         return self._data.empty
     
+    def flags(self, index):
+        if self._editable:
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        else:
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
     # def removeRows(self, position, rows=1, index=QModelIndex()):
 
     #     self.beginRemoveRows(QModelIndex(), position, position + rows - 1)  
