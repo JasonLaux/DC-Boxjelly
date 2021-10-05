@@ -155,15 +155,7 @@ class MainWindow(QMainWindow):
         self._selectedRows = []
         self._selectedCalNum = ""
         self._selectedRuns = []
-    
-
-    def deleteRows(self, tableName):
-        # Reverse sort rows indexes
-        indexes = sorted(self._selectedRows, reverse=True)
-
-        # Delete rows
-        for row_idx in indexes:
-            self.clientModel.removeRows(position=row_idx)
+        self._sourceIndex = {}
 
 
     def chooseClient(self):
@@ -186,7 +178,7 @@ class MainWindow(QMainWindow):
         """
         if self._selectedRows:
             self.clientModel.layoutAboutToBeChanged.emit()
-            self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+            self._selectedCalNum = self.clientModel._data.loc[self._sourceIndex["homeTable"], 'CAL Number'].to_list()[0]
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this client?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
@@ -252,7 +244,7 @@ class MainWindow(QMainWindow):
         """
         if self._selectedRows:
             self.equipmentModel.layoutAboutToBeChanged.emit()
-            self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+            self._selectedEquipID = self.equipmentModel._data.loc[self._sourceIndex["equipmentsTable"], 'ID'].to_list()[0]
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this Equipment?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
@@ -271,7 +263,7 @@ class MainWindow(QMainWindow):
         """
         if self._selectedRows:
             self.runModel.layoutAboutToBeChanged.emit()
-            selectedRun = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
+            selectedRun = self.runModel._data.loc[self._sourceIndex["runsTable"], 'ID'].to_list()
             # logger.debug(selectedRun)
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete selected run or runs?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -294,10 +286,12 @@ class MainWindow(QMainWindow):
             # TODO Order is based on the selection. Need to sort first?
             modelIndex = getattr(self, tableName).selectionModel().selectedRows() # QModelIndexList
             self._selectedRows = [idx.row() for idx in modelIndex]
+            self._sourceIndex = {}
             logger.debug(self._selectedRows)
             if tableName == "homeTable" and self._selectedRows != []:
                 self.equipmentModel.layoutAboutToBeChanged.emit()
                 source_selectedIndex = [self.proxy_model.mapToSource(modelIndex[0]).row()]
+                self._sourceIndex.setdefault("homeTable", source_selectedIndex)
                 logger.debug(source_selectedIndex)
                 self._selectedCalNum = self.clientModel._data.loc[source_selectedIndex, 'CAL Number'].to_list()[0]
                 logger.debug(self._selectedCalNum)
@@ -311,6 +305,7 @@ class MainWindow(QMainWindow):
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self.runModel.layoutAboutToBeChanged.emit()
                 source_selectedIndex = [self.equip_sortermodel.mapToSource(modelIndex[0]).row()]
+                self._sourceIndex.setdefault("equipmentsTable", source_selectedIndex)
                 logger.debug(source_selectedIndex)
                 self._selectedEquipID = self.equipmentModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
@@ -320,6 +315,7 @@ class MainWindow(QMainWindow):
                 source_selectedIndex = []
                 for idx in modelIndex:
                     source_selectedIndex.append(self.run_sortermodel.mapToSource(idx).row())
+                self._sourceIndex.setdefault("runsTable", source_selectedIndex)
                 logger.debug(source_selectedIndex)
                 selectedRuns = self.runModel._data.loc[sorted(source_selectedIndex), 'ID'].to_list()
                 runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
@@ -415,7 +411,7 @@ class MainWindow(QMainWindow):
         logger.debug("Open menu")
 
         # If multiple runs are chosen, only the first run is processed
-        selectedRun = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()[0]
+        selectedRun = self.runModel._data.loc[sorted(self._sourceIndex["runsTable"]), 'ID'].to_list()[0]
         run = Job[self._selectedCalNum][self._selectedEquipID].mex[selectedRun]
 
         if action == "OpenFileFolder":
