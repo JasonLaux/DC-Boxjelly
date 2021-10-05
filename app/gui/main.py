@@ -1406,7 +1406,8 @@ class TableModel(QAbstractTableModel):
     
     def setData(self, index, value, role):
         if role == Qt.EditRole and self._editable:
-            self._data[index.row()][index.column()] = value
+            self._data.iloc[index.row(), index.column()] = value
+            self.dataChanged.emit(index, index, (Qt.DisplayRole, ))
             return True
         return False
 
@@ -1429,7 +1430,7 @@ class TableModel(QAbstractTableModel):
         return self._data.empty
     
     def flags(self, index):
-        if self._editable:
+        if self._editable and index.column() == 2:
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
         else:
             return Qt.ItemIsSelectable | Qt.ItemIsEnabled
