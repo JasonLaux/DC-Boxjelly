@@ -553,6 +553,8 @@ class ImportWindow(QMainWindow):
         reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
+            self.ui.clientFilePathLine.clear()
+            self.ui.labFilePathLine.clear()
             event.accept()  
         else:
             event.ignore() 
