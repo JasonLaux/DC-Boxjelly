@@ -402,6 +402,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     df_merge1.to_excel(writer, sheet_name='total-1')
     df_merge2.to_excel(writer, sheet_name='total-2')
     writer.save()
+    writer.close()
     ################################################## Save to excel ###################################################
 
 def extractionHeader(client_path: str, lab_path: str):
