@@ -380,17 +380,6 @@ class MainWindow(QMainWindow):
             logger.error("Can't resolve raw data file!", exc_info=e)
             QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
         
-    
-    def closeEvent(self, event):  
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want to exit?', QtWidgets.QMessageBox.Yes,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-        
-            event.accept()  
-        else:
-            event.ignore() 
-    
-    
     def showContextMenu(self):  
         self.ui.runsTable.contextMenu = QtWidgets.QMenu(self)
         self.ui.runsTable.contextMenu.setStyleSheet("""
@@ -550,12 +539,17 @@ class ImportWindow(QMainWindow):
 
 
     def closeEvent(self, event):  
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            event.accept()  
+        if len(self.ui.clientFilePathLine.text()) != 0 or len(self.ui.labFilePathLine.text()) != 0:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window? \nAll inputs will be clear.', QtWidgets.QMessageBox.Yes,
+                                                QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.ui.clientFilePathLine.clear()
+                self.ui.labFilePathLine.clear()
+                event.accept()  
+            else:
+                event.ignore() 
         else:
-            event.ignore() 
+            event.accept() 
 
 
 class ReuploadWindow(ImportWindow):
@@ -800,14 +794,17 @@ class HomeImportWindow(QMainWindow):
                 QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your path.")
 
     def closeEvent(self, event):  
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            self.ui.clientFilePathLine.clear()
-            self.ui.labFilePathLine.clear()
-            event.accept()  
+        if len(self.ui.clientFilePathLine.text()) != 0 or len(self.ui.labFilePathLine.text()) != 0:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window? \nAll inputs will be clear.', QtWidgets.QMessageBox.Yes,
+                                                QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.ui.clientFilePathLine.clear()
+                self.ui.labFilePathLine.clear()
+                event.accept()  
+            else:
+                event.ignore() 
         else:
-            event.ignore() 
+            event.accept() 
 
 
 class ConfirmWindow(QMainWindow):
@@ -836,7 +833,7 @@ class ConstantsWindow(QMainWindow):
         self.constant_sortermodel.setSourceModel(self.constantModel)
         self.ui.constantsTable.setModel(self.constant_sortermodel)
         self.ui.constantsTable.setSortingEnabled(True)
-        self.ui.constantsTable.sortByColumn(0, Qt.AscendingOrder)
+        self.ui.constantsTable.sortByColumn(1, Qt.AscendingOrder)
         self.ui.constantsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.constantsTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.constantsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed())
@@ -892,11 +889,20 @@ class ConstantsWindow(QMainWindow):
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
             return
         #pop up confirm window
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this constants file?', QtWidgets.QMessageBox.Yes,
+        if str(self._selectedConstantsID) == constant_file_config.default_id:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'You are deleting currently selected file. \nAre you sure you want to proceed? \nAfter deletion, selected file will be set as DEFAULT. ', 
+                                               QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        else:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this constants file?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             # delete chosen constants
-            ConstantFile[self._selectedConstantsID].delete()
+            try:
+                ConstantFile[self._selectedConstantsID].delete()
+            except PermissionError:
+                QtWidgets.QMessageBox.about(self, "Warning", "Please close the constants file first.")
+                return
             # refresh table
             self.constantModel.layoutAboutToBeChanged.emit()
             self.constantModel.initialiseTable(data=getConstantsTableData())
@@ -907,6 +913,9 @@ class ConstantsWindow(QMainWindow):
                 self.ui.idLabel.setText(constant_file_config.default_id)
             else:
                 self.ui.idLabel.setText("DEFAULT")
+        else:
+            self.ui.constantsTable.clearSelection()
+            return
 
     def selection_changed(self):
         """
@@ -962,7 +971,6 @@ class AnalyseWindow(QMainWindow):
         # logger.debug(self.ui.tabWidget.count())
         self.ui.generatePdfButton.clicked.connect(self.generate_pdf)
 
-
     def setRuns(self, runs):
         
         self.runs = runs
@@ -993,24 +1001,12 @@ class AnalyseWindow(QMainWindow):
         
         self.resultModel.layoutChanged.emit()
         
-
     def analyze(self):
         # TODO: insert analyze functions here
         logger.debug(self.runs)
         self.setWindowModality(Qt.ApplicationModal)
         self.show()
         return
-
-
-    def closeEvent(self, event):  
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            self.__init__()
-            event.accept()  
-        else:
-            event.ignore() 
-
 
     def plot(self, x, y, color, runId):
         scatter_item = pg.ScatterPlotItem(
@@ -1169,16 +1165,19 @@ class AddClientWindow(QMainWindow):
         self.clientSubmitButton.clicked.connect(self.addNewClient)
         
     def closeEvent(self, event):  
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            self.ui.calNumLine.clear()
-            self.ui.clientNameLine.clear()
-            self.ui.clientAddress1Line.clear()
-            self.ui.clientAddress2Line.clear()
-            event.accept()  
+        if len(self.ui.calNumLine.text()) != 0 or len(self.ui.clientNameLine.text()) != 0 or len(self.ui.clientAddress1Line.text()) != 0 or len(self.ui.clientAddress2Line.text()) != 0:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window? \nAll inputs will be clear.', QtWidgets.QMessageBox.Yes,
+                                                QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.ui.calNumLine.clear()
+                self.ui.clientNameLine.clear()
+                self.ui.clientAddress1Line.clear()
+                self.ui.clientAddress2Line.clear()
+                event.accept()  
+            else:
+                event.ignore() 
         else:
-            event.ignore() 
+            event.accept() 
     
     def getNewClientInfo(self):
 
@@ -1281,14 +1280,17 @@ class AddEquipmentWindow(QMainWindow):
         # TODO: Display another window to confirm information
 
     def closeEvent(self, event):  
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window?', QtWidgets.QMessageBox.Yes,
-                                               QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            self.ui.modelLine.clear()
-            self.ui.serialLine.clear()
-            event.accept()  
+        if len(self.ui.modelLine.text()) != 0 or len(self.ui.serialLine.text()) != 0:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Close window? \nAll inputs will be clear.', QtWidgets.QMessageBox.Yes,
+                                                QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.ui.modelLine.clear()
+                self.ui.serialLine.clear()
+                event.accept()  
+            else:
+                event.ignore() 
         else:
-            event.ignore() 
+            event.accept() 
 
 
 class TableModel(QAbstractTableModel):

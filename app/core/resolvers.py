@@ -14,6 +14,7 @@ import re
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 from matplotlib.pyplot import cm
+from app.core.models import constant_file_config
 
 warnings.filterwarnings('ignore')
 
@@ -103,13 +104,7 @@ def calculator(client, lab):
     H2 = lab_data.df_mean['H(%)'].to_frame('NK')
 
     # read constant and KK from constant excel file
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    # dir_path = os.path.dirname(os.path.realpath(__file__))
-    constant = os.path.join(base_path, 'constant.xlsx')
+    constant = os.path.join(constant_file_config.get_path())
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_beams = pd.read_excel(constant, sheet_name='Beams')
 
@@ -439,8 +434,8 @@ def extractionHeader(client_path: str, lab_path: str):
             elif 'Operator' in line:
                 client_data.operator = line.split(',')[2].strip()
             elif 'Chamber' in line:
-                client_data.serial = line.split(',')[2].strip()[-4:]
-                client_data.model = line.split(',')[2].strip()[:-4].strip()
+                client_data.serial = line.split(',')[2].strip().split()[-1]
+                client_data.model = " ".join(line.split(',')[2].strip().split()[:-1])
             elif 'Date' in line:
                 client_data.date = line.split(',')[2].strip()
                 # client_data.date = datetime.strptime(dateStr, "%m/%d/%Y").date()               
@@ -473,8 +468,8 @@ def extractionHeader(client_path: str, lab_path: str):
         raise HeaderError("Lab file does not contains CAL num, please check!")
     elif client_data.serial == "" or client_data.model == "":
         raise HeaderError("Client file does not contains model/serial, please check!")
-    elif not re.match(r"\d{4}", client_data.serial):
-        raise HeaderError("Invalid chamber in client file, please check!")
+    # elif not re.match(r"\d{4}", client_data.serial):
+    #     raise HeaderError("Invalid chamber in client file, please check!")
     elif lab_data.CAL_num != client_data.CAL_num:
         raise HeaderError("CAL num from Client file and Lab file not the same, please check!")
     
