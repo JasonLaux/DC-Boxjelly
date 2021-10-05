@@ -96,7 +96,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>100</width>
+          <width>150</width>
           <height>20</height>
          </size>
         </property>
@@ -157,8 +157,8 @@
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="styleSheet">
@@ -206,8 +206,8 @@
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="styleSheet">
@@ -255,8 +255,8 @@
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
@@ -301,8 +301,8 @@
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
@@ -347,8 +347,8 @@
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
@@ -393,8 +393,8 @@
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
@@ -439,8 +439,8 @@
                <font>
                 <family>Verdana</family>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
@@ -451,19 +451,6 @@
            </layout>
           </item>
          </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>564</width>
-            <height>13</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>
@@ -484,6 +471,19 @@
        </spacer>
       </item>
      </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -638,19 +638,6 @@ background-color: white;
        </spacer>
       </item>
      </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>162</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item>
      <spacer name="verticalSpacer">
