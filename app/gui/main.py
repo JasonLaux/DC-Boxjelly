@@ -317,7 +317,6 @@ class MainWindow(QMainWindow):
                 self.ui.runsTable.setColumnHidden(2, True)
                 self.runModel.layoutChanged.emit()
             elif tableName == "runsTable" and self._selectedRows != []:
-        
                 source_selectedIndex = [self.run_sortermodel.mapToSource(modelIndex[0]).row()]
                 logger.debug(source_selectedIndex)
                 selectedRuns = self.runModel._data.loc[sorted(source_selectedIndex), 'ID'].to_list()
@@ -873,17 +872,47 @@ class ConstantsWindow(QMainWindow):
         self.ui.constantsTable.setItemDelegate(AlignDelegate())
         self.ui.constantsTable.setColumnHidden(2, True)
         self._selectedConstantsID = ""
+
+
+        # Context menu
+        self.ui.constantsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
+        self.ui.constantsTable.customContextMenuRequested.connect(self.showContextMenu)
+
+
         # link buttons to function
         self.openButton.clicked.connect(self.openDefaultConstantsFile)
         self.defaultButton.clicked.connect(self.setDefault)
         self.createButton.clicked.connect(self.create)
         self.deleteButton.clicked.connect(self.delete)
         # link table raw to double click
-        self.ui.constantsTable.doubleClicked.connect(self.openConstantsFile)
+        # self.ui.constantsTable.doubleClicked.connect(self.openConstantsFile)
         # initiallize table
         self.constantModel.layoutAboutToBeChanged.emit()
         self.constantModel.initialiseTable(data=getConstantsTableData())
         self.constantModel.layoutChanged.emit()
+
+    def showContextMenu(self):  
+        self.ui.constantsTable.contextMenu = QtWidgets.QMenu(self)
+        self.ui.constantsTable.contextMenu.setStyleSheet("""
+            QMenu:selected {background-color: #ddf; color: #000;}
+            """
+            )
+
+        def add_action(name, handler):
+            action = self.ui.constantsTable.contextMenu.addAction(name)
+            action.triggered.connect(lambda: self.actionHandler(handler))
+            
+        add_action('Open constant.xlsx', "OpenConstantFile")
+
+        self.ui.constantsTable.contextMenu.popup(QtGui.QCursor.pos())  # Menu position based on cursor
+        self.ui.constantsTable.contextMenu.show()
+
+
+    def actionHandler(self, action):
+        logger.debug("Open menu")
+
+        if action == "OpenConstantFile":
+            self.openConstantsFile()
         
     def openDefaultConstantsFile(self):
         try:
@@ -957,7 +986,9 @@ class ConstantsWindow(QMainWindow):
         self._selectedRows = [idx.row() for idx in modelIndex]
         logger.debug(self._selectedRows)
         if len(self._selectedRows) > 0:
-            self._selectedConstantsID = self.constantModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+            source_selectedIndex = [self.constant_sortermodel.mapToSource(modelIndex[0]).row()]
+            logger.debug(source_selectedIndex)
+            self._selectedConstantsID = self.constantModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
         elif len(self._selectedRows) == 0:
             self._selectedConstantsID = ""
 
