@@ -14,6 +14,7 @@ import re
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 from matplotlib.pyplot import cm
+from app.core.models import constant_file_config
 
 warnings.filterwarnings('ignore')
 
@@ -109,7 +110,7 @@ def calculator(client, lab):
     except Exception:
         base_path = os.path.abspath(".")
     # dir_path = os.path.dirname(os.path.realpath(__file__))
-    constant = os.path.join(base_path, 'constant.xlsx')
+    constant = os.path.join(constant_file_config.get_path())
     df_constant = pd.read_excel(constant, sheet_name='constant')
     df_beams = pd.read_excel(constant, sheet_name='Beams')
 
