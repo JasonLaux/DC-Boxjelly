@@ -518,7 +518,7 @@ class ImportWindow(QMainWindow):
         data = {
             'ID': run.id,
             # 'Added Time': converTimeFormat(run.added_at),
-            # 'Edited Time': converTimeFormat(run.edited_at),
+            'Edited Time': converTimeFormat(run.edited_at),
             'Measurement Date': converTimeFormat(run.measured_at).split()[0],
             'Operator': run.operator,
         }
@@ -729,7 +729,7 @@ class HomeImportWindow(QMainWindow):
             data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
             }
@@ -757,7 +757,7 @@ class HomeImportWindow(QMainWindow):
                 data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
@@ -772,7 +772,7 @@ class HomeImportWindow(QMainWindow):
                 data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
