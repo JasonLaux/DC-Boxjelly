@@ -2,7 +2,7 @@ from os import error, name
 from typing import Counter
 from PyQt5 import QtWidgets, QtGui
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog, QDialog, QProgressBar, QPushButton
+from PyQt5.QtWidgets import QApplication, QErrorMessage, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog, QDialog, QProgressBar, QPushButton
 from PyQt5.QtCore import QObject, QRunnable, QThreadPool, Qt, QSortFilterProxyModel, QAbstractTableModel, QThread, pyqtSignal, pyqtSlot
 import sys
 from numpy import clongdouble, empty
@@ -17,7 +17,7 @@ import time
 import tempfile
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat, getConstantsTableData
-from app.core.models import Job, Equipment, MexRawFile, ConstantFile, constant_file_config
+from app.core.models import Job, Equipment, MexRawFile, ConstantFile, MexRun, constant_file_config
 from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
 from app.core.pdf import get_pdf
@@ -443,7 +443,7 @@ class ImportWindow(QMainWindow):
         window = loadUI(':/ui/import_page.ui', self)
 
         self.ui = window
-        self.equip = None
+        self.equip: Equipment = None
         self.clientPath = self.ui.clientFilePathLine.text()
         self.labPath = self.ui.labFilePathLine.text()
         self.ui.clientFilePathLine.textChanged.connect(self.sync_clientLineEdit)
@@ -497,9 +497,16 @@ class ImportWindow(QMainWindow):
         if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
             return
-        run = self.equip.mex.add()
+        run: MexRun = self.equip.mex.add()
         run.raw_client.upload_from(Path(self.clientPath))
         run.raw_lab.upload_from(Path(self.labPath))
+
+        error = self.equip.check_consistency()
+        if error:
+            run.delete()
+            QErrorMessage(self).showMessage(error)
+            return
+
         data = {
             'ID': run.id,
             # 'Added Time': converTimeFormat(run.added_at),

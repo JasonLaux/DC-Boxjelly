@@ -306,6 +306,25 @@ class Equipment(WithMetaMixin, DeleteFolderMixin):
             'equipment_serial': self.serial,
         }
 
+    def check_consistency(self) -> Optional[str]:
+        """
+        Check consistency of this equipment. 
+        If they do not meet, return error message, otherwise, return None
+
+        1. IC_HV of all runs must be the same.
+        """
+
+        if not self._check_ic_hv():
+            return 'IC_HV of all runs must be the same'
+
+    def _check_ic_hv(self):
+        iterator = iter(self.mex)
+        try:
+            first = next(iterator)
+        except StopIteration:
+            return True
+        return all(first.IC_HV == x.IC_HV for x in iterator)
+
 
 class MexMeasurements:
     """
@@ -423,7 +442,8 @@ class MexRun(WithMetaMixin, DeleteFolderMixin):
         self._client = self._raw / MEX_RAW_CLIENT_FILE_NAME
         self._lab = self._raw / MEX_RAW_LAB_FILE_NAME
 
-        self.raw_client = MexRawFile(self, self._client, update_meta=True, type='client')
+        self.raw_client = MexRawFile(
+            self, self._client, update_meta=True, type='client')
         self.raw_lab = MexRawFile(self, self._lab, type='lab')
 
         self._ensure_folder_with_meta({
@@ -470,10 +490,10 @@ class MexRawFile:
     Representing a raw file
     """
 
-    def __init__(self, 
-        parent: MexRun, path: Path, 
-        update_meta=False,
-        type: str = '') -> None:
+    def __init__(self,
+                 parent: MexRun, path: Path,
+                 update_meta=False,
+                 type: str = '') -> None:
         """
         Create a raw file object.
 
@@ -612,7 +632,7 @@ class MexRawFile:
         # extract meta section
         beg = None
         end = None
-        logger.debug('raw file (first 20 lines):', lines[0:20])
+        logger.debug('raw file (first 20 lines): \n %s', lines[0:20])
         for idx, line in enumerate(lines):
             if RAW_MEASUREMENT_SECTION_NAME in line:
                 beg = idx + 1
@@ -846,5 +866,6 @@ class _ConstantFileConfig(WithMetaMixin):
             return self.default.path
         else:
             return TEMPLATE_CONSTANT_FILE
+
 
 constant_file_config = _ConstantFileConfig()
