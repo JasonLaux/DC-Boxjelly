@@ -130,6 +130,7 @@ class MainWindow(QMainWindow):
         self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
         self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.equipmentsTable.setItemDelegate(AlignDelegate())
+
         self._selectedEquipID = ""
 
         # Run Table
@@ -300,8 +301,9 @@ class MainWindow(QMainWindow):
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
-                self.ui.equipmentsTable.setColumnHidden(2, True)
                 self.equipmentModel.layoutChanged.emit()
+                self.ui.equipmentsTable.setColumnHidden(2, True)
+
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self.runModel.layoutAboutToBeChanged.emit()
                 source_selectedIndex = [self.equip_sortermodel.mapToSource(modelIndex[0]).row()]
@@ -309,8 +311,9 @@ class MainWindow(QMainWindow):
                 logger.debug(source_selectedIndex)
                 self._selectedEquipID = self.equipmentModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
-                self.ui.runsTable.setColumnHidden(2, True)
                 self.runModel.layoutChanged.emit()
+                self.ui.runsTable.setColumnHidden(2, True)
+
             elif tableName == "runsTable" and self._selectedRows != []:
                 source_selectedIndex = []
                 for idx in modelIndex:
@@ -868,7 +871,7 @@ class ConstantsWindow(QMainWindow):
         self.ui.constantsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed())
         self.ui.constantsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.constantsTable.setItemDelegate(AlignDelegate())
-        self.ui.constantsTable.setColumnHidden(2, True)
+        self.ui.constantsTable.setColumnHidden(2, True) #??
         self._selectedSourceIndex = None
         self._selectedConstantsID = ""
 
@@ -889,12 +892,12 @@ class ConstantsWindow(QMainWindow):
         self.constantModel.layoutAboutToBeChanged.emit()
         self.constantModel.initialiseTable(data=getConstantsTableData())
         self.constantModel.layoutChanged.emit()
-        # self.constantModel.dataChanged.connect(self.onDescriptionChanged)
+        self.constantModel.dataChanged.connect(self.onDescriptionChanged)
 
 
-    # def onDescriptionChanged(self):
-
-    #     ConstantFile[self._selectedConstantsID].note = self.constantModel._data.loc[self._selectedSourceIndex, 'Description']
+    def onDescriptionChanged(self, tLeft, bRight):
+        logger.debug(self.constantModel._data.iloc[tLeft.row(), tLeft.column()])
+        ConstantFile[self._selectedConstantsID].note = self.constantModel._data.iloc[tLeft.row(), tLeft.column()]
 
 
     def showContextMenu(self):  
