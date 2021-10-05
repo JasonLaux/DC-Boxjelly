@@ -836,7 +836,7 @@ class ConstantsWindow(QMainWindow):
         self.constant_sortermodel.setSourceModel(self.constantModel)
         self.ui.constantsTable.setModel(self.constant_sortermodel)
         self.ui.constantsTable.setSortingEnabled(True)
-        self.ui.constantsTable.sortByColumn(0, Qt.AscendingOrder)
+        self.ui.constantsTable.sortByColumn(1, Qt.AscendingOrder)
         self.ui.constantsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.constantsTable.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.ui.constantsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed())
