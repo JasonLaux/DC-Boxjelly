@@ -517,7 +517,7 @@ class ImportWindow(QMainWindow):
         data = {
             'ID': run.id,
             # 'Added Time': converTimeFormat(run.added_at),
-            # 'Edited Time': converTimeFormat(run.edited_at),
+            'Edited Time': converTimeFormat(run.edited_at),
             'Measurement Date': converTimeFormat(run.measured_at).split()[0],
             'Operator': run.operator,
         }
@@ -693,7 +693,7 @@ class HomeImportWindow(QMainWindow):
         self.confirmWindow.operatorLine.setText(self.data.operator)
         self.confirmWindow.measurementLine.setText(self.data.date)
         self.confirmWindow.setFixedSize(800, 560)
-        self.confirmWindow.setWindowModality(Qt.ApplicationModal)
+        # self.confirmWindow.setWindowModality(Qt.ApplicationModal)
         self.confirmWindow.show()
         
     def addNewRun(self):
@@ -725,10 +725,15 @@ class HomeImportWindow(QMainWindow):
             run = equip.mex.add()
             run.raw_client.upload_from(Path(self.clientPath))
             run.raw_lab.upload_from(Path(self.labPath))
+            error = equip.check_consistency()
+            if error:
+                run.delete()
+                QErrorMessage(self).showMessage(error)
+                return
             data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
             }
@@ -739,7 +744,7 @@ class HomeImportWindow(QMainWindow):
             equipsID = []
             for equip in job:
                 equipsID.append(equip.id)
-            equipId = self.data.model+'_'+self.data.serial
+            equipId = self.data.model+' '+self.data.serial
             if not equipId in equipsID:
                 # if equip not existed, create equip then add run  
                 equip = job.add_equipment(model = self.data.model, serial = self.data.serial)
@@ -753,10 +758,15 @@ class HomeImportWindow(QMainWindow):
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
                 run.raw_lab.upload_from(Path(self.labPath))
+                error = equip.check_consistency()
+                if error:
+                    run.delete()
+                    QErrorMessage(self).showMessage(error)
+                    return
                 data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
@@ -768,10 +778,15 @@ class HomeImportWindow(QMainWindow):
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
                 run.raw_lab.upload_from(Path(self.labPath))
+                error = equip.check_consistency()
+                if error:
+                    run.delete()
+                    QErrorMessage(self).showMessage(error)
+                    return
                 data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
