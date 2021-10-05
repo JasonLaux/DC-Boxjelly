@@ -869,6 +869,7 @@ class ConstantsWindow(QMainWindow):
         self.ui.constantsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.constantsTable.setItemDelegate(AlignDelegate())
         self.ui.constantsTable.setColumnHidden(2, True)
+        self._selectedSourceIndex = None
         self._selectedConstantsID = ""
 
 
@@ -878,7 +879,7 @@ class ConstantsWindow(QMainWindow):
 
 
         # link buttons to function
-        self.openButton.clicked.connect(self.openDefaultConstantsFile)
+        # self.openButton.clicked.connect(self.openDefaultConstantsFile)
         self.defaultButton.clicked.connect(self.setDefault)
         self.createButton.clicked.connect(self.create)
         self.deleteButton.clicked.connect(self.delete)
@@ -888,6 +889,13 @@ class ConstantsWindow(QMainWindow):
         self.constantModel.layoutAboutToBeChanged.emit()
         self.constantModel.initialiseTable(data=getConstantsTableData())
         self.constantModel.layoutChanged.emit()
+        # self.constantModel.dataChanged.connect(self.onDescriptionChanged)
+
+
+    # def onDescriptionChanged(self):
+
+    #     ConstantFile[self._selectedConstantsID].note = self.constantModel._data.loc[self._selectedSourceIndex, 'Description']
+
 
     def showContextMenu(self):  
         self.ui.constantsTable.contextMenu = QtWidgets.QMenu(self)
@@ -987,6 +995,7 @@ class ConstantsWindow(QMainWindow):
             source_selectedIndex = [self.constant_sortermodel.mapToSource(modelIndex[0]).row()]
             logger.debug(source_selectedIndex)
             self._selectedConstantsID = self.constantModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
+            self._selectedSourceIndex = source_selectedIndex
         elif len(self._selectedRows) == 0:
             self._selectedConstantsID = ""
 
