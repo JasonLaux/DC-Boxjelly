@@ -1144,7 +1144,7 @@ class AnalyseWindow(QMainWindow):
             copyfile(file_path, file_name)
     
     def closeEvent(self, event):  
-        self.__init__()
+        self.__init__(self.parent)
         event.accept()           
 
 
