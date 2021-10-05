@@ -377,6 +377,8 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     plt.legend(ncol=2)
 
     plot3.savefig(path + r'\HVL_Cu.png', bbox_inches='tight')
+
+    plt.close('all')
     ################################################## Draw HVL Cu ##################################################
     ################################################## Save to excel ###################################################
     first_table_num = 40
