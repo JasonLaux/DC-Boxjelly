@@ -892,7 +892,12 @@ class ConstantsWindow(QMainWindow):
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
             return
         #pop up confirm window
-        reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this constants file?', QtWidgets.QMessageBox.Yes,
+        if str(self._selectedConstantsID) == constant_file_config.default_id:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'You are deleting currently selected file. \nAre you sure you want to proceed? \nAfter deletion, selected file will be set as DEFAULT. ', 
+                                               QtWidgets.QMessageBox.Yes,
+                                               QtWidgets.QMessageBox.No)
+        else:
+            reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this constants file?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             # delete chosen constants
