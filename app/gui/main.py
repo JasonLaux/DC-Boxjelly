@@ -317,7 +317,9 @@ class MainWindow(QMainWindow):
                 self.ui.runsTable.setColumnHidden(2, True)
                 self.runModel.layoutChanged.emit()
             elif tableName == "runsTable" and self._selectedRows != []:
-                source_selectedIndex = [self.run_sortermodel.mapToSource(modelIndex[0]).row()]
+                source_selectedIndex = []
+                for idx in modelIndex:
+                    source_selectedIndex.append(self.run_sortermodel.mapToSource(idx).row())
                 logger.debug(source_selectedIndex)
                 selectedRuns = self.runModel._data.loc[sorted(source_selectedIndex), 'ID'].to_list()
                 runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
