@@ -911,6 +911,9 @@ class ConstantsWindow(QMainWindow):
                 self.ui.idLabel.setText(constant_file_config.default_id)
             else:
                 self.ui.idLabel.setText("DEFAULT")
+        else:
+            self.ui.constantsTable.clearSelection()
+            return
 
     def selection_changed(self):
         """
