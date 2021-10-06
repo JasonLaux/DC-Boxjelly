@@ -1,18 +1,15 @@
 import logging
 import os
-import comtypes.client
 import xlwings as xw
 import sys
 import pandas as pd
 import numpy as np
 import pythoncom
-import openpyxl
-from openpyxl import load_workbook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 figure_width = 450
-figure_height = 264
+figure_height = 280
 
 def get_pdf(path, **kwgs):
     pythoncom.CoInitialize()
@@ -122,14 +119,41 @@ def get_pdf(path, **kwgs):
     wb.save(templateFilePath) # excel template file path
     app.quit()
 
-    app = comtypes.client.CreateObject('Excel.Application')
-    app.Visible = False
+    import win32com.client
+    from pywintypes import com_error
 
-    infile = os.path.join(templateFilePath)
-    outfile = os.path.join(path, 'ClientReport.pdf')
+    excel = win32com.client.Dispatch("Excel.Application")
+    try:
+        print('Start conversion to PDF')
 
-    doc = app.Workbooks.Open(infile)
-    doc.ExportAsFixedFormat(0, outfile, 1, 0)
-    doc.Close()
-    app.Quit()
+        wb = excel.Workbooks.Open(templateFilePath)
+        wb_list = [1]
+        wb.Worksheets(wb_list).Select()
+        outfile = os.path.join(path, 'ClientReport.pdf')
+        print(outfile)
+        wb.ActiveSheet.ExportAsFixedFormat(0, outfile)
+    except com_error as e:
+        print('Failed')
+    else:
+        print("Succeeded.")
+    finally:
+        wb.Close()
+
+    # MacOS doesn't support win32com.
+    # if you're going to test the PDF generation, please use the code below
+    # note that the quality of pictures would get blurred
+
+    # import comtypes.client
+    # app = comtypes.client.CreateObject('Excel.Application')
+    # app.Visible = False
+
+    # infile = os.path.join(templateFilePath)
+    # outfile = os.path.join(path, 'ClientReport.pdf')
+
+    # doc = app.Workbooks.Open(infile)
+    # doc.ExportAsFixedFormat(0, outfile, 1, 0)
+    # doc.Close()
+    # app.Quit()
+
+    
     
