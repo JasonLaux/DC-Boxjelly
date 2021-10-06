@@ -46,6 +46,13 @@ except ImportError:
 
 class MainWindow(QMainWindow):
 
+    JOB_LIST_WINDOW_TITLE = 'Job List'
+
+    CLIENT_INFO_WINDOW_TITLE = 'Client Info'
+
+    EQUIPMENT_INFO_WINDOW_TITLE = 'Equipment Info'
+
+
     def __init__(self):
         QMainWindow.__init__(self)
         
@@ -53,6 +60,7 @@ class MainWindow(QMainWindow):
         window = loadUI(':/ui/main_window.ui', self)
         #window = loadUI("./app/gui/main_window.ui", self)
         self.ui = window
+        self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE)
 
         # load other windows
         self.addClientWindow = AddClientWindow(self)
@@ -65,6 +73,7 @@ class MainWindow(QMainWindow):
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
+        self.ui.homeButton.clicked.connect(lambda: self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE))
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.addClientButton.clicked.connect(lambda: self.ui.homeTable.clearSelection())
@@ -79,10 +88,12 @@ class MainWindow(QMainWindow):
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.returnButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
         self.ui.returnButton.clicked.connect(lambda: self.ui.updateClientButton.setEnabled(False))
+        self.ui.returnButton.clicked.connect(lambda: self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE))
 
         # Return to Client Info Page
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.runsTable.clearSelection())
+        self.ui.returnButton_2.clicked.connect(lambda: self.setWindowTitle(self.CLIENT_INFO_WINDOW_TITLE))
 
         # Delete client
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
@@ -168,6 +179,7 @@ class MainWindow(QMainWindow):
             self.ui.updateClientButton.setEnabled(False)
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
             self.ui.homeTable.clearSelection()
+            self.setWindowTitle(self.CLIENT_INFO_WINDOW_TITLE)
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
 
@@ -227,6 +239,7 @@ class MainWindow(QMainWindow):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage)
             self._selectedRows = []
+            self.setWindowTitle(self.EQUIPMENT_INFO_WINDOW_TITLE)
 
             # Display the equipment info
             self.ui.label_eqCAL.setText(self._selectedCalNum)
