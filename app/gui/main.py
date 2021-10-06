@@ -848,6 +848,7 @@ class ConfirmWindow(QMainWindow):
 
 
 class ConstantsWindow(QMainWindow):
+
     def __init__(self, parent = None):
         super(ConstantsWindow, self).__init__(parent)
         self.parent = parent 
@@ -857,7 +858,13 @@ class ConstantsWindow(QMainWindow):
         if constant_file_config.default_id:
             self.ui.idLabel.setText(constant_file_config.default_id)
         else:
-            self.ui.idLabel.setText("DEFAULT")
+            self.ui.idLabel.setText("Template")
+        # Templete constants file path
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        self.templete_path = os.path.join(base_path, 'constant.xlsx')
         # Table insertion
         self.ui.constantsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")
         self.constantModel = TableModel(data=pd.DataFrame([]), editable=True)
@@ -875,11 +882,9 @@ class ConstantsWindow(QMainWindow):
         self._selectedSourceIndex = None
         self._selectedConstantsID = ""
 
-
         # Context menu
         self.ui.constantsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.constantsTable.customContextMenuRequested.connect(self.showContextMenu)
-
 
         # link buttons to function
         # self.openButton.clicked.connect(self.openDefaultConstantsFile)
@@ -896,6 +901,8 @@ class ConstantsWindow(QMainWindow):
 
 
     def onDescriptionChanged(self, tLeft, bRight):
+        if self._selectedConstantsID == "Template":
+            return
         logger.debug(self.constantModel._data.iloc[tLeft.row(), tLeft.column()])
         ConstantFile[self._selectedConstantsID].note = self.constantModel._data.iloc[tLeft.row(), tLeft.column()]
 
@@ -930,15 +937,23 @@ class ConstantsWindow(QMainWindow):
             QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
 
     def openConstantsFile(self):
-        try:
-            os.startfile(ConstantFile[self._selectedConstantsID].path)
-        except FileNotFoundError:
-            QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
+        if self._selectedConstantsID == "Template":
+            os.startfile(self.templete_path)
+        else:
+            try:
+                os.startfile(ConstantFile[self._selectedConstantsID].path)
+            except FileNotFoundError:
+                QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
 
     def setDefault(self):
         # check if chose one row
         if self._selectedConstantsID == "":
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
+            return
+        # check if choosing template row
+        if self._selectedConstantsID == "Template":
+            del constant_file_config.default_id
+            self.ui.idLabel.setText("Template")
             return
         # set default constants file
         constant_file_config.default_id = ConstantFile[self._selectedConstantsID].id
@@ -957,6 +972,10 @@ class ConstantsWindow(QMainWindow):
         # check if chose one row
         if self._selectedConstantsID == "":
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
+            return
+        # check if choosing template row
+        if self._selectedConstantsID == "Template":
+            QtWidgets.QMessageBox.about(self, "Warning", "Sorry, template constants can not be deleted.")
             return
         #pop up confirm window
         if str(self._selectedConstantsID) == constant_file_config.default_id:
