@@ -379,6 +379,14 @@ class MainWindow(QMainWindow):
         if self._selectedRows:
             try:
                 self.analysisWindow.setRuns(self._selectedRuns) 
+                # initailize constants label
+                if constant_file_config.default_id:
+                    if ConstantFile[constant_file_config.default_id].note:
+                        self.analysisWindow.ui.constantsLabel.setText("Current Constants File: %s (%s)" % (constant_file_config.default_id, ConstantFile[constant_file_config.default_id].note))
+                    else:
+                        self.analysisWindow.ui.constantsLabel.setText("Current Constants File: %s " % constant_file_config.default_id)
+                else:
+                    self.analysisWindow.ui.constantsLabel.setText("Current Constants File: Template Constants ")
                 self.analysisWindow.setWindowModality(Qt.ApplicationModal)
                 self.analysisWindow.show()
                 self.ui.runsTable.clearSelection()
@@ -848,7 +856,6 @@ class ConfirmWindow(QMainWindow):
 
 
 class ConstantsWindow(QMainWindow):
-
     def __init__(self, parent = None):
         super(ConstantsWindow, self).__init__(parent)
         self.parent = parent 

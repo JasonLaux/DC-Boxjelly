@@ -117,7 +117,7 @@ def getConstantsTableData():
     # insert templete constants
     data['ID'].append("Template")
     data['Create time'].append("01-10-2021 00:00:00")
-    data['Description'].append("Templete Constants File")
+    data['Description'].append("Templete Constants")
     # get all other constants obj
     for constantsFile in ConstantFile:
         data['ID'].append(constantsFile.id)
