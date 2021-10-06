@@ -2,7 +2,7 @@ from os import error, name
 from typing import Counter
 from PyQt5 import QtWidgets, QtGui
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog, QDialog, QProgressBar, QPushButton
+from PyQt5.QtWidgets import QApplication, QErrorMessage, QMainWindow, QHeaderView, QTableView, QItemDelegate, QGraphicsScene, QFileDialog, QDialog, QProgressBar, QPushButton
 from PyQt5.QtCore import QObject, QRunnable, QThreadPool, Qt, QSortFilterProxyModel, QAbstractTableModel, QThread, pyqtSignal, pyqtSlot
 import sys
 from numpy import clongdouble, empty
@@ -17,7 +17,7 @@ import time
 import tempfile
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat, getConstantsTableData
-from app.core.models import Job, Equipment, MexRawFile, ConstantFile, constant_file_config
+from app.core.models import Job, Equipment, MexRawFile, ConstantFile, MexRun, constant_file_config
 from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
 from app.core.pdf import get_pdf
@@ -46,6 +46,13 @@ except ImportError:
 
 class MainWindow(QMainWindow):
 
+    JOB_LIST_WINDOW_TITLE = 'Job List'
+
+    CLIENT_INFO_WINDOW_TITLE = 'Client Info'
+
+    EQUIPMENT_INFO_WINDOW_TITLE = 'Equipment Info'
+
+
     def __init__(self):
         QMainWindow.__init__(self)
         
@@ -53,6 +60,7 @@ class MainWindow(QMainWindow):
         window = loadUI(':/ui/main_window.ui', self)
         #window = loadUI("./app/gui/main_window.ui", self)
         self.ui = window
+        self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE)
 
         # load other windows
         self.addClientWindow = AddClientWindow(self)
@@ -65,6 +73,7 @@ class MainWindow(QMainWindow):
 
         #Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
+        self.ui.homeButton.clicked.connect(lambda: self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE))
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.addClientButton.clicked.connect(lambda: self.ui.homeTable.clearSelection())
@@ -79,10 +88,12 @@ class MainWindow(QMainWindow):
         self.ui.returnButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.returnButton.clicked.connect(lambda: self.ui.equipmentsTable.clearSelection())
         self.ui.returnButton.clicked.connect(lambda: self.ui.updateClientButton.setEnabled(False))
+        self.ui.returnButton.clicked.connect(lambda: self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE))
 
         # Return to Client Info Page
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage))
         self.ui.returnButton_2.clicked.connect(lambda: self.ui.runsTable.clearSelection())
+        self.ui.returnButton_2.clicked.connect(lambda: self.setWindowTitle(self.CLIENT_INFO_WINDOW_TITLE))
 
         # Delete client
         self.ui.deleteClientButton.clicked.connect(self.deleteClient)
@@ -130,6 +141,7 @@ class MainWindow(QMainWindow):
         self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
         self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.equipmentsTable.setItemDelegate(AlignDelegate())
+
         self._selectedEquipID = ""
 
         # Run Table
@@ -146,7 +158,6 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.setItemDelegate(AlignDelegate())
         self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.runsTable.customContextMenuRequested.connect(self.showContextMenu)
-        self.ui.analyseButton.clicked.connect(lambda: self.ui.runsTable.clearSelection())
 
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
@@ -156,15 +167,7 @@ class MainWindow(QMainWindow):
         self._selectedRows = []
         self._selectedCalNum = ""
         self._selectedRuns = []
-    
-
-    def deleteRows(self, tableName):
-        # Reverse sort rows indexes
-        indexes = sorted(self._selectedRows, reverse=True)
-
-        # Delete rows
-        for row_idx in indexes:
-            self.clientModel.removeRows(position=row_idx)
+        self._sourceIndex = {}
 
 
     def chooseClient(self):
@@ -176,6 +179,7 @@ class MainWindow(QMainWindow):
             self.ui.updateClientButton.setEnabled(False)
             self.ui.stackedWidget.setCurrentWidget(self.ui.clientInfoPage)
             self.ui.homeTable.clearSelection()
+            self.setWindowTitle(self.CLIENT_INFO_WINDOW_TITLE)
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a Client!")
 
@@ -187,7 +191,7 @@ class MainWindow(QMainWindow):
         """
         if self._selectedRows:
             self.clientModel.layoutAboutToBeChanged.emit()
-            self._selectedCalNum = self.clientModel._data.loc[self._selectedRows, 'CAL Number'].to_list()[0]
+            self._selectedCalNum = self.clientModel._data.loc[self._sourceIndex["homeTable"], 'CAL Number'].to_list()[0]
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this client?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
@@ -235,6 +239,7 @@ class MainWindow(QMainWindow):
         if self._selectedRows:
             self.ui.stackedWidget.setCurrentWidget(self.ui.equipmentInfoPage)
             self._selectedRows = []
+            self.setWindowTitle(self.EQUIPMENT_INFO_WINDOW_TITLE)
 
             # Display the equipment info
             self.ui.label_eqCAL.setText(self._selectedCalNum)
@@ -253,7 +258,7 @@ class MainWindow(QMainWindow):
         """
         if self._selectedRows:
             self.equipmentModel.layoutAboutToBeChanged.emit()
-            self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+            self._selectedEquipID = self.equipmentModel._data.loc[self._sourceIndex["equipmentsTable"], 'ID'].to_list()[0]
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete this Equipment?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
@@ -263,7 +268,7 @@ class MainWindow(QMainWindow):
             self.ui.equipmentsTable.clearSelection()
         else:
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
-    
+            
 
     def deleteRun(self):
         """
@@ -272,7 +277,7 @@ class MainWindow(QMainWindow):
         """
         if self._selectedRows:
             self.runModel.layoutAboutToBeChanged.emit()
-            selectedRun = self.runModel._data.loc[self._selectedRows, 'ID'].to_list()
+            selectedRun = self.runModel._data.loc[self._sourceIndex["runsTable"], 'ID'].to_list()
             # logger.debug(selectedRun)
             reply = QtWidgets.QMessageBox.question(self, u'Warning', u'Do you want delete selected run or runs?', QtWidgets.QMessageBox.Yes,
                                                QtWidgets.QMessageBox.No)
@@ -295,10 +300,12 @@ class MainWindow(QMainWindow):
             # TODO Order is based on the selection. Need to sort first?
             modelIndex = getattr(self, tableName).selectionModel().selectedRows() # QModelIndexList
             self._selectedRows = [idx.row() for idx in modelIndex]
+            self._sourceIndex = {}
             logger.debug(self._selectedRows)
             if tableName == "homeTable" and self._selectedRows != []:
                 self.equipmentModel.layoutAboutToBeChanged.emit()
                 source_selectedIndex = [self.proxy_model.mapToSource(modelIndex[0]).row()]
+                self._sourceIndex.setdefault("homeTable", source_selectedIndex)
                 logger.debug(source_selectedIndex)
                 self._selectedCalNum = self.clientModel._data.loc[source_selectedIndex, 'CAL Number'].to_list()[0]
                 logger.debug(self._selectedCalNum)
@@ -307,15 +314,31 @@ class MainWindow(QMainWindow):
                 self.ui.address1lineEdit.setText(Job[self._selectedCalNum].client_address_1)
                 self.ui.address2lineEdit.setText(Job[self._selectedCalNum].client_address_2)
                 self.equipmentModel.initialiseTable(data=getEquipmentsTableData(Job[self._selectedCalNum]))
-                self.ui.equipmentsTable.setColumnHidden(2, True)
                 self.equipmentModel.layoutChanged.emit()
+                self.ui.equipmentsTable.setColumnHidden(2, True)
+
             elif tableName == "equipmentsTable" and self._selectedRows != []:
                 self.runModel.layoutAboutToBeChanged.emit()
-                self._selectedEquipID = self.equipmentModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+                source_selectedIndex = [self.equip_sortermodel.mapToSource(modelIndex[0]).row()]
+                self._sourceIndex.setdefault("equipmentsTable", source_selectedIndex)
+                logger.debug(source_selectedIndex)
+                self._selectedEquipID = self.equipmentModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
-                self.ui.runsTable.setColumnHidden(2, True)
                 self.runModel.layoutChanged.emit()
-            # elif tableName == "runsTable" and self._selectedRows != []:
+                # self.ui.runsTable.setColumnHidden(2, True)
+
+            elif tableName == "runsTable" and self._selectedRows != []:
+                source_selectedIndex = []
+                for idx in modelIndex:
+                    source_selectedIndex.append(self.run_sortermodel.mapToSource(idx).row())
+                self._sourceIndex.setdefault("runsTable", source_selectedIndex)
+                logger.debug(source_selectedIndex)
+                selectedRuns = self.runModel._data.loc[sorted(source_selectedIndex), 'ID'].to_list()
+                runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
+                self._selectedRuns = runs
+                logger.debug(self._selectedRuns)
+                
+                
 
         except AttributeError:
             raise AttributeError("Attribute does not exist! Table name may be altered!")
@@ -363,22 +386,30 @@ class MainWindow(QMainWindow):
 
     def openAnalysisWindow(self):
         """
-        Open analysis window. Pop up warning when not choosing any of the runs.
+        Choose runs and goes into the analysis page.
+        When not choosing any of runs, pop up a warning window
         """
-        try:
-            if self._selectedRows:
+        if self._selectedRows:
+            try:
+                self.analysisWindow.setRuns(self._selectedRuns) 
+                # initailize constants label
+                if constant_file_config.default_id:
+                    if ConstantFile[constant_file_config.default_id].note:
+                        self.analysisWindow.ui.constantsLabel.setText("Current Constants File: %s (%s)" % (constant_file_config.default_id, ConstantFile[constant_file_config.default_id].note))
+                    else:
+                        self.analysisWindow.ui.constantsLabel.setText("Current Constants File: %s " % constant_file_config.default_id)
+                else:
+                    self.analysisWindow.ui.constantsLabel.setText("Current Constants File: Template Constants ")
+                self.analysisWindow.setWindowModality(Qt.ApplicationModal)
+                self.analysisWindow.show()
+                self.ui.runsTable.clearSelection()
+            except Exception as e:
+                logger.error("Can't resolve raw data file!", exc_info=e)
+                QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
+        else:
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
 
-                selectedRuns = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()
-                runs = list(map(lambda runId:Job[self._selectedCalNum][self._selectedEquipID].mex[runId], selectedRuns))
-                self._selectedRuns = runs
-                self.analysisWindow.setRuns(runs) 
-                self.analysisWindow.analyze()
-                self._selectedRows = []
-            else:
-                QtWidgets.QMessageBox.about(self, "Warning", "Please choose at least one run to analyze.")
-        except Exception as e:
-            logger.error("Can't resolve raw data file!", exc_info=e)
-            QtWidgets.QMessageBox.about(self, "Warning", "Can not resolve raw files. Please check the data.")
+        
         
     def showContextMenu(self):  
         self.ui.runsTable.contextMenu = QtWidgets.QMenu(self)
@@ -404,7 +435,7 @@ class MainWindow(QMainWindow):
         logger.debug("Open menu")
 
         # If multiple runs are chosen, only the first run is processed
-        selectedRun = self.runModel._data.loc[sorted(self._selectedRows), 'ID'].to_list()[0]
+        selectedRun = self.runModel._data.loc[sorted(self._sourceIndex["runsTable"]), 'ID'].to_list()[0]
         run = Job[self._selectedCalNum][self._selectedEquipID].mex[selectedRun]
 
         if action == "OpenFileFolder":
@@ -441,7 +472,7 @@ class ImportWindow(QMainWindow):
         window = loadUI(':/ui/import_page.ui', self)
 
         self.ui = window
-        self.equip = None
+        self.equip: Equipment = None
         self.clientPath = self.ui.clientFilePathLine.text()
         self.labPath = self.ui.labFilePathLine.text()
         self.ui.clientFilePathLine.textChanged.connect(self.sync_clientLineEdit)
@@ -495,13 +526,20 @@ class ImportWindow(QMainWindow):
         if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
             return
-        run = self.equip.mex.add()
+        run: MexRun = self.equip.mex.add()
         run.raw_client.upload_from(Path(self.clientPath))
         run.raw_lab.upload_from(Path(self.labPath))
+
+        error = self.equip.check_consistency()
+        if error:
+            run.delete()
+            QErrorMessage(self).showMessage(error)
+            return
+
         data = {
             'ID': run.id,
             # 'Added Time': converTimeFormat(run.added_at),
-            # 'Edited Time': converTimeFormat(run.edited_at),
+            'Edited Time': converTimeFormat(run.edited_at),
             'Measurement Date': converTimeFormat(run.measured_at).split()[0],
             'Operator': run.operator,
         }
@@ -677,7 +715,7 @@ class HomeImportWindow(QMainWindow):
         self.confirmWindow.operatorLine.setText(self.data.operator)
         self.confirmWindow.measurementLine.setText(self.data.date)
         self.confirmWindow.setFixedSize(800, 560)
-        self.confirmWindow.setWindowModality(Qt.ApplicationModal)
+        # self.confirmWindow.setWindowModality(Qt.ApplicationModal)
         self.confirmWindow.show()
         
     def addNewRun(self):
@@ -709,10 +747,15 @@ class HomeImportWindow(QMainWindow):
             run = equip.mex.add()
             run.raw_client.upload_from(Path(self.clientPath))
             run.raw_lab.upload_from(Path(self.labPath))
+            error = equip.check_consistency()
+            if error:
+                run.delete()
+                QErrorMessage(self).showMessage(error)
+                return
             data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
             }
@@ -723,7 +766,7 @@ class HomeImportWindow(QMainWindow):
             equipsID = []
             for equip in job:
                 equipsID.append(equip.id)
-            equipId = self.data.model+'_'+self.data.serial
+            equipId = self.data.model+' '+self.data.serial
             if not equipId in equipsID:
                 # if equip not existed, create equip then add run  
                 equip = job.add_equipment(model = self.data.model, serial = self.data.serial)
@@ -737,10 +780,15 @@ class HomeImportWindow(QMainWindow):
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
                 run.raw_lab.upload_from(Path(self.labPath))
+                error = equip.check_consistency()
+                if error:
+                    run.delete()
+                    QErrorMessage(self).showMessage(error)
+                    return
                 data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
@@ -752,10 +800,15 @@ class HomeImportWindow(QMainWindow):
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
                 run.raw_lab.upload_from(Path(self.labPath))
+                error = equip.check_consistency()
+                if error:
+                    run.delete()
+                    QErrorMessage(self).showMessage(error)
+                    return
                 data = {
                     'ID': run.id,
                     # 'Added Time': converTimeFormat(run.added_at),
-                    # 'Edited Time': converTimeFormat(run.edited_at),
+                    'Edited Time': converTimeFormat(run.edited_at),
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
@@ -825,10 +878,16 @@ class ConstantsWindow(QMainWindow):
         if constant_file_config.default_id:
             self.ui.idLabel.setText(constant_file_config.default_id)
         else:
-            self.ui.idLabel.setText("DEFAULT")
+            self.ui.idLabel.setText("Template")
+        # Templete constants file path
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        self.templete_path = os.path.join(base_path, 'constant.xlsx')
         # Table insertion
         self.ui.constantsTable.horizontalHeader().setStyleSheet("QHeaderView { font-size: 12pt; font-family: Verdana; font-weight: bold; }")
-        self.constantModel = TableModel(data=pd.DataFrame([]))
+        self.constantModel = TableModel(data=pd.DataFrame([]), editable=True)
         self.constant_sortermodel = QSortFilterProxyModel()
         self.constant_sortermodel.setSourceModel(self.constantModel)
         self.ui.constantsTable.setModel(self.constant_sortermodel)
@@ -839,19 +898,57 @@ class ConstantsWindow(QMainWindow):
         self.ui.constantsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed())
         self.ui.constantsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.constantsTable.setItemDelegate(AlignDelegate())
-        self.ui.constantsTable.setColumnHidden(2, True)
+        self.ui.constantsTable.setColumnHidden(2, True) #??
+        self._selectedSourceIndex = None
         self._selectedConstantsID = ""
+
+        # Context menu
+        self.ui.constantsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
+        self.ui.constantsTable.customContextMenuRequested.connect(self.showContextMenu)
+
         # link buttons to function
-        self.openButton.clicked.connect(self.openDefaultConstantsFile)
+        # self.openButton.clicked.connect(self.openDefaultConstantsFile)
         self.defaultButton.clicked.connect(self.setDefault)
         self.createButton.clicked.connect(self.create)
         self.deleteButton.clicked.connect(self.delete)
         # link table raw to double click
-        self.ui.constantsTable.doubleClicked.connect(self.openConstantsFile)
+        # self.ui.constantsTable.doubleClicked.connect(self.openConstantsFile)
         # initiallize table
         self.constantModel.layoutAboutToBeChanged.emit()
         self.constantModel.initialiseTable(data=getConstantsTableData())
         self.constantModel.layoutChanged.emit()
+        self.constantModel.dataChanged.connect(self.onDescriptionChanged)
+
+
+    def onDescriptionChanged(self, tLeft, bRight):
+        if self._selectedConstantsID == "Template":
+            return
+        logger.debug(self.constantModel._data.iloc[tLeft.row(), tLeft.column()])
+        ConstantFile[self._selectedConstantsID].note = self.constantModel._data.iloc[tLeft.row(), tLeft.column()]
+
+
+    def showContextMenu(self):  
+        self.ui.constantsTable.contextMenu = QtWidgets.QMenu(self)
+        self.ui.constantsTable.contextMenu.setStyleSheet("""
+            QMenu:selected {background-color: #ddf; color: #000;}
+            """
+            )
+
+        def add_action(name, handler):
+            action = self.ui.constantsTable.contextMenu.addAction(name)
+            action.triggered.connect(lambda: self.actionHandler(handler))
+            
+        add_action('Open constant.xlsx', "OpenConstantFile")
+
+        self.ui.constantsTable.contextMenu.popup(QtGui.QCursor.pos())  # Menu position based on cursor
+        self.ui.constantsTable.contextMenu.show()
+
+
+    def actionHandler(self, action):
+        logger.debug("Open menu")
+
+        if action == "OpenConstantFile":
+            self.openConstantsFile()
         
     def openDefaultConstantsFile(self):
         try:
@@ -860,15 +957,23 @@ class ConstantsWindow(QMainWindow):
             QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
 
     def openConstantsFile(self):
-        try:
-            os.startfile(ConstantFile[self._selectedConstantsID].path)
-        except FileNotFoundError:
-            QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
+        if self._selectedConstantsID == "Template":
+            os.startfile(self.templete_path)
+        else:
+            try:
+                os.startfile(ConstantFile[self._selectedConstantsID].path)
+            except FileNotFoundError:
+                QtWidgets.QMessageBox.about(self, "Warning", "No constants file, Please check your path.")
 
     def setDefault(self):
         # check if chose one row
         if self._selectedConstantsID == "":
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
+            return
+        # check if choosing template row
+        if self._selectedConstantsID == "Template":
+            del constant_file_config.default_id
+            self.ui.idLabel.setText("Template")
             return
         # set default constants file
         constant_file_config.default_id = ConstantFile[self._selectedConstantsID].id
@@ -887,6 +992,10 @@ class ConstantsWindow(QMainWindow):
         # check if chose one row
         if self._selectedConstantsID == "":
             QtWidgets.QMessageBox.about(self, "Warning", "Please choose a constants.")
+            return
+        # check if choosing template row
+        if self._selectedConstantsID == "Template":
+            QtWidgets.QMessageBox.about(self, "Warning", "Sorry, template constants can not be deleted.")
             return
         #pop up confirm window
         if str(self._selectedConstantsID) == constant_file_config.default_id:
@@ -925,7 +1034,10 @@ class ConstantsWindow(QMainWindow):
         self._selectedRows = [idx.row() for idx in modelIndex]
         logger.debug(self._selectedRows)
         if len(self._selectedRows) > 0:
-            self._selectedConstantsID = self.constantModel._data.loc[self._selectedRows, 'ID'].to_list()[0]
+            source_selectedIndex = [self.constant_sortermodel.mapToSource(modelIndex[0]).row()]
+            logger.debug(source_selectedIndex)
+            self._selectedConstantsID = self.constantModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
+            self._selectedSourceIndex = source_selectedIndex
         elif len(self._selectedRows) == 0:
             self._selectedConstantsID = ""
 
@@ -1000,13 +1112,7 @@ class AnalyseWindow(QMainWindow):
         self.resultModel.initialiseTable(data=self.summay)
         
         self.resultModel.layoutChanged.emit()
-        
-    def analyze(self):
-        # TODO: insert analyze functions here
-        logger.debug(self.runs)
-        self.setWindowModality(Qt.ApplicationModal)
-        self.show()
-        return
+    
 
     def plot(self, x, y, color, runId):
         scatter_item = pg.ScatterPlotItem(
@@ -1143,6 +1249,7 @@ class AnalyseWindow(QMainWindow):
         if file_name:
             copyfile(file_path, file_name)
     
+
     def closeEvent(self, event):  
         self.__init__(self.parent)
         event.accept()           
@@ -1297,7 +1404,7 @@ class AddEquipmentWindow(QMainWindow):
 
 class TableModel(QAbstractTableModel):
 
-    def __init__(self, data, set_bg = False, bg_index=None):
+    def __init__(self, data, set_bg = False, bg_index=None, editable=False):
         super(TableModel, self).__init__()
         self._data = data
         # May be required to change logic
@@ -1305,9 +1412,10 @@ class TableModel(QAbstractTableModel):
         #     self._display = data.drop(labels=['Address'], axis=1)
         self._bg = set_bg
         self._bgCellIdx = bg_index
+        self._editable = editable
     
     def data(self, index, role):
-        if role == Qt.DisplayRole:
+        if role == Qt.DisplayRole or role == Qt.EditRole:
             # Address is at the end of columns
             # if index.column() != self.columnNum - 1:
             value = self._data.iloc[index.row(), index.column()]
@@ -1347,9 +1455,12 @@ class TableModel(QAbstractTableModel):
         else:
             pass
     
-    def setData(self, index, value):
-        self._data.iloc[index.row(), index.column()] = value
-        return True
+    def setData(self, index, value, role):
+        if role == Qt.EditRole and self._editable:
+            self._data.iloc[index.row(), index.column()] = value
+            self.dataChanged.emit(index, index, (Qt.DisplayRole, ))
+            return True
+        return False
 
     def initialiseTable(self, data):
     
@@ -1369,6 +1480,11 @@ class TableModel(QAbstractTableModel):
 
         return self._data.empty
     
+    def flags(self, index):
+        if self._editable and index.column() == 2:
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        else:
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
     # def removeRows(self, position, rows=1, index=QModelIndex()):
 
     #     self.beginRemoveRows(QModelIndex(), position, position + rows - 1)  

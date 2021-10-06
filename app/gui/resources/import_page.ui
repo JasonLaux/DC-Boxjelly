@@ -11,48 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Import files</string>
+   <string>Import Files</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(255, 255, 255);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>925</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item alignment="Qt::AlignHCenter">
-     <widget class="QLabel" name="headerLabel_2">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>50</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Verdana</family>
-        <pointsize>24</pointsize>
-       </font>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::WinPanel</enum>
-      </property>
-      <property name="text">
-       <string>Add New Run</string>
-      </property>
-     </widget>
-    </item>
     <item>
      <spacer name="horizontalSpacer_2">
       <property name="orientation">

@@ -530,28 +530,6 @@ background-color: white;
               </font>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_4">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Verdana</family>
-                  <pointsize>24</pointsize>
-                 </font>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::WinPanel</enum>
-                </property>
-                <property name="text">
-                 <string>HOME</string>
-                </property>
-               </widget>
-              </item>
               <item>
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">
@@ -651,7 +629,7 @@ background-color: white;
 </string>
                   </property>
                   <property name="text">
-                   <string>Choose Client</string>
+                   <string>Select Client</string>
                   </property>
                  </widget>
                 </item>
@@ -815,28 +793,6 @@ background-color: white;
               </font>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_16">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Verdana</family>
-                  <pointsize>24</pointsize>
-                 </font>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::WinPanel</enum>
-                </property>
-                <property name="text">
-                 <string>CLIENT INFORMATION</string>
-                </property>
-               </widget>
-              </item>
               <item>
                <spacer name="horizontalSpacer">
                 <property name="orientation">
@@ -1236,28 +1192,6 @@ background-color: white;
               </font>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_34">
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_47">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Verdana</family>
-                  <pointsize>24</pointsize>
-                 </font>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::WinPanel</enum>
-                </property>
-                <property name="text">
-                 <string>EQUIPMENT INFO</string>
-                </property>
-               </widget>
-              </item>
               <item>
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
@@ -1482,7 +1416,7 @@ background-color: white;
 </string>
                   </property>
                   <property name="text">
-                   <string>Analyse</string>
+                   <string>Analyse Run</string>
                   </property>
                  </widget>
                 </item>
@@ -1617,6 +1551,23 @@ background-color: white;
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="font">
+                 <font>
+                  <family>Verdana</family>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(255, 0, 0);</string>
+                </property>
+                <property name="text">
+                 <string>*Right click on any row to reveal more options*</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QTableView" name="runsTable">

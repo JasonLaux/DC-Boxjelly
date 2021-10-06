@@ -108,13 +108,13 @@ class TestJob(ModelTestBase):
             self.assertEqual(e.serial, '123')
 
         # contains
-        self.assertTrue('AAA_123' in j)
+        self.assertTrue('AAA 123' in j)
 
         # len
         self.assertEqual(len(j), 1)
 
         # get
-        e = j['AAA_123']
+        e = j['AAA 123']
         self.assertEqual(e.model, 'AAA')
         self.assertEqual(e.serial, '123')
 
@@ -123,7 +123,7 @@ class TestJob(ModelTestBase):
         self.assertRaises(ValueError, lambda: j.add_equipment('AAA', '456'))
 
         # delete
-        del j['AAA_123']
+        del j['AAA 123']
         self.assertEqual(len(j), 1)
 
 
@@ -145,7 +145,7 @@ class TestMexRun(ModelTestBase):
 
         # meta file
         lines = Path(
-            'data/jobs/CAL0001/AAA_123/MEX/1/meta.ini').read_text().strip().splitlines()
+            'data/jobs/CAL0001/AAA 123/MEX/1/meta.ini').read_text().strip().splitlines()
         self.assertEqual(len(lines), 4)
         self.assertEqual(lines[0], '[DEFAULT]')
         self.assertRegex(lines[1], r'^added_at = ')
@@ -179,7 +179,7 @@ class TestMexRun(ModelTestBase):
         path = r.raw_client.path
         assert path is not None
 
-        self.assertTrue(path.samefile('data/jobs/CAL0001/AAA_123/MEX/1/raw/client.csv'),
+        self.assertTrue(path.samefile('data/jobs/CAL0001/AAA 123/MEX/1/raw/client.csv'),
                         'test the raw file path')
         self.assertFileEqual(path, CLIENT_A_RUN1_CLIENT, 'test file content')
 
@@ -196,7 +196,7 @@ class TestMexRun(ModelTestBase):
         # test deleting
         r.raw_client.remove()
         self.assertFalse(
-            Path('data/jobs/CAL0001/AAA_123/MEX/1/raw/client.csv').exists()
+            Path('data/jobs/CAL0001/AAA 123/MEX/1/raw/client.csv').exists()
         )
         self.assertIsNone(r.raw_client.path)
 
