@@ -107,7 +107,7 @@
        <string notr="true">color: rgb(255, 0, 0);</string>
       </property>
       <property name="text">
-       <string>*Double click to open the Excel file*</string>
+       <string>*Right click on the row to open the Excel file*</string>
       </property>
      </widget>
     </item>
