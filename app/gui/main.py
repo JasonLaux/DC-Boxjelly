@@ -312,7 +312,7 @@ class MainWindow(QMainWindow):
                 self._selectedEquipID = self.equipmentModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.runModel.layoutChanged.emit()
-                self.ui.runsTable.setColumnHidden(2, True)
+                # self.ui.runsTable.setColumnHidden(2, True)
 
             elif tableName == "runsTable" and self._selectedRows != []:
                 source_selectedIndex = []
