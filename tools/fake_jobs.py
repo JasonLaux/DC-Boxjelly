@@ -2,6 +2,7 @@
 
 """
 Generate fake jobs
+For test purpose.
 """
 
 import os

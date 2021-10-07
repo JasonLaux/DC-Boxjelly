@@ -10,12 +10,14 @@ DC-Boxjelly Private Github Repository
 1044804 - Jiexin Liu jiexin@student.unimelb.edu.au  Deployment Lead  
 1102336 - Chien-Chih Wang chienchihw@student.unimelb.edu.au  Quality Lead  
 
-## How to develop
+## How to develop (Use command line to do the following process)
 - Install [pipenv](https://pipenv.pypa.io/en/latest/)
 - Run `pipenv sync` to install dependency
 - Run `pipenv shell` to start a shell based on the virtualenv
 - Then, use whatever shell command you want in the shell
-- If you want to install any packages, use `pipenv install`
+- If you want to install any packages, use `pipenv install` instead of `pip install`.
+  - After installing packages, use `pipenv lock -r > requirements.txt` to regenerate requirements file.
+- To run unit tests, use `pipenv run test`
 
 ## Interactive development
 - After the steps above, you can use `pipenv run repl` to start an interactive shell in IPython. You can import modules and test them, like `from models import Job`.
@@ -25,3 +27,9 @@ DC-Boxjelly Private Github Repository
 ## UI development
 - First of all, please ensure that all dependency are install by `pipenv sync`
 - Run `qt5-tools designer` in pipenv shell or directly use `pipenv run designer` to start a qt designer.
+- After modifying `.ui` files in `app/gui/resources`, please run `pipenv run gen-resource` to generate `resources.py` file.
+
+## Package
+- Please ensure that pipenv is installed.
+- Run `package.bat` to package the project.
+- The packaged files are located at `dist` folder.
