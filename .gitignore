@@ -252,4 +252,3 @@ cython_debug/
 
 ## Ignore data folder
 /data/*
-app/gui/resources.py
