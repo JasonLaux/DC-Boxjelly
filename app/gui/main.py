@@ -422,7 +422,8 @@ class MainWindow(QMainWindow):
             action = self.ui.runsTable.contextMenu.addAction(name)
             action.triggered.connect(lambda: self.actionHandler(handler))
             
-        add_action('Reveal in File Explorer', "OpenFileFolder")
+        add_action('Open raw client file', 'OpenClientFile')
+        add_action('Open raw lab file', 'OpenLabFile')
         add_action('Re-upload', "Reupload")
         add_action('Export raw client to..', 'export_client')
         add_action('Export raw lab to..', 'export_lab')
@@ -438,8 +439,10 @@ class MainWindow(QMainWindow):
         selectedRun = self.runModel._data.loc[sorted(self._sourceIndex["runsTable"]), 'ID'].to_list()[0]
         run = Job[self._selectedCalNum][self._selectedEquipID].mex[selectedRun]
 
-        if action == "OpenFileFolder":
-            os.startfile(os.path.dirname(run.raw_client.path))
+        if action == "OpenClientFile":
+            os.startfile(run.raw_client.path)
+        elif action == "OpenLabFile":
+            os.startfile(run.raw_lab.path)
         elif action == "Reupload":
             self.openReuploadWindow()
             self.reuploadWindow.setRuns(selectedRun, run)
