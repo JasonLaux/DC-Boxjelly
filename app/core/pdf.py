@@ -113,7 +113,7 @@ def get_pdf(path, **kwgs):
 
     #Footer Values
     sheet.range('A57').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
-    sheet.range('I57').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
+    sheet.range('I57').value = kwgs["report_date"] #Report date
 
     app = xw.apps.active
     wb.save(templateFilePath) # excel template file path
