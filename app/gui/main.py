@@ -15,15 +15,17 @@ import logging
 import numpy as np
 import time
 import tempfile
+import shutil
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat, getConstantsTableData
 from app.core.models import Job, Equipment, MexRawFile, ConstantFile, MexRun, constant_file_config
 from app.core.resolvers import HeaderError, calculator, result_data, summary, extractionHeader, Header_data, pdf_visualization
 from app.gui import resources
-from app.core.pdf import get_pdf
+from app.export.pdf import get_pdf
 from datetime import datetime
 from copy import deepcopy
 from shutil import copyfile
+from app.core.definition import DATA_FOLDER
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -1161,26 +1163,24 @@ class AnalyseWindow(QMainWindow):
         except Exception:
             base_path = os.path.abspath(".")
         # dir_path = os.path.dirname(os.path.realpath(__file__))
-        path = os.path.join(base_path, 'data')
-        temp_folder = tempfile.mkdtemp(dir=path)
-        pdf_visualization(temp_folder, self.summay, self.constant)
-        info_dict = self.gather_info()
-        
-        pool = QThreadPool.globalInstance()
 
-        workerSignals = ProgressWorkerSignals()
-        worker = PdfWorker(temp_folder, info_dict, workerSignals)
-        ticker = ProgressBarCounter(workerSignals)   
-        progressBar = ProgressBar(self, workerSignals)
+        file_name, _ = QFileDialog.getSaveFileName(self, 'Save PDF Report', '', "PDF file (*.pdf)")
+        logger.debug(file_name)
+        if file_name:
+            info_dict = self.gather_info()
+            
+            pool = QThreadPool.globalInstance()
 
-        pool.start(worker)
-        pool.start(ticker)
+            workerSignals = ProgressWorkerSignals()
+            worker = PdfWorker(file_name, info_dict, workerSignals, self.summay, self.constant)
+            ticker = ProgressBarCounter(workerSignals)   
+            progressBar = ProgressBar(self, workerSignals)
 
-        # QtWidgets.QMessageBox.about(self, "Finish!")
+            pool.start(worker)
+            pool.start(ticker)
 
-        workerSignals.finished.connect(lambda: self.export_pdf(temp_folder))
-
-        
+            # QtWidgets.QMessageBox.about(self, "Finish!")
+            # workerSignals.finished.connect(lambda: self.export_pdf(temp_folder))
 
     def gather_info(self):
 
@@ -1226,29 +1226,8 @@ class AnalyseWindow(QMainWindow):
                 "ic_hv": ichv,
                 "polarity": flag
                 })
-
-
-    def export_pdf(self, path):
-
-
-        try:
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            base_path = sys._MEIPASS
-        except Exception:
-            base_path = os.path.abspath(".")
-        # dir_path = os.path.dirname(os.path.realpath(__file__))
-        file_path = os.path.join(path, 'ClientReport.pdf')
-
-        file_name, _ = QFileDialog.getSaveFileName(self, 'Save PDF Report', base_path, "PDF file (*.pdf)")
-
-        try:
-            _ = open(file_path)
-        except:
-            logger.debug("PDF is not generated correctly!")
-
-        if file_name:
-            copyfile(file_path, file_name)
     
+
 
     def closeEvent(self, event):  
         self.__init__(self.parent)
@@ -1547,14 +1526,29 @@ class PdfWorker(QRunnable):
     A thread to handle pdf generation
     """
 
-    def __init__(self, path, info_dict, signals: ProgressWorkerSignals) -> None:
+    def __init__(self, path, info_dict, signals: ProgressWorkerSignals, summary, constant) -> None:
         super().__init__()
         self._info_dict = info_dict
         self._signals = signals
         self._path = path
+        self.summary = summary
+        self.constant = constant
+
 
     def run(self):
-        get_pdf(self._path, **self._info_dict)
+        temp_folder = tempfile.mkdtemp(dir=DATA_FOLDER.absolute())
+        logger.debug(temp_folder)
+        pdf_visualization(temp_folder, self.summary, self.constant)
+        pdf = get_pdf(temp_folder, **self._info_dict)
+
+        shutil.copyfile(pdf, self._path)
+
+        try:
+            logger.debug('Cleaning temporary folder...')
+            shutil.rmtree(temp_folder)
+        except OSError as e:
+            print ("Error: %s - %s." % (e.filename, e.strerror))
+
         self._signals.finished.emit()
 
 class ProgressBar(QDialog):

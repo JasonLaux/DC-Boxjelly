@@ -5,25 +5,31 @@ import sys
 import pandas as pd
 import numpy as np
 import pythoncom
+import win32com.client
+from pywintypes import com_error
+import shutil
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 figure_width = 450
 figure_height = 280
 
-def get_pdf(path, **kwgs):
+def get_pdf(temp_folder, **kwgs):
     pythoncom.CoInitialize()
 
     try:
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
-    templateFilePath = os.path.join(base_path, 'app', 'core', 'testing.xlsx')
+    templateFilePath = os.path.join(base_path, 'app', 'export', 'pdf_template.xlsx')
+    
+    tablePath = os.path.join(temp_folder, 'pdf_table.xlsx')
+    hvl_al_fig = os.path.join(temp_folder, 'HVL_Al.png')
+    hvl_cu_fig = os.path.join(temp_folder, 'HVL_Cu.png')
+    kvp_fig = os.path.join(temp_folder, 'kVp.png')
 
-    tablePath = os.path.join(path, 'pdf_table.xlsx')
-    hvl_al_fig = os.path.join(path, 'HVL_Al.png')
-    hvl_cu_fig = os.path.join(path, 'HVL_Cu.png')
-    kvp_fig = os.path.join(path, 'kVp.png')
+    doc_path = os.path.join(temp_folder, 'document.xlsx')
+    shutil.copy(templateFilePath, doc_path)
 
     try:
         subtable_df = pd.read_excel(tablePath, sheet_name='subset')
@@ -34,7 +40,7 @@ def get_pdf(path, **kwgs):
 
     logger.debug(kwgs)
     app = xw.App(visible = False)
-    wb = xw.Book(templateFilePath) #excel template file path
+    wb = xw.Book(doc_path) #excel template file path
     sheet = wb.sheets['MEXReport']
 
     sheet.range('T13').value = kwgs["cal_num"] #CAL NUMBER
@@ -113,31 +119,26 @@ def get_pdf(path, **kwgs):
 
     #Footer Values
     sheet.range('A57').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
-    sheet.range('I57').value = kwgs["report_date"] #Report date
+    sheet.range('I57').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
 
-    app = xw.apps.active
-    wb.save(templateFilePath) # excel template file path
-    app.quit()
+    wb.save(doc_path)
+    wb.close()
 
-    import win32com.client
-    from pywintypes import com_error
+    doc_pdf = os.path.join(temp_folder, 'document.pdf')
 
     excel = win32com.client.Dispatch("Excel.Application")
     try:
         print('Start conversion to PDF')
-
-        wb = excel.Workbooks.Open(templateFilePath)
+        wb = excel.Workbooks.Open(doc_path)
         wb_list = [1]
         wb.Worksheets(wb_list).Select()
-        outfile = os.path.join(path, 'ClientReport.pdf')
-        print(outfile)
-        wb.ActiveSheet.ExportAsFixedFormat(0, outfile)
+        wb.ActiveSheet.ExportAsFixedFormat(0, doc_pdf)
     except com_error as e:
-        print('Failed')
-    else:
-        print("Succeeded.")
+        logger.error('Failed', exc_info=e)
     finally:
         wb.Close()
+
+    return doc_pdf
 
     # MacOS doesn't support win32com.
     # if you're going to test the PDF generation, please use the code below
