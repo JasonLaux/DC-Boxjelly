@@ -10,6 +10,11 @@ DC-Boxjelly Private Github Repository
 1044804 - Jiexin Liu jiexin@student.unimelb.edu.au  Deployment Lead  
 1102336 - Chien-Chih Wang chienchihw@student.unimelb.edu.au  Quality Lead  
 
+## Run from source code
+- To directly run the program from source code, please use the `bat` script in project root.
+- Run `install.bat` to install dependencies through pip.
+- Run `run.bat` to start the program.
+
 ## How to develop (Use command line to do the following process)
 - Install [pipenv](https://pipenv.pypa.io/en/latest/)
 - Run `pipenv sync` to install dependency
@@ -29,7 +34,19 @@ DC-Boxjelly Private Github Repository
 - Run `qt5-tools designer` in pipenv shell or directly use `pipenv run designer` to start a qt designer.
 - After modifying `.ui` files in `app/gui/resources`, please run `pipenv run gen-resource` to generate `resources.py` file.
 
-## Package
+## Publish 
 - Please ensure that pipenv is installed.
 - Run `package.bat` to package the project.
 - The packaged files are located at `dist` folder.
+
+## File structure
+The purpose of source code files are listed below:
+- app: Source code for the application
+  - core: core function, data reading and writing
+  - gui: The gui
+  - output: Functions for output, such as pdf or digital certification.
+  - main.py: The entry point of the program.
+- assets: Files that used in publishing
+- data: Folder that contains jobs and constants
+- test: unit test files for `app/core`
+- tools: Utility scripts for developing.
