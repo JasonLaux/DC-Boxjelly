@@ -524,7 +524,7 @@ class ImportWindow(QMainWindow):
         self.parent.runModel.layoutAboutToBeChanged.emit()
         self.parent.ui.runsTable.clearSelection()
         if len(self.clientPath) == 0 or len(self.labPath) == 0:
-            QtWidgets.QMessageBox.about(self, "Warning", "Please choose or fill in both Client file and Lab file path.")
+            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in both Client file and Lab file path.")
             return
         if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
@@ -692,11 +692,8 @@ class HomeImportWindow(QMainWindow):
     
     def submit(self):
         # file path check
-        if self.clientPath.strip() == "":
-            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in client file path.")
-            return
-        if self.labPath.strip() == "":
-            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in lab file path.")
+        if self.clientPath.strip() == "" or self.labPath.strip() == "":
+            QtWidgets.QMessageBox.about(self, "Warning", "Please fill in both client file and lab file path.")
             return
         if (not os.path.isfile(self.clientPath)) or (not os.path.isfile(self.labPath)):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
