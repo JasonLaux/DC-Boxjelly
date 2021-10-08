@@ -119,7 +119,7 @@ def get_pdf(temp_folder, **kwgs):
 
     #Footer Values
     sheet.range('A57').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
-    sheet.range('I57').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
+    sheet.range('I57').value = "Report Date: " + kwgs["report_date"] #CAL Number
 
     wb.save(doc_path)
     wb.close()
