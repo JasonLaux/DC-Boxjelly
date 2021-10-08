@@ -12,7 +12,7 @@ import shutil
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 figure_width = 450
-figure_height = 400
+figure_height = 450
 
 def get_pdf(temp_folder, **kwgs):
     pythoncom.CoInitialize()
