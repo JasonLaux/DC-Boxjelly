@@ -358,7 +358,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
     plt.legend(ncol=2)
-
+    plt.rcParams["figure.figsize"] = (8, 4)
     plot2.savefig(path + r'\HVL_Al.png', bbox_inches='tight', dpi=1200)
     ################################################## Draw HVL Al ##################################################
     ################################################## Draw HVL Cu ##################################################
@@ -376,7 +376,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
     plt.legend(ncol=2)
-
+    plt.rcParams["figure.figsize"] = (8, 4) 
     plot3.savefig(path + r'\HVL_Cu.png', bbox_inches='tight', dpi=1200)
 
     plt.close('all')
