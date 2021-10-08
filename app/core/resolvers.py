@@ -328,7 +328,8 @@ def pdf_visualization(path, df_summary, df_otherConstant):
     df_merge = df_merge.apply(pd.to_numeric).fillna('')
     ################################################### Draw kVp ####################################################
     color = cm.rainbow(np.linspace(0, 1, len(df_merge['Tube voltage'].unique())))
-
+    plt.rcParams["figure.figsize"] = (8, 4)
+    
     plot1 = plt.figure(1)
     for voltage, c in zip(df_merge['Tube voltage'].unique(), color):
         df_temp = df_merge[df_merge['Tube voltage'] == voltage]  # extract one voltage
