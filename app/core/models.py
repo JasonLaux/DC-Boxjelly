@@ -17,7 +17,7 @@ import logging
 import csv
 import stat
 
-from .mixins import WithMetaMixin, assign_properties, meta_property
+from .mixins import DeleteFolderMixin, WithMetaMixin, assign_properties, meta_property
 from .definition import CONSTANT_FILE_NAME, CONSTANT_FOLDER, RAW_DATA_SECTION_NAME, RAW_META_SECTION_NAME, JOB_FOLDER, MEX_FOLDER_NAME, MEX_RAW_CLIENT_FILE_NAME, MEX_RAW_FOLDER_NAME, MEX_RAW_LAB_FILE_NAME, RAW_MEASUREMENT_SECTION_NAME, TEMPLATE_CONSTANT_FILE
 from .utils import count_iter_items, datetime_to_iso, ensure_folder, iter_subfolders
 
@@ -83,7 +83,7 @@ class _JobMetaClass(type):
         return obj
 
 
-class Job(WithMetaMixin, metaclass=_JobMetaClass):
+class Job(WithMetaMixin, DeleteFolderMixin, metaclass=_JobMetaClass):
     """
     A model that represents a job.
 
@@ -224,13 +224,8 @@ class Job(WithMetaMixin, metaclass=_JobMetaClass):
             'client_address_2': self.client_address_2,
         }
 
-    def delete(self):
-        for e in self:
-            e.delete()
-        shutil.rmtree(self._folder)
 
-
-class Equipment(WithMetaMixin):
+class Equipment(WithMetaMixin, DeleteFolderMixin):
     """
     A model that represents an equipment.
 
@@ -330,12 +325,6 @@ class Equipment(WithMetaMixin):
             return True
         return all(first.IC_HV == x.IC_HV for x in iterator)
 
-    def delete(self):
-        # delete all mex run before actually deleting the folder
-        for run in self.mex:
-            run.delete()
-        shutil.rmtree(self._folder)
-
 
 class MexMeasurements:
     """
@@ -421,7 +410,7 @@ class MexMeasurements:
         return MexRun(self)
 
 
-class MexRun(WithMetaMixin):
+class MexRun(WithMetaMixin, DeleteFolderMixin):
     """
     This model represents a run in mex analysis.
     """
@@ -494,12 +483,6 @@ class MexRun(WithMetaMixin):
             'run_measured_at': self.measured_at,
             'IC_HV': self.IC_HV,
         }
-
-    def delete(self):
-        # Remove raw file first to prevent error
-        self.raw_client.remove()
-        self.raw_lab.remove()
-        shutil.rmtree(self._folder) 
 
 
 class MexRawFile:
