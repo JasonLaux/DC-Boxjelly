@@ -1,3 +1,8 @@
+"""
+The entry point of main program.
+"""
+
+
 from portalocker.exceptions import AlreadyLocked
 import portalocker
 from PyQt5.QtWidgets import QMessageBox, QApplication
