@@ -138,21 +138,3 @@ def meta_property(name: str, docstring: Optional[str] = None, *,
 def assign_properties(obj, kwargs: Dict[str, str]):
     for key, value in kwargs.items():
         setattr(obj, key, value)
-
-
-class DeleteFolderMixin:
-    """
-    A mixin that adds operation to delete the folder this instance represents.
-
-    The class must contains a _folder field.
-    """
-
-    _folder: Path
-
-    def delete(self):
-        """
-        Remove the model, this process cannot be undone.
-
-        After calling this method, invoking other methods are invalid.
-        """
-        shutil.rmtree(self._folder)
