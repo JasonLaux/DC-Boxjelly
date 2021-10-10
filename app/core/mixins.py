@@ -2,6 +2,7 @@ from pathlib import Path
 import configparser
 import shutil
 from typing import Any, Callable, Dict, Optional
+from os import rename
 
 from .definition import META_FILE_NAME
 from .utils import ensure_folder
@@ -154,5 +155,10 @@ class DeleteFolderMixin:
         Remove the model, this process cannot be undone.
 
         After calling this method, invoking other methods are invalid.
+
+        If folder cannot be deleted (maybe due to the permission error),
+        raise OSError 
         """
-        shutil.rmtree(self._folder)
+        delete_path = str(self._folder.absolute()) + '.delete'
+        rename(self._folder, delete_path)
+        shutil.rmtree(delete_path)
