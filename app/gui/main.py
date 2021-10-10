@@ -1163,11 +1163,12 @@ class AnalyseWindow(QMainWindow):
         except Exception:
             base_path = os.path.abspath(".")
         # dir_path = os.path.dirname(os.path.realpath(__file__))
+        info_dict = self.gather_info()
 
-        file_name, _ = QFileDialog.getSaveFileName(self, 'Save PDF Report', '', "PDF file (*.pdf)")
+        file_name, _ = QFileDialog.getSaveFileName(self, 'Save PDF Report', info_dict["cal_num"] + " MEX " + info_dict["model"] + " sn " + info_dict["serial"], "PDF file (*.pdf)")
+
         logger.debug(file_name)
         if file_name:
-            info_dict = self.gather_info()
             
             pool = QThreadPool.globalInstance()
 
