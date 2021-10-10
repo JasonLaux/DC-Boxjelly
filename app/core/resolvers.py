@@ -438,8 +438,11 @@ def extractionHeader(client_path: str, lab_path: str):
             elif 'Operator' in line:
                 client_data.operator = line.split(',')[2].strip()
             elif 'Chamber' in line:
-                client_data.serial = line.split(',')[2].strip().split()[-1]
-                client_data.model = " ".join(line.split(',')[2].strip().split()[:-1])
+                if len(line.split(',')[2].strip())==0:
+                    raise HeaderError("Client file does not contains model/serial, please check!")
+                else:
+                    client_data.serial = line.split(',')[2].strip().split()[-1]
+                    client_data.model = " ".join(line.split(',')[2].strip().split()[:-1])
             elif 'Date' in line:
                 client_data.date = line.split(',')[2].strip()
                 # client_data.date = datetime.strptime(dateStr, "%m/%d/%Y").date()               
