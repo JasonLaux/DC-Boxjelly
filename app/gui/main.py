@@ -285,7 +285,11 @@ class MainWindow(QMainWindow):
                                                QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
                 for runId in selectedRun:
-                    del Job[self._selectedCalNum][self._selectedEquipID].mex[runId]
+                    try:
+                        del Job[self._selectedCalNum][self._selectedEquipID].mex[runId]
+                    except PermissionError:
+                        QtWidgets.QMessageBox.about(self, "Warning", "Please close the raw file first.")
+                        return
                 self.runModel.initialiseTable(data=getRunsTableData(Job[self._selectedCalNum][self._selectedEquipID]))
                 self.runModel.layoutChanged.emit()
             
