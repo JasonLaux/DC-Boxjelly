@@ -7,8 +7,11 @@ import pandas as pd
 import os
 import logging
 from app.core.models import Job, Equipment, ConstantFile
+import dateutil.parser
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 def loadUI(str, window):
     ui_file_name = str
@@ -99,8 +102,9 @@ def getResultData():
     return pd.DataFrame(data)
 
 def converTimeFormat(time: str):
+    
     if time:
-        dateTime = datetime.fromisoformat(time)
+        dateTime = dateutil.parser.isoparse(time)
         return dateTime.strftime('%d-%m-%Y %H:%M:%S')
     else:
         return None
