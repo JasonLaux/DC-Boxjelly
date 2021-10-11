@@ -105,8 +105,8 @@ def calculator(client, lab):
 
     # read constant and KK from constant excel file
     constant = os.path.join(constant_file_config.get_path())
-    df_constant = pd.read_excel(constant, sheet_name='constant')
-    df_beams = pd.read_excel(constant, sheet_name='Beams')
+    df_constant = pd.read_excel(constant, sheet_name='constant', engine='openpyxl')
+    df_beams = pd.read_excel(constant, sheet_name='Beams', engine='openpyxl')
 
     # get ma and WE
     Ma = df_constant['ma'].values[0]
