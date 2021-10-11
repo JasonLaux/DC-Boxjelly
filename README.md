@@ -25,7 +25,7 @@ This section contains the documentation used in developing the software.
 
 ### Specify python version
 - If you want to do development in specify python version, please specify it in `pipenv`.
-  - For example, instead of `pipenv sync`, use `pipenv --python 3.6 sync`.
+  - For example, instead of `pipenv sync`, use `pipenv sync --python 3.6`.
   - All pipenv commands need to add `--python x.x` switch.
 
 ### How to develop (Use command line to do the following process)
