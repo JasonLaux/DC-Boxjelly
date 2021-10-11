@@ -742,7 +742,11 @@ class HomeImportWindow(QMainWindow):
                 'CAL Number': self.data.CAL_num,
                 'Client Name': self.data.Client_name,
             }
-            self.parent.clientModel.addData(pd.DataFrame(newClient, index=[0]) )
+            # TODO: fix ValueError bug
+            try:
+                self.parent.clientModel.addData(pd.DataFrame(newClient, index=[0]) )
+            except ValueError:
+                pass
             self.parent.clientModel.layoutChanged.emit()
             equip = job.add_equipment(model = self.data.model, serial = self.data.serial)
             newEquip = {
@@ -750,7 +754,11 @@ class HomeImportWindow(QMainWindow):
                 'Serial Num': self.data.serial,
                 'ID': equip.id,
             }
-            self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+            # TODO: fix ValueError bug
+            try:
+                self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+            except ValueError:
+                pass
             self.parent.equipmentModel.layoutChanged.emit()
             run = equip.mex.add()
             run.raw_client.upload_from(Path(self.clientPath))
@@ -767,7 +775,11 @@ class HomeImportWindow(QMainWindow):
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
             }
-            self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+            # TODO: fix ValueError bug
+            try:
+                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+            except ValueError:
+                pass
             self.parent.runModel.layoutChanged.emit()
         else:
             job = Job[self.data.CAL_num]
@@ -783,7 +795,11 @@ class HomeImportWindow(QMainWindow):
                     'Serial Num': self.data.serial,
                     'ID': equip.id,
                 }
-                self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+                # TODO: fix ValueError bug
+                try:
+                    self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+                except ValueError:
+                    pass
                 self.parent.equipmentModel.layoutChanged.emit()
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
@@ -800,7 +816,11 @@ class HomeImportWindow(QMainWindow):
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
-                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                # TODO: fix ValueError bug
+                try:
+                    self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                except ValueError:
+                    pass
                 self.parent.runModel.layoutChanged.emit()
             else:
                 # if both job and equip existed, add run to it
@@ -820,7 +840,11 @@ class HomeImportWindow(QMainWindow):
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
-                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                # TODO: fix ValueError bug
+                try:
+                    self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                except ValueError:
+                    pass
                 self.parent.runModel.layoutChanged.emit()
         
         # pop up message when import successfully
