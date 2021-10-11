@@ -1203,7 +1203,7 @@ class AnalyseWindow(QMainWindow):
         # Only first operator is considered
         operator = self.runs[0].operator
         for run in self.runs:
-            date_list.append(datetime.fromisoformat(run.measured_at))
+            date_list.append(converTimeFormat(run.measured_at))
             ic_hv.append(run.IC_HV)
 
         earliest_date = min(date_list).strftime("%d %b %Y")
