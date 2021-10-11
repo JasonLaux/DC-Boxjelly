@@ -16,6 +16,8 @@ import numpy as np
 import time
 import tempfile
 import shutil
+import dateutil.parser
+
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat, getConstantsTableData
 from app.core.models import Job, Equipment, MexRawFile, ConstantFile, MexRun, constant_file_config
@@ -1203,7 +1205,7 @@ class AnalyseWindow(QMainWindow):
         # Only first operator is considered
         operator = self.runs[0].operator
         for run in self.runs:
-            date_list.append(converTimeFormat(run.measured_at))
+            date_list.append(dateutil.parser.isoparse(run.measured_at))
             ic_hv.append(run.IC_HV)
 
         earliest_date = min(date_list).strftime("%d %b %Y")
