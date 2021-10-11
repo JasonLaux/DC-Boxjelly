@@ -32,9 +32,9 @@ def get_pdf(temp_folder, **kwgs):
     shutil.copy(templateFilePath, doc_path)
 
     try:
-        subtable_df = pd.read_excel(tablePath, sheet_name='subset')
-        total1_df = pd.read_excel(tablePath, sheet_name='total-1')
-        total2_df = pd.read_excel(tablePath, sheet_name='total-2')
+        subtable_df = pd.read_excel(tablePath, sheet_name='subset', engine='openpyxl')
+        total1_df = pd.read_excel(tablePath, sheet_name='total-1', engine='openpyxl')
+        total2_df = pd.read_excel(tablePath, sheet_name='total-2', engine='openpyxl')
     except:
         logger.debug("Cannot read table file properly!")
 
