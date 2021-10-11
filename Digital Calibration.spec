@@ -6,7 +6,7 @@ block_cipher = None
 
 a = Analysis(['app\\main.py'],
              binaries=[],
-             datas=[('constant.xlsx', '.'), ( 'app/core/template_constant.xlsx', 'app/core' ), ( 'app/core/testing.xlsx', 'app/core' )],
+             datas=[('constant.xlsx', '.'), ( 'app/core/template_constant.xlsx', 'app/core' ), ( 'app/export/pdf_template.xlsx', 'app/export' )],
              hiddenimports=[],
              hookspath=[],
              hooksconfig={},
