@@ -30,7 +30,7 @@ This section contains the documentation used in developing the software.
 
 ### How to develop (Use command line to do the following process)
 - Install [pipenv](https://pipenv.pypa.io/en/latest/)
-- Run `pipenv sync` to install dependency
+- Run `pipenv sync --dev` to install dependency (including development dependency)
 - Run `pipenv shell` to start a shell based on the virtualenv
 - Then, use whatever shell command you want in the shell
 - If you want to install any packages, use `pipenv install` instead of `pip install`.
