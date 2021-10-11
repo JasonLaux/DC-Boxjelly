@@ -23,6 +23,11 @@ be viewed in the software as well as exported as PDF files.
 ## Documentation
 This section contains the documentation used in developing the software.
 
+### Specify python version
+- If you want to do development in specify python version, please specify it in `pipenv`.
+  - For example, instead of `pipenv sync`, use `pipenv --python 3.6 sync`.
+  - All pipenv commands need to add `--python x.x` switch.
+
 ### How to develop (Use command line to do the following process)
 - Install [pipenv](https://pipenv.pypa.io/en/latest/)
 - Run `pipenv sync` to install dependency
