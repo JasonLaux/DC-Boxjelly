@@ -532,6 +532,19 @@ background-color: white;
                <property name="text">
                 <string>Support</string>
                </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>questionmark.png</normaloff>questionmark.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
               </widget>
              </item>
             </layout>
