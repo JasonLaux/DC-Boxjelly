@@ -491,7 +491,7 @@ background-color: white;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="homeButton_2">
+              <widget class="QPushButton" name="supportButton">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
