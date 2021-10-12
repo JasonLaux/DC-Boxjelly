@@ -27,7 +27,7 @@ from app.export.pdf import get_pdf
 from datetime import datetime
 from copy import deepcopy
 from shutil import copyfile
-from app.core.definition import DATA_FOLDER
+from app.core.definition import DATA_FOLDER, OPS_MANUAL
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -75,9 +75,11 @@ class MainWindow(QMainWindow):
         self.addEquipmentWindow = AddEquipmentWindow(self)
         self.reuploadWindow = ReuploadWindow(self)
 
-        #Home Page
+        # Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.homeButton.clicked.connect(lambda: self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE))
+        # Support Button
+        self.ui.supportButton.clicked.connect(self.openSupport)
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.addClientButton.clicked.connect(lambda: self.ui.homeTable.clearSelection())
@@ -177,6 +179,15 @@ class MainWindow(QMainWindow):
         self._selectedCalNum = ""
         self._selectedRuns = []
         self._sourceIndex = {}
+    
+    def openSupport(self):
+        """
+        Open manual file.
+        """
+        try:
+            os.startfile(os.path.join(OPS_MANUAL))
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "Operation Manual not found.")
 
 
     def chooseClient(self):
