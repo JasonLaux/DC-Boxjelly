@@ -164,6 +164,10 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.runsTable.customContextMenuRequested.connect(self.showContextMenu)
         self.ui.runsTable.doubleClicked.connect(self.openAnalysisWindow) # double click for analyze
+        
+
+        # Support Icon
+        self.ui.supportButton.setIcon(QtGui.QIcon(':/img/qsmark.png'))
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
         self.ui.homeTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
