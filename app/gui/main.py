@@ -1255,7 +1255,7 @@ class AnalyseWindow(QMainWindow):
                 "operator": operator,
                 "period": period,
                 "report_date": report_date,
-                "ic_hv": str(ichv) + ' V' + " on the guard electrode " + flag,
+                "ic_hv": str(ichv) + 'V' + " on the guard electrode",
                 "polarity": flag
                 })
     
