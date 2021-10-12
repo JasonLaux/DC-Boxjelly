@@ -1254,7 +1254,7 @@ class AnalyseWindow(QMainWindow):
                 "operator": operator,
                 "period": period,
                 "report_date": report_date,
-                "ic_hv": ichv,
+                "ic_hv": str(ichv) + 'V',
                 "polarity": flag
                 })
     
