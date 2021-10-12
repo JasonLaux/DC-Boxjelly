@@ -112,17 +112,17 @@ def get_pdf(temp_folder, **kwgs):
     #Chart 1: N vs KvP Chart @ Cell A220
     sheet.pictures.add(kvp_fig, top=sheet.range('A225').top, left=sheet.range('A220').left, name='kVp', update=True, width=figure_width, height=figure_height)
     #Chart 1 Title
-    # sheet.range('C243').value = 
+    sheet.range('C243').value = "Figure 1: Calibration coefficients for " + kwgs["model"] +" serial number " + kwgs["serial"] + " grouped by kVp"
 
     #Chart 2: N vs HVL Chart (mm Al) @ Cell A245
     sheet.pictures.add(hvl_al_fig, top=sheet.range('A251').top, left=sheet.range('A245').left, name='Al', update=True, width=figure_width, height=figure_height)
     #Chart 2 Title
-    # sheet.range('C273').value = 
+    sheet.range('C273').value = "Figure 2: Calibration coefficients for " + kwgs["model"] + " serial number " + kwgs["serial"] + " versus HVL (mm Al)"
 
     #Chart 3: N vs HVL Chart (mm Cu) @ Cell A272
     sheet.pictures.add(hvl_cu_fig, top=sheet.range('A278').top, left=sheet.range('A272').left, name='Cu', update=True, width=figure_width, height=figure_height)
     #Chart 3 Title
-    # sheet.range('C300').value = 
+    sheet.range('C300').value = "Figure 3: Calibration coefficients for " + kwgs["model"] + " serial number " + kwgs["serial"] +" versus HVL (mm Cu)"
 
     #Footer Values
     sheet.range('A59').value = "Calibration No: " + kwgs["cal_num"] #CAL Number

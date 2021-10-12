@@ -1242,9 +1242,9 @@ class AnalyseWindow(QMainWindow):
         ichv = ic_hv[0]
 
         if int(ichv) < 0:
-            flag = "(" + ichv + ")" + " on the guard electrode " + "Positive " + "(Central Electrode Negative)"
+            flag = "Positive " + "(Central Electrode Negative)"
         else:
-            flag = "(" + ichv + ")" + "on the guard electrode " + "Negative " + "(Central Electrode Negative)"
+            flag = "Negative " + "(Central Electrode Positive)"
 
         return deepcopy({"cal_num": cal_num,
                 "client_name": client_name,
@@ -1255,7 +1255,7 @@ class AnalyseWindow(QMainWindow):
                 "operator": operator,
                 "period": period,
                 "report_date": report_date,
-                "ic_hv": str(ichv) + 'V',
+                "ic_hv": str(ichv) + ' V' + " on the guard electrode " + flag,
                 "polarity": flag
                 })
     
