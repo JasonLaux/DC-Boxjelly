@@ -128,7 +128,7 @@ class MainWindow(QMainWindow):
         self.ui.homeTable.sortByColumn(0, Qt.AscendingOrder)
         self.ui.homeTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) #column stretch to window size
         self.ui.homeTable.setItemDelegate(AlignDelegate()) # text alignment
-
+        self.ui.homeTable.doubleClicked.connect(self.chooseClient) # double click for choose client
 
         ## Table insertion
         # Equipment Table
@@ -145,6 +145,7 @@ class MainWindow(QMainWindow):
         self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
         self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.equipmentsTable.setItemDelegate(AlignDelegate())
+        self.ui.equipmentsTable.doubleClicked.connect(self.chooseEquipment) # double click for choose equipment
 
         self._selectedEquipID = ""
 
@@ -162,7 +163,7 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.setItemDelegate(AlignDelegate())
         self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.runsTable.customContextMenuRequested.connect(self.showContextMenu)
-
+        self.ui.runsTable.doubleClicked.connect(self.openAnalysisWindow) # double click for analyze
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
         self.ui.homeTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
