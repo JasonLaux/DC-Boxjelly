@@ -530,7 +530,7 @@ background-color: white;
 </string>
                </property>
                <property name="text">
-                <string>Support</string>
+                <string>SUPPORT</string>
                </property>
                <property name="icon">
                 <iconset>
