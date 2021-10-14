@@ -162,9 +162,9 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.runsTable.setItemDelegate(AlignDelegate())
-        self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.runsTable.customContextMenuRequested.connect(self.showContextMenu)
+        self.ui.runsTable.setItemDelegate(AlignDelegate())
+        
         self.ui.runsTable.doubleClicked.connect(self.openAnalysisWindow) # double click for analyze
         
 
@@ -325,6 +325,7 @@ class MainWindow(QMainWindow):
             modelIndex = getattr(self, tableName).selectionModel().selectedRows() # QModelIndexList
             self._selectedRows = [idx.row() for idx in modelIndex]
             self._sourceIndex = {}
+            self.ui.runsTable.setContextMenuPolicy(Qt.PreventContextMenu)
             logger.debug(self._selectedRows)
             if tableName == "homeTable" and self._selectedRows != []:
                 self.equipmentModel.layoutAboutToBeChanged.emit()
@@ -352,6 +353,7 @@ class MainWindow(QMainWindow):
                 # self.ui.runsTable.setColumnHidden(2, True)
 
             elif tableName == "runsTable" and self._selectedRows != []:
+                self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
                 source_selectedIndex = []
                 for idx in modelIndex:
                     source_selectedIndex.append(self.run_sortermodel.mapToSource(idx).row())
@@ -469,10 +471,7 @@ class MainWindow(QMainWindow):
             os.startfile(run.raw_lab.path)
         elif action == "Reupload":
             self.openReuploadWindow()
-            try: 
-                self.reuploadWindow.setRuns(selectedRun, run)
-            except PermissionError:
-                QtWidgets.QMessageBox.about(self, "Warning", "Cannot re-upload files. Please close correpsonding file windows!")
+            self.reuploadWindow.setRuns(selectedRun, run) 
         elif action == 'export_lab':
             self.export_raw_file(run.raw_lab, 'lab')
         elif action == 'export_client':
@@ -638,20 +637,23 @@ class ReuploadWindow(ImportWindow):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
             return
 
-        self.run.raw_client.upload_from(Path(self.clientPath))
-        self.run.raw_lab.upload_from(Path(self.labPath))
-        
-        self.parent.runModel.initialiseTable(data=getRunsTableData(Job[self.parent._selectedCalNum][self.parent._selectedEquipID]))
+        try: 
+            self.run.raw_client.upload_from(Path(self.clientPath))
+            self.run.raw_lab.upload_from(Path(self.labPath))
+            self.parent.runModel.initialiseTable(data=getRunsTableData(Job[self.parent._selectedCalNum][self.parent._selectedEquipID]))
 
-        self.parent.runModel.layoutChanged.emit()
-        
-        # Finish add new run and quit
-        self.hide()
-        self.equip = None
-        self.clientPath = ""
-        self.labPath = ""
-        self.ui.clientFilePathLine.clear()
-        self.ui.labFilePathLine.clear()
+            self.parent.runModel.layoutChanged.emit()
+            
+            # Finish add new run and quit
+            self.hide()
+            self.equip = None
+            self.clientPath = ""
+            self.labPath = ""
+            self.ui.clientFilePathLine.clear()
+            self.ui.labFilePathLine.clear()
+        except PermissionError:
+            QtWidgets.QMessageBox.about(self, "Warning", "Cannot re-upload files. Please close correpsonding file windows!")
+            
     
 
     def setRuns(self, selectedRun, run):
@@ -954,7 +956,6 @@ class ConstantsWindow(QMainWindow):
         self._selectedConstantsID = ""
 
         # Context menu
-        self.ui.constantsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.constantsTable.customContextMenuRequested.connect(self.showContextMenu)
 
         # link buttons to function
@@ -1083,8 +1084,10 @@ class ConstantsWindow(QMainWindow):
         """
         modelIndex =self.ui.constantsTable.selectionModel().selectedRows() # QModelIndexList
         self._selectedRows = [idx.row() for idx in modelIndex]
+        self.ui.constantsTable.setContextMenuPolicy(Qt.PreventContextMenu)
         logger.debug(self._selectedRows)
         if len(self._selectedRows) > 0:
+            self.ui.constantsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
             source_selectedIndex = [self.constant_sortermodel.mapToSource(modelIndex[0]).row()]
             logger.debug(source_selectedIndex)
             self._selectedConstantsID = self.constantModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
