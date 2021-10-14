@@ -287,7 +287,7 @@ class MainWindow(QMainWindow):
                 self.equipmentModel.layoutChanged.emit()
             self.ui.equipmentsTable.clearSelection()
         else:
-            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose an equipment to delete.")
             
 
     def deleteRun(self):
