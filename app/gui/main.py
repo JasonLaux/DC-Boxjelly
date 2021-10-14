@@ -469,10 +469,7 @@ class MainWindow(QMainWindow):
             os.startfile(run.raw_lab.path)
         elif action == "Reupload":
             self.openReuploadWindow()
-            try: 
-                self.reuploadWindow.setRuns(selectedRun, run)
-            except PermissionError:
-                QtWidgets.QMessageBox.about(self, "Warning", "Cannot re-upload files. Please close correpsonding file windows!")
+            self.reuploadWindow.setRuns(selectedRun, run) 
         elif action == 'export_lab':
             self.export_raw_file(run.raw_lab, 'lab')
         elif action == 'export_client':
