@@ -638,20 +638,23 @@ class ReuploadWindow(ImportWindow):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
             return
 
-        self.run.raw_client.upload_from(Path(self.clientPath))
-        self.run.raw_lab.upload_from(Path(self.labPath))
-        
-        self.parent.runModel.initialiseTable(data=getRunsTableData(Job[self.parent._selectedCalNum][self.parent._selectedEquipID]))
+        try: 
+            self.run.raw_client.upload_from(Path(self.clientPath))
+            self.run.raw_lab.upload_from(Path(self.labPath))
+            self.parent.runModel.initialiseTable(data=getRunsTableData(Job[self.parent._selectedCalNum][self.parent._selectedEquipID]))
 
-        self.parent.runModel.layoutChanged.emit()
-        
-        # Finish add new run and quit
-        self.hide()
-        self.equip = None
-        self.clientPath = ""
-        self.labPath = ""
-        self.ui.clientFilePathLine.clear()
-        self.ui.labFilePathLine.clear()
+            self.parent.runModel.layoutChanged.emit()
+            
+            # Finish add new run and quit
+            self.hide()
+            self.equip = None
+            self.clientPath = ""
+            self.labPath = ""
+            self.ui.clientFilePathLine.clear()
+            self.ui.labFilePathLine.clear()
+        except PermissionError:
+            QtWidgets.QMessageBox.about(self, "Warning", "Cannot re-upload files. Please close correpsonding file windows!")
+            
     
 
     def setRuns(self, selectedRun, run):
