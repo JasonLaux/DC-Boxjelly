@@ -1567,7 +1567,7 @@ class ProgressBarCounter(QRunnable):
     def run(self):
         count = 0
         while count < 100 and not self._stop:
-            count +=10
+            count += 5
             time.sleep(1)
             self._signals.progress.emit(count)
 
