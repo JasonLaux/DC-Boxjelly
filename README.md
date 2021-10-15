@@ -1,6 +1,25 @@
-# DC-Boxjelly
+DC-Boxjelly
+=====================
+
 DC-Boxjelly Private Github Repository
 
+- [DC-Boxjelly](#dc-boxjelly)
+  - [Project Description](#project-description)
+  - [Run from source code](#run-from-source-code)
+  - [Features](#features)
+  - [Documentation](#documentation)
+    - [Specify python version](#specify-python-version)
+    - [How to develop (Use command line to do the following process)](#how-to-develop-use-command-line-to-do-the-following-process)
+    - [Interactive development](#interactive-development)
+    - [UI development](#ui-development)
+    - [Publish](#publish)
+    - [File structure](#file-structure)
+  - [System Requirements](#system-requirements)
+  - [Technologies Used](#technologies-used)
+  - [Setup Guide](#setup-guide)
+  - [Testing](#testing)
+  - [Release History](#release-history)
+  - [Attribution](#attribution)
 
 ## Project Description
 
