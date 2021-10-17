@@ -35,6 +35,7 @@ This installation manual aims to help deploy and install our Digital Calibration
 
 2. When the clone or unzipping is done, run install.bat in the root folder by double clicking the file or typing ‘install.bat’ in the command line and run.
 3. When all packages are installed successfully, you can simply run run.bat file to launch the program. 
+### Note: If the required packages are installed, there is no need to run the install.bat.
 
 
 ## Troubleshooting
