@@ -9,6 +9,7 @@ This installation manual aims to help deploy and install our Digital Calibration
 
 * Windows10
 * Python >= 3.6. The download link: [https://www.python.org/downloads/](https://www.python.org/downloads/)
+    * To develop the program using Pipenv, the version needs to be exactly `3.6`.
 * Excel: Our product uses Excel to generate intermediate template files.
 * PDF viewers such as Adobe Acrobat Reader DC are required to open the final report
 * pip: pip is the package installer for Python. 
@@ -28,14 +29,15 @@ This installation manual aims to help deploy and install our Digital Calibration
         git clone https://github.com/Johnlky/DC-Boxjelly.git
 
 
-    If the condition is not met, you can simply download the ZIP file from our Github homepage as the following figure shows:
+    If the condition is not met, you can simply download the ZIP file from our Github homepage as the following figure shows (downloading zip file in the main branch is fine):
     
 ![Download Zip](docs/images/download-zip.png "image_tooltip")
 
 
 2. When the clone or unzipping is done, run install.bat in the root folder by double clicking the file or typing ‘install.bat’ in the command line and run.
 3. When all packages are installed successfully, you can simply run run.bat file to launch the program. 
-### Note: If the required packages are installed, there is no need to run the install.bat.
+
+**Note: If the required packages are installed, there is no need to run the install.bat.**
 
 
 ## Troubleshooting
