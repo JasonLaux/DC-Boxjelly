@@ -16,6 +16,8 @@ import numpy as np
 import time
 import tempfile
 import shutil
+import dateutil.parser
+
 
 from app.gui.utils import loadUI, getHomeTableData, getEquipmentsTableData, getRunsTableData, getResultData, converTimeFormat, getConstantsTableData
 from app.core.models import Job, Equipment, MexRawFile, ConstantFile, MexRun, constant_file_config
@@ -25,7 +27,7 @@ from app.export.pdf import get_pdf
 from datetime import datetime
 from copy import deepcopy
 from shutil import copyfile
-from app.core.definition import DATA_FOLDER
+from app.core.definition import DATA_FOLDER, OPS_MANUAL
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -73,9 +75,11 @@ class MainWindow(QMainWindow):
         self.addEquipmentWindow = AddEquipmentWindow(self)
         self.reuploadWindow = ReuploadWindow(self)
 
-        #Home Page
+        # Home Page
         self.ui.homeButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.homePage))
         self.ui.homeButton.clicked.connect(lambda: self.setWindowTitle(self.JOB_LIST_WINDOW_TITLE))
+        # Support Button
+        self.ui.supportButton.clicked.connect(self.openSupport)
         # View/Edit Client Info 
         self.ui.chooseClientButton.clicked.connect(self.chooseClient)
         self.ui.addClientButton.clicked.connect(lambda: self.ui.homeTable.clearSelection())
@@ -126,7 +130,7 @@ class MainWindow(QMainWindow):
         self.ui.homeTable.sortByColumn(0, Qt.AscendingOrder)
         self.ui.homeTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) #column stretch to window size
         self.ui.homeTable.setItemDelegate(AlignDelegate()) # text alignment
-
+        self.ui.homeTable.doubleClicked.connect(self.chooseClient) # double click for choose client
 
         ## Table insertion
         # Equipment Table
@@ -143,6 +147,7 @@ class MainWindow(QMainWindow):
         self.ui.equipmentsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('equipmentsTable'))
         self.ui.equipmentsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.equipmentsTable.setItemDelegate(AlignDelegate())
+        self.ui.equipmentsTable.doubleClicked.connect(self.chooseEquipment) # double click for choose equipment
 
         self._selectedEquipID = ""
 
@@ -157,10 +162,14 @@ class MainWindow(QMainWindow):
         self.ui.runsTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.ui.runsTable.selectionModel().selectionChanged.connect(lambda: self.selection_changed('runsTable'))
         self.ui.runsTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.ui.runsTable.setItemDelegate(AlignDelegate())
-        self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.runsTable.customContextMenuRequested.connect(self.showContextMenu)
+        self.ui.runsTable.setItemDelegate(AlignDelegate())
+        
+        self.ui.runsTable.doubleClicked.connect(self.openAnalysisWindow) # double click for analyze
+        
 
+        # Support Icon
+        self.ui.supportButton.setIcon(QtGui.QIcon(':/img/qsmark.png'))
 
         # Change selection behaviour. User can only select rows rather than cells. Single selection
         self.ui.homeTable.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
@@ -170,6 +179,15 @@ class MainWindow(QMainWindow):
         self._selectedCalNum = ""
         self._selectedRuns = []
         self._sourceIndex = {}
+    
+    def openSupport(self):
+        """
+        Open manual file.
+        """
+        try:
+            os.startfile(os.path.join(OPS_MANUAL))
+        except FileNotFoundError:
+            QtWidgets.QMessageBox.about(self, "Warning", "Operation Manual not found.")
 
 
     def chooseClient(self):
@@ -269,7 +287,7 @@ class MainWindow(QMainWindow):
                 self.equipmentModel.layoutChanged.emit()
             self.ui.equipmentsTable.clearSelection()
         else:
-            QtWidgets.QMessageBox.about(self, "Warning", "Please choose a client to delete.")
+            QtWidgets.QMessageBox.about(self, "Warning", "Please choose an equipment to delete.")
             
 
     def deleteRun(self):
@@ -307,6 +325,7 @@ class MainWindow(QMainWindow):
             modelIndex = getattr(self, tableName).selectionModel().selectedRows() # QModelIndexList
             self._selectedRows = [idx.row() for idx in modelIndex]
             self._sourceIndex = {}
+            self.ui.runsTable.setContextMenuPolicy(Qt.PreventContextMenu)
             logger.debug(self._selectedRows)
             if tableName == "homeTable" and self._selectedRows != []:
                 self.equipmentModel.layoutAboutToBeChanged.emit()
@@ -334,6 +353,7 @@ class MainWindow(QMainWindow):
                 # self.ui.runsTable.setColumnHidden(2, True)
 
             elif tableName == "runsTable" and self._selectedRows != []:
+                self.ui.runsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
                 source_selectedIndex = []
                 for idx in modelIndex:
                     source_selectedIndex.append(self.run_sortermodel.mapToSource(idx).row())
@@ -451,7 +471,7 @@ class MainWindow(QMainWindow):
             os.startfile(run.raw_lab.path)
         elif action == "Reupload":
             self.openReuploadWindow()
-            self.reuploadWindow.setRuns(selectedRun, run)
+            self.reuploadWindow.setRuns(selectedRun, run) 
         elif action == 'export_lab':
             self.export_raw_file(run.raw_lab, 'lab')
         elif action == 'export_client':
@@ -617,27 +637,30 @@ class ReuploadWindow(ImportWindow):
             QtWidgets.QMessageBox.about(self, "Warning", "File not found, Please check your file path.")
             return
 
-        self.run.raw_client.upload_from(Path(self.clientPath))
-        self.run.raw_lab.upload_from(Path(self.labPath))
-        
-        self.parent.runModel.initialiseTable(data=getRunsTableData(Job[self.parent._selectedCalNum][self.parent._selectedEquipID]))
+        try: 
+            self.run.raw_client.upload_from(Path(self.clientPath))
+            self.run.raw_lab.upload_from(Path(self.labPath))
+            self.parent.runModel.initialiseTable(data=getRunsTableData(Job[self.parent._selectedCalNum][self.parent._selectedEquipID]))
 
-        self.parent.runModel.layoutChanged.emit()
-        
-        # Finish add new run and quit
-        self.hide()
-        self.equip = None
-        self.clientPath = ""
-        self.labPath = ""
-        self.ui.clientFilePathLine.clear()
-        self.ui.labFilePathLine.clear()
+            self.parent.runModel.layoutChanged.emit()
+            
+            # Finish add new run and quit
+            self.hide()
+            self.equip = None
+            self.clientPath = ""
+            self.labPath = ""
+            self.ui.clientFilePathLine.clear()
+            self.ui.labFilePathLine.clear()
+        except PermissionError:
+            QtWidgets.QMessageBox.about(self, "Warning", "Cannot re-upload files. Please close correpsonding file windows!")
+            
     
 
     def setRuns(self, selectedRun, run):
         logger.debug("Selected RunID: %s", selectedRun)
         self.selectedRun = selectedRun
         self.run = run
-        pass
+        
 
 
 class HomeImportWindow(QMainWindow):
@@ -740,7 +763,11 @@ class HomeImportWindow(QMainWindow):
                 'CAL Number': self.data.CAL_num,
                 'Client Name': self.data.Client_name,
             }
-            self.parent.clientModel.addData(pd.DataFrame(newClient, index=[0]) )
+            # TODO: fix ValueError bug
+            try:
+                self.parent.clientModel.addData(pd.DataFrame(newClient, index=[0]) )
+            except ValueError:
+                pass
             self.parent.clientModel.layoutChanged.emit()
             equip = job.add_equipment(model = self.data.model, serial = self.data.serial)
             newEquip = {
@@ -748,7 +775,11 @@ class HomeImportWindow(QMainWindow):
                 'Serial Num': self.data.serial,
                 'ID': equip.id,
             }
-            self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+            # TODO: fix ValueError bug
+            try:
+                self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+            except ValueError:
+                pass
             self.parent.equipmentModel.layoutChanged.emit()
             run = equip.mex.add()
             run.raw_client.upload_from(Path(self.clientPath))
@@ -765,7 +796,11 @@ class HomeImportWindow(QMainWindow):
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
             }
-            self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+            # TODO: fix ValueError bug
+            try:
+                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+            except ValueError:
+                pass
             self.parent.runModel.layoutChanged.emit()
         else:
             job = Job[self.data.CAL_num]
@@ -781,7 +816,11 @@ class HomeImportWindow(QMainWindow):
                     'Serial Num': self.data.serial,
                     'ID': equip.id,
                 }
-                self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+                # TODO: fix ValueError bug
+                try:
+                    self.parent.equipmentModel.addData(pd.DataFrame(newEquip, index=[0]) )
+                except ValueError:
+                    pass
                 self.parent.equipmentModel.layoutChanged.emit()
                 run = equip.mex.add()
                 run.raw_client.upload_from(Path(self.clientPath))
@@ -798,7 +837,11 @@ class HomeImportWindow(QMainWindow):
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
-                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                # TODO: fix ValueError bug
+                try:
+                    self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                except ValueError:
+                    pass
                 self.parent.runModel.layoutChanged.emit()
             else:
                 # if both job and equip existed, add run to it
@@ -818,7 +861,11 @@ class HomeImportWindow(QMainWindow):
                     'Measurement Date': converTimeFormat(run.measured_at).split()[0],
                     'Operator': run.operator,
                 }
-                self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                # TODO: fix ValueError bug
+                try:
+                    self.parent.runModel.addData(pd.DataFrame(data, index=[0]))
+                except ValueError:
+                    pass
                 self.parent.runModel.layoutChanged.emit()
         
         # pop up message when import successfully
@@ -909,7 +956,6 @@ class ConstantsWindow(QMainWindow):
         self._selectedConstantsID = ""
 
         # Context menu
-        self.ui.constantsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
         self.ui.constantsTable.customContextMenuRequested.connect(self.showContextMenu)
 
         # link buttons to function
@@ -1038,8 +1084,10 @@ class ConstantsWindow(QMainWindow):
         """
         modelIndex =self.ui.constantsTable.selectionModel().selectedRows() # QModelIndexList
         self._selectedRows = [idx.row() for idx in modelIndex]
+        self.ui.constantsTable.setContextMenuPolicy(Qt.PreventContextMenu)
         logger.debug(self._selectedRows)
         if len(self._selectedRows) > 0:
+            self.ui.constantsTable.setContextMenuPolicy(Qt.CustomContextMenu) 
             source_selectedIndex = [self.constant_sortermodel.mapToSource(modelIndex[0]).row()]
             logger.debug(source_selectedIndex)
             self._selectedConstantsID = self.constantModel._data.loc[source_selectedIndex, 'ID'].to_list()[0]
@@ -1203,7 +1251,7 @@ class AnalyseWindow(QMainWindow):
         # Only first operator is considered
         operator = self.runs[0].operator
         for run in self.runs:
-            date_list.append(datetime.fromisoformat(run.measured_at))
+            date_list.append(dateutil.parser.isoparse(run.measured_at))
             ic_hv.append(run.IC_HV)
 
         earliest_date = min(date_list).strftime("%d %b %Y")
@@ -1215,9 +1263,9 @@ class AnalyseWindow(QMainWindow):
         ichv = ic_hv[0]
 
         if int(ichv) < 0:
-            flag = "(" + ichv + ")" + " on the guard electrode " + "Positive " + "(Central Electrode Negative)"
+            flag = "Positive " + "(Central Electrode Negative)"
         else:
-            flag = "(" + ichv + ")" + "on the guard electrode " + "Negative " + "(Central Electrode Negative)"
+            flag = "Negative " + "(Central Electrode Positive)"
 
         return deepcopy({"cal_num": cal_num,
                 "client_name": client_name,
@@ -1228,7 +1276,7 @@ class AnalyseWindow(QMainWindow):
                 "operator": operator,
                 "period": period,
                 "report_date": report_date,
-                "ic_hv": ichv,
+                "ic_hv": str(ichv) + ' V' + " on the guard electrode",
                 "polarity": flag
                 })
     
@@ -1519,7 +1567,7 @@ class ProgressBarCounter(QRunnable):
     def run(self):
         count = 0
         while count < 100 and not self._stop:
-            count +=10
+            count += 5
             time.sleep(1)
             self._signals.progress.emit(count)
 

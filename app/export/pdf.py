@@ -32,9 +32,9 @@ def get_pdf(temp_folder, **kwgs):
     shutil.copy(templateFilePath, doc_path)
 
     try:
-        subtable_df = pd.read_excel(tablePath, sheet_name='subset')
-        total1_df = pd.read_excel(tablePath, sheet_name='total-1')
-        total2_df = pd.read_excel(tablePath, sheet_name='total-2')
+        subtable_df = pd.read_excel(tablePath, sheet_name='subset', engine='openpyxl')
+        total1_df = pd.read_excel(tablePath, sheet_name='total-1', engine='openpyxl')
+        total2_df = pd.read_excel(tablePath, sheet_name='total-2', engine='openpyxl')
     except:
         logger.debug("Cannot read table file properly!")
 
@@ -43,43 +43,43 @@ def get_pdf(temp_folder, **kwgs):
     wb = xw.Book(doc_path) #excel template file path
     sheet = wb.sheets['MEXReport']
 
-    sheet.range('T13').value = kwgs["cal_num"] #CAL NUMBER
+    sheet.range('T12').value = kwgs["cal_num"] #CAL NUMBER
 
-    sheet.range('G20').value = kwgs["client_name"] #Client Name
-    sheet.range('G110').value = kwgs["client_name"] #Client Name
-    sheet.range('L143').value = "Calibrated by: " + kwgs["client_name"] #Client Name #####
+    sheet.range('G19').value = kwgs["client_name"] #Client Name
+    sheet.range('G111').value = kwgs["client_name"] #Client Name
+    sheet.range('L145').value = "Calibrated by: " + kwgs["client_name"] #Client Name #####
 
-    sheet.range('G21').value = kwgs["address1"] # Address 1
-    sheet.range('G22').value = kwgs["address2"] # Address 2
+    sheet.range('G20').value = kwgs["address1"] # Address 1
+    sheet.range('G21').value = kwgs["address2"] # Address 2
 
-    sheet.range('G25').value = kwgs["model"] + ' ' + kwgs["serial"] # Chamber Information
-    sheet.range('G111').value = kwgs["model"] + ' ' + kwgs["serial"] # Chamber Information
+    sheet.range('G24').value = kwgs["model"] + ' ' + kwgs["serial"] # Chamber Information
+    sheet.range('G112').value = kwgs["model"] + ' ' + kwgs["serial"] # Chamber Information
 
-    sheet.range('G27').value = kwgs["period"] #Date of Measurement: Option -> 2-6 July 2021 or Option 2-> 2 July 2021 to 6 July 2021
-    sheet.range('G123').value = kwgs["period"] #Date of Measurement: Option -> 2-6 July 2021 or Option 2-> 2 July 2021 to 6 July 2021
+    sheet.range('G26').value = kwgs["period"] #Date of Measurement: Option -> 2-6 July 2021 or Option 2-> 2 July 2021 to 6 July 2021
+    sheet.range('G124').value = kwgs["period"] #Date of Measurement: Option -> 2-6 July 2021 or Option 2-> 2 July 2021 to 6 July 2021
 
+    sheet.range('G30').value = kwgs["operator"] #Name of Operator of latest run
     sheet.range('G31').value = kwgs["operator"] #Name of Operator of latest run
-    sheet.range('G32').value = kwgs["operator"] #Name of Operator of latest run
 
-    sheet.range('G33').value = kwgs["report_date"] + ' ' #Report generation date/current
+    sheet.range('G32').value = kwgs["report_date"] + ' ' #Report generation date/current
 
-    sheet.range('G112').value = kwgs["ic_hv"] #Client RAW File, IC HV Value
+    sheet.range('G113').value = kwgs["ic_hv"] #Client RAW File, IC HV Value
 
-    sheet.range('G113').value = kwgs["polarity"] #if above is negative, then here is positive
+    sheet.range('G114').value = kwgs["polarity"] #if above is negative, then here is positive
 
     #insert table 1 @ Cell A122 or Replace NK value from Q124 to Q134
 
     # sheet.range('Q124:Q134').value = subtable_df["NK [2]"].to_list()
-    sheet.range('A129').options(transpose=True).value = subtable_df["Beam code"].to_list()
-    sheet.range('C129').options(transpose=True).value = subtable_df["Tube voltage"].to_list()
-    sheet.range('E129').options(transpose=True).value = subtable_df["Added filter(mm Al)"].to_list()
-    sheet.range('G129').options(transpose=True).value = subtable_df["Added filter(mm Cu)"].to_list()
-    sheet.range('I129').options(transpose=True).value = subtable_df["HVL(mm Al)"].to_list()
-    sheet.range('K129').options(transpose=True).value = subtable_df["HVL(mm Cu)"].to_list()
-    sheet.range('M129').options(transpose=True).value = subtable_df["Nominal effective energy [1]"].to_list()
-    sheet.range('O129').options(transpose=True).value = subtable_df["Nominal air kerma rate"].to_list()
-    sheet.range('Q129').options(transpose=True).value = subtable_df["NK [2]"].to_list()
-    sheet.range('S129').options(transpose=True).value = subtable_df["U %"].to_list()
+    sheet.range('A130').options(transpose=True).value = subtable_df["Beam code"].to_list()
+    sheet.range('C130').options(transpose=True).value = subtable_df["Tube voltage"].to_list()
+    sheet.range('E130').options(transpose=True).value = subtable_df["Added filter(mm Al)"].to_list()
+    sheet.range('G130').options(transpose=True).value = subtable_df["Added filter(mm Cu)"].to_list()
+    sheet.range('I130').options(transpose=True).value = subtable_df["HVL(mm Al)"].to_list()
+    sheet.range('K130').options(transpose=True).value = subtable_df["HVL(mm Cu)"].to_list()
+    sheet.range('M130').options(transpose=True).value = subtable_df["Nominal effective energy [1]"].to_list()
+    sheet.range('O130').options(transpose=True).value = subtable_df["Nominal air kerma rate"].to_list()
+    sheet.range('Q130').options(transpose=True).value = subtable_df["NK [2]"].to_list()
+    sheet.range('S130').options(transpose=True).value = subtable_df["U %"].to_list()
 
 
     #insert table 2 @ Cell A145 or Replace NK value from Q147 to Q186
@@ -97,29 +97,36 @@ def get_pdf(temp_folder, **kwgs):
 
     #insert table 2-A @ Cell A192 or Replace NK value from Q194 to Q215
     # sheet.range('Q194:Q215').value = total2_df["NK [2]"].to_list()
-    sheet.range('A198').options(transpose=True).value = total2_df["Beam code"].to_list()
-    sheet.range('C198').options(transpose=True).value = total2_df["Tube voltage"].to_list()
-    sheet.range('E198').options(transpose=True).value = total2_df["Added filter(mm Al)"].to_list()
-    sheet.range('G198').options(transpose=True).value = total2_df["Added filter(mm Cu)"].to_list()
-    sheet.range('I198').options(transpose=True).value = total2_df["HVL(mm Al)"].to_list()
-    sheet.range('K198').options(transpose=True).value = total2_df["HVL(mm Cu)"].to_list()
-    sheet.range('M198').options(transpose=True).value = total2_df["Nominal effective energy [1]"].to_list()
-    sheet.range('O198').options(transpose=True).value = total2_df["Nominal air kerma rate"].to_list()
-    sheet.range('Q198').options(transpose=True).value = total2_df["NK [2]"].to_list()
-    sheet.range('S198').options(transpose=True).value = total2_df["U %"].to_list()
+    sheet.range('A199').options(transpose=True).value = total2_df["Beam code"].to_list()
+    sheet.range('C199').options(transpose=True).value = total2_df["Tube voltage"].to_list()
+    sheet.range('E199').options(transpose=True).value = total2_df["Added filter(mm Al)"].to_list()
+    sheet.range('G199').options(transpose=True).value = total2_df["Added filter(mm Cu)"].to_list()
+    sheet.range('I199').options(transpose=True).value = total2_df["HVL(mm Al)"].to_list()
+    sheet.range('K199').options(transpose=True).value = total2_df["HVL(mm Cu)"].to_list()
+    sheet.range('M199').options(transpose=True).value = total2_df["Nominal effective energy [1]"].to_list()
+    sheet.range('O199').options(transpose=True).value = total2_df["Nominal air kerma rate"].to_list()
+    sheet.range('Q199').options(transpose=True).value = total2_df["NK [2]"].to_list()
+    sheet.range('S199').options(transpose=True).value = total2_df["U %"].to_list()
 
 
     #Chart 1: N vs KvP Chart @ Cell A220
-    sheet.pictures.add(kvp_fig, top=sheet.range('A224').top, left=sheet.range('A220').left, name='kVp', update=True, width=figure_width, height=figure_height)
-    #Chart 2: N vs HVL Chart (mm Al) @ Cell A245
-    sheet.pictures.add(hvl_al_fig, top=sheet.range('A249').top, left=sheet.range('A245').left, name='Al', update=True, width=figure_width, height=figure_height)
-    #Chart 3: N vs HVL Chart (mm Cu) @ Cell A272
-    sheet.pictures.add(hvl_cu_fig, top=sheet.range('A276').top, left=sheet.range('A272').left, name='Cu', update=True, width=figure_width, height=figure_height)
+    sheet.pictures.add(kvp_fig, top=sheet.range('A225').top, left=sheet.range('A220').left, name='kVp', update=True, width=figure_width, height=figure_height)
+    #Chart 1 Title
+    sheet.range('C243').value = "Figure 1: Calibration coefficients for " + kwgs["model"] +" serial number " + kwgs["serial"] + " grouped by kVp"
 
+    #Chart 2: N vs HVL Chart (mm Al) @ Cell A245
+    sheet.pictures.add(hvl_al_fig, top=sheet.range('A251').top, left=sheet.range('A245').left, name='Al', update=True, width=figure_width, height=figure_height)
+    #Chart 2 Title
+    sheet.range('C273').value = "Figure 2: Calibration coefficients for " + kwgs["model"] + " serial number " + kwgs["serial"] + " versus HVL (mm Al)"
+
+    #Chart 3: N vs HVL Chart (mm Cu) @ Cell A272
+    sheet.pictures.add(hvl_cu_fig, top=sheet.range('A278').top, left=sheet.range('A272').left, name='Cu', update=True, width=figure_width, height=figure_height)
+    #Chart 3 Title
+    sheet.range('C300').value = "Figure 3: Calibration coefficients for " + kwgs["model"] + " serial number " + kwgs["serial"] +" versus HVL (mm Cu)"
 
     #Footer Values
-    sheet.range('A57').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
-    sheet.range('I57').value = "Report Date: " + kwgs["report_date"] #CAL Number
+    sheet.range('A59').value = "Calibration No: " + kwgs["cal_num"] #CAL Number
+    sheet.range('I59').value = "Report Date: " + kwgs["report_date"] #CAL Number
 
     wb.save(doc_path)
     wb.close()

@@ -23,6 +23,9 @@ ipython = "*"
 pyqt5-tools = "*"
 time-machine = "*"
 
+[require]
+python_version = "3.6"
+
 [scripts]
 repl = "python app/repl.py"
 test = "python -m unittest discover"

@@ -105,8 +105,8 @@ def calculator(client, lab):
 
     # read constant and KK from constant excel file
     constant = os.path.join(constant_file_config.get_path())
-    df_constant = pd.read_excel(constant, sheet_name='constant')
-    df_beams = pd.read_excel(constant, sheet_name='Beams')
+    df_constant = pd.read_excel(constant, sheet_name='constant', engine='openpyxl')
+    df_beams = pd.read_excel(constant, sheet_name='Beams', engine='openpyxl')
 
     # get ma and WE
     Ma = df_constant['ma'].values[0]
@@ -336,7 +336,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
         plt.plot(df_temp['Tube voltage'], df_temp['NK [2]'], marker='D', label=str(voltage) + ' kVp', c=c)
 
     plt.xlabel("kVp", fontweight='bold')
-    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
+    plt.ylabel(r'$\bfN_K$ (mGy/nc)', fontweight='bold')
     plt.grid(axis='y', linestyle='--')
     plt.legend(ncol=2)
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
@@ -353,7 +353,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
         plt.plot(np.round(df_temp['HVL(mm Al)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp', c=c)
 
     plt.xlabel(r'HVL (mm Al)', fontweight='bold')
-    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
+    plt.ylabel(r'$\bfN_K$ (mGy/nc)', fontweight='bold')
     plt.grid(axis='y', linestyle='--')
     plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))
@@ -371,7 +371,7 @@ def pdf_visualization(path, df_summary, df_otherConstant):
         plt.plot(np.round(df_temp['HVL(mm Cu)'].to_list(), 2), df_temp['NK [2]'], '.-', label=str(voltage) + ' kVp', c=c)
 
     plt.xlabel(r'HVL (mm Cu)', fontweight='bold')
-    plt.ylabel(r'$\bfN_k$ (mGy/nc)', fontweight='bold')
+    plt.ylabel(r'$\bfN_K$ (mGy/nc)', fontweight='bold')
     plt.grid(axis='y', linestyle='--')
     plt.gca().xaxis.set_major_formatter(StrMethodFormatter('{x:,.2f}'))
     plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.1f}'))

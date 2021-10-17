@@ -1,6 +1,25 @@
-# DC-Boxjelly
+DC-Boxjelly
+=====================
+
 DC-Boxjelly Private Github Repository
 
+- [DC-Boxjelly](#dc-boxjelly)
+  - [Project Description](#project-description)
+  - [Run from source code](#run-from-source-code)
+  - [Features](#features)
+  - [Documentation](#documentation)
+    - [Specify python version](#specify-python-version)
+    - [How to develop (Use command line to do the following process)](#how-to-develop-use-command-line-to-do-the-following-process)
+    - [Interactive development](#interactive-development)
+    - [UI development](#ui-development)
+    - [Publish](#publish)
+    - [File structure](#file-structure)
+  - [System Requirements](#system-requirements)
+  - [Technologies Used](#technologies-used)
+  - [Setup Guide](#setup-guide)
+  - [Testing](#testing)
+  - [Release History](#release-history)
+  - [Attribution](#attribution)
 
 ## Project Description
 
@@ -23,9 +42,14 @@ be viewed in the software as well as exported as PDF files.
 ## Documentation
 This section contains the documentation used in developing the software.
 
+### Specify python version
+- If you want to do development in specify python version, please specify it in `pipenv`.
+  - For example, instead of `pipenv sync`, use `pipenv sync --python 3.6`.
+  - All pipenv commands need to add `--python x.x` switch.
+
 ### How to develop (Use command line to do the following process)
 - Install [pipenv](https://pipenv.pypa.io/en/latest/)
-- Run `pipenv sync` to install dependency
+- Run `pipenv sync --dev` to install dependency (including development dependency)
 - Run `pipenv shell` to start a shell based on the virtualenv
 - Then, use whatever shell command you want in the shell
 - If you want to install any packages, use `pipenv install` instead of `pip install`.

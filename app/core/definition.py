@@ -75,3 +75,9 @@ if not ensure_folder(CONSTANT_FOLDER):
     (CONSTANT_FOLDER / META_FILE_NAME).touch()
 
 CONSTANT_FILE_NAME = 'constant.xlsx'
+
+'''
+The path of the Operation Manual
+'''
+OPS_MANUAL = Path(__file__).parent.parent.parent / 'docs' / 'Operation Manual.pdf'
+OPS_MANUAL.chmod(S_IREAD) # make the file read only
