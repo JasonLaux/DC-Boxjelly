@@ -6,6 +6,7 @@
 - Added PDF report generating
 - Added CSV file exporting
 - Added CSV file altering (re-upload)
+- Added importing csv file from home window.
 - Added version control to the constraints file.
 
 ### Changed
@@ -30,6 +31,7 @@
 ### Added
 - Added the storage of Job, Equipment and Run (file system).
 - Added importing MEX run.
+- Added viewing and changing metadata of Job, Equipment and Run.
 - Added MEX analysis calculation
 - Added MEX analysis charts
 
