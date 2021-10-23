@@ -111,7 +111,7 @@ See [INSTALL.md](INSTALL.md)
 
 
 ## Attribution
-1247145 - John Kah Yong Low johnkayongl@student.unimelb.edu.au Product Owner  
+1247145 - John Kah Yong Low johnkahyongl@student.unimelb.edu.au Product Owner  
 1070917 - ChingYuan Yang chingyuany@student.unimelb.edu.au  Scrum master  
 1087943 - Jianheng Shi jianheng@student.unimelb.edu.au Development Environment Lead  
 1063288 - Shumin Liu  shumin@student.unimelb.edu.au  Architecture Lead  
