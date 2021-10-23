@@ -107,8 +107,9 @@ See [INSTALL.md](INSTALL.md)
 - The gui testing are under `gui_testing` folder.
 
 ## Release History
-- 11th Oct 2021: 1.0
-
+See full changelog on [CHANGELOG.md](./CHANGELOG.md)
+- 11th Oct 2021: Sprint2
+- 17th Sep 2021: Sprint1
 
 ## Attribution
 1247145 - John Kah Yong Low johnkahyongl@student.unimelb.edu.au Product Owner  
